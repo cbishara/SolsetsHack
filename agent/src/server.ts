@@ -14,6 +14,25 @@ import { runWeek, summarize } from './evaluate.ts';
 import { createChat } from './chat.ts';
 import type { Chat } from './chat.ts';
 import { createCodexRunner } from './engines/codex.ts';
+import type { CodexOptions } from './engines/codex.ts';
+
+/** Chat settings are independent of the guard classifier's model and effort. */
+export function chatCodexOptions(env: NodeJS.ProcessEnv): CodexOptions {
+  const effort = env.CHAT_REASONING_EFFORT ?? 'low';
+  if (!['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'].includes(effort)) {
+    throw new Error('CHAT_REASONING_EFFORT no es un nivel válido.');
+  }
+  if (env.CHAT_FAST !== undefined && !['true', 'false', '1', '0'].includes(env.CHAT_FAST)) {
+    throw new Error('CHAT_FAST debe ser true, false, 1 o 0.');
+  }
+  return {
+    bin: env.CODEX_BIN,
+    model: env.CHAT_MODEL ?? env.CODEX_MODEL,
+    reasoningEffort: effort as CodexOptions['reasoningEffort'],
+    fast: env.CHAT_FAST === 'true' || env.CHAT_FAST === '1',
+    timeoutMs: Number(env.CHAT_TIMEOUT_MS ?? 60_000),
+  };
+}
 
 const MAX_BODY = 64 * 1024;
 
@@ -117,9 +136,10 @@ export function createAgentServer({ store, agent, devAgents = {}, token, dev, ch
       }
 
       if (dev) {
-        if (req.method === 'GET' && path === '/') {
+        if (req.method === 'GET' && (path === '/' || path === '/tools')) {
           res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-          return res.end(await readFile(new URL('../console/index.html', import.meta.url)));
+          const page = path === '/' ? 'index.html' : 'tools.html';
+          return res.end(await readFile(new URL(`../console/${page}`, import.meta.url)));
         }
         if (req.method === 'POST' && path === '/dev/classify') {
           const body = (await readJson(req)) as Record<string, unknown>;
@@ -192,10 +212,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.error('CHAT_PASSWORD es obligatoria en producción (16 caracteres o más): el chat gasta el plan de Codex.');
     process.exit(1);
   }
+  const chatOptions = chatCodexOptions(process.env);
   const chat = createChat({
-    store, userId: process.env.CHAT_USER_ID ?? 'rodrigo-demo', model: process.env.CODEX_MODEL ?? null,
+    store, userId: process.env.CHAT_USER_ID ?? 'rodrigo-demo', model: chatOptions.model ?? null,
     runner: engineName === 'codex'
-      ? createCodexRunner({ bin: process.env.CODEX_BIN, model: process.env.CODEX_MODEL, timeoutMs: Number(process.env.CHAT_TIMEOUT_MS ?? 60_000) })
+      ? createCodexRunner(chatOptions)
       : null,
   });
   const server = createAgentServer({
@@ -206,5 +227,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const host = process.env.HOST ?? (production ? '0.0.0.0' : '127.0.0.1');
   server.listen(port, host, () => {
     console.log(`Agente escuchando en http://localhost:${port} · motor de la API: ${engineName}${dev ? ` · consola: http://localhost:${port}/` : ''}`);
+    if (engineName === 'codex') console.log(`Chat: ${chatOptions.model ?? 'modelo predeterminado'} · razonamiento: ${chatOptions.reasoningEffort} · Fast solicitado: ${chatOptions.fast ? 'sí' : 'no'}`);
   });
 }

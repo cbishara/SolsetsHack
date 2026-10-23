@@ -1,332 +1,286 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Consola del agente · Solsets</title>
-<link rel="icon" href="data:,">
-<style>
-  :root { --bg: #f5f4f0; --card: #fff; --ink: #1d1d1b; --muted: #6b6a65; --line: #e2e0d8;
-    --wake: #b42318; --wake-bg: #fde8e6; --part: #8a5a00; --part-bg: #fdf1d8; --noise: #55534d; --noise-bg: #ecebe6; --ok: #1f6f43; }
-  * { box-sizing: border-box; }
-  body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
-  header { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; }
-  header h1 { font-size: 15px; margin: 0 12px 0 0; }
-  header label { display: flex; gap: 6px; align-items: center; color: var(--muted); }
-  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 16px 20px 40px; }
-  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
-  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
-  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 10px; }
-  input, select, textarea, button { font: inherit; }
-  input, select, textarea { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #fff; color: var(--ink); }
-  textarea { width: 100%; min-height: 90px; resize: vertical; }
-  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
-  .row > input { flex: 1; min-width: 120px; }
-  button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
-  button:hover { border-color: var(--ink); }
-  button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
-  button:disabled { opacity: .5; cursor: wait; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: 12px; }
-  .DESPERTAR { color: var(--wake); background: var(--wake-bg); }
-  .PARTE { color: var(--part); background: var(--part-bg); }
-  .RUIDO { color: var(--noise); background: var(--noise-bg); }
-  .big { font-size: 20px; padding: 4px 12px; }
-  .muted { color: var(--muted); }
-  .small { font-size: 12px; }
-  .warn { color: var(--wake); }
-  .good { color: var(--ok); }
-  ul { list-style: none; padding: 0; margin: 0; }
-  li.case { border-top: 1px solid var(--line); padding: 10px 0; }
-  li.case:first-child { border-top: 0; }
-  .case-text { margin: 4px 0 6px; white-space: pre-wrap; }
-  .verdict { display: none; margin-top: 6px; }
-  .verdict.open { display: flex; }
-  .summary { font-size: 15px; margin: 8px 0; }
-  .empty { color: var(--muted); font-style: italic; }
-  #result:empty::before { content: "Todavía no clasificas nada."; color: var(--muted); font-style: italic; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fafbfd">
+  <title>SOL · Conversación</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #fafbfd; --surface: #fff; --ink: #152347; --secondary: #53617b;
+      --quiet: #64718a; --blue: #2e59e5; --deep-blue: #18356f; --lime: #e4f51a;
+      --soft-blue: #edf1fc; --line: #e3e8f1; --error: #a12a35; --error-bg: #fff1f2;
+      --app-height: 100dvh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink); background: var(--page); font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; height: var(--app-height); min-height: 320px; display: flex; flex-direction: column; }
+    button, textarea, input { font: inherit; }
+    button, a, textarea, input { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; opacity: .45; }
+    button, a { touch-action: manipulation; }
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+    [hidden] { display: none !important; }
+    .topbar { flex-shrink: 0; border-bottom: 1px solid var(--line); background: var(--surface); }
+    .topbar-inner { min-height: 76px; max-width: 1120px; padding: 12px 28px; margin: auto; display: flex; align-items: center; gap: 16px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 750; font-size: 23px; letter-spacing: -.8px; text-decoration: none; }
+    .mark { width: 33px; height: 33px; display: inline-flex; align-items: center; justify-content: center; background: var(--blue); color: #fff; border-radius: 11px; }
+    .mark svg { width: 21px; height: 21px; }
+    .connection { font-size: 12px; color: var(--quiet); display: flex; gap: 6px; align-items: center; }
+    .connection::before { content: ""; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
+    nav { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .quiet-button { min-height: 42px; padding: 9px 12px; color: var(--secondary); background: transparent; border: 0; border-radius: 10px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+    .quiet-button:hover { background: var(--soft-blue); color: var(--ink); }
+    .quiet-button svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .conversation { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+    .thread { max-width: 760px; margin: 0 auto; padding: 36px 24px 28px; }
+    .intro { min-height: min(49vh, 450px); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-bottom: 36px; }
+    .intro-symbol { display: flex; justify-content: center; align-items: center; width: 48px; height: 48px; border-radius: 16px; background: var(--lime); color: var(--deep-blue); margin-bottom: 25px; }
+    .intro-symbol svg { width: 26px; height: 26px; }
+    h1 { max-width: 560px; font-size: clamp(30px, 4vw, 43px); line-height: 1.13; font-weight: 550; letter-spacing: -1.7px; margin: 0 0 16px; text-wrap: balance; }
+    .intro p { font-size: 17px; line-height: 1.65; color: var(--secondary); margin: 0; max-width: 460px; }
+    .intro .example { margin-top: 23px; text-align: left; padding: 11px 14px; border: 1px solid var(--line); border-radius: 11px; background: transparent; color: var(--secondary); font-size: 13px; line-height: 1.5; }
+    .example:hover { border-color: #b6c4ea; background: var(--soft-blue); }
+    .message { margin-bottom: 28px; line-height: 1.7; font-size: 16px; overflow-wrap: anywhere; }
+    .message p { white-space: pre-wrap; margin: 0; }
+    .message.user { margin-left: auto; width: fit-content; max-width: 86%; padding: 14px 19px; border-radius: 20px 20px 5px 20px; background: var(--deep-blue); color: white; }
+    .message.assistant { padding: 0 2px; max-width: 98%; }
+    .speaker { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 750; color: var(--blue); letter-spacing: .7px; margin-bottom: 8px; }
+    .speaker svg { width: 13px; height: 13px; }
+    .message-note { display: block; margin-top: 8px; font-size: 12px; color: var(--quiet); line-height: 1.5; }
+    .user .message-note { color: #d9e5ff; }
+    .message.failed { color: var(--error); }
+    .waiting { color: var(--secondary); display: flex; align-items: center; gap: 10px; font-size: 14px; margin: 0 0 20px; padding: 3px 2px; }
+    .dots { display: inline-flex; gap: 4px; }
+    .dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--blue); animation: pulse 1.5s infinite; }
+    .dots i:nth-child(2) { animation-delay: .2s; } .dots i:nth-child(3) { animation-delay: .4s; }
+    @keyframes pulse { 0%, 65%, 100% { opacity: .3; } 30% { opacity: 1; } }
+    footer { flex-shrink: 0; padding: 0 24px max(14px, env(safe-area-inset-bottom)); width: 100%; max-width: 788px; margin: auto; }
+    .composer { padding: 11px 12px 11px 20px; display: flex; align-items: flex-end; gap: 12px; border: 1px solid var(--line); border-radius: 23px; background: var(--surface); box-shadow: 0 5px 24px #18356f07; transition: border-color .15s, box-shadow .15s; }
+    .composer:focus-within { border-color: #9fafe8; box-shadow: 0 0 0 3px #2e59e50a; }
+    textarea { padding: 8px 0; border: 0; outline: none; resize: none; flex: 1; width: 100%; min-height: 42px; max-height: 160px; background: transparent; color: var(--ink); font-size: 16px; line-height: 1.55; }
+    textarea::placeholder { color: var(--quiet); opacity: 1; }
+    .send { width: 42px; height: 42px; border: 0; border-radius: 50%; color: white; background: var(--blue); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s; }
+    .send:not(:disabled):hover { background: var(--deep-blue); }
+    .send:disabled { background: var(--soft-blue); color: var(--quiet); opacity: 1; }
+    .send svg { width: 21px; height: 21px; }
+    .footnote { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 4px 0; font-size: 11px; color: var(--quiet); line-height: 1.4; }
+    .error { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 12px; border-radius: 12px; background: var(--error-bg); color: var(--error); font-size: 13px; line-height: 1.5; }
+    .error span { flex: 1; }
+    .error button { padding: 7px 9px; border: 1px solid #a12a352b; color: inherit; background: transparent; border-radius: 8px; font-size: 12px; flex-shrink: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    dialog { width: min(440px, calc(100vw - 32px)); max-height: min(80dvh, 720px); border: 1px solid var(--line); border-radius: 22px; padding: 28px; color: var(--ink); background: var(--surface); overflow-y: auto; }
+    dialog::backdrop { background: #1523473d; backdrop-filter: blur(3px); }
+    dialog h2 { font-size: 23px; line-height: 1.25; letter-spacing: -.7px; font-weight: 600; margin: 0; }
+    .dialog-heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; margin-bottom: 22px; }
+    .close { border: 0; background: var(--soft-blue); color: var(--secondary); border-radius: 50%; width: 34px; height: 34px; font-size: 21px; flex-shrink: 0; }
+    .context-block + .context-block { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 24px; }
+    .context-label { font-size: 11px; letter-spacing: .8px; text-transform: uppercase; color: var(--quiet); font-weight: 650; margin: 0 0 10px; }
+    .context-block p, .memory-list { font-size: 14px; line-height: 1.65; }
+    .context-block p { margin: 0; }
+    .context-block .context-small { font-size: 12px; color: var(--quiet); margin-top: 8px; }
+    .memory-list { list-style: none; margin: 0; padding: 0; }
+    .memory-list li + li { margin-top: 20px; }
+    .memory-list blockquote { margin: 6px 0 0; padding-left: 10px; border-left: 2px solid var(--line); color: var(--quiet); font-size: 12px; }
+    #password { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; margin: 12px 0; outline-color: var(--blue); }
+    .connect { border: 0; background: var(--blue); color: white; padding: 11px 18px; border-radius: 10px; }
+    @media (max-width: 600px) {
+      .topbar-inner { min-height: 66px; padding: 9px 18px; gap: 10px; }
+      .brand { font-size: 21px; } .mark { width: 29px; height: 29px; border-radius: 9px; }
+      .connection, .tools-label { display: none; }
+      nav { gap: 1px; } .quiet-button { padding: 8px; font-size: 12px; }
+      .thread { padding: 25px 20px 15px; } .intro { min-height: 45dvh; }
+      .intro p { font-size: 16px; } h1 { letter-spacing: -1px; }
+      .message { font-size: 16px; margin-bottom: 24px; }
+      .message.user { padding: 12px 16px; max-width: 91%; }
+      footer { padding-left: 14px; padding-right: 14px; }
+      .composer { padding-left: 16px; } .keyboard-hint { display: none; }
+      .footnote { justify-content: center; font-size: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Consola del agente</h1>
-  <label>Usuario <input id="user" value="rodrigo-demo" size="14"></label>
-  <label>Motor
-    <select id="engine">
-      <option value="rules">Reglas fijas (sin claves)</option>
-      <option value="codex">Codex con tu plan</option>
-    </select>
-  </label>
-  <label><input type="checkbox" id="shadow" checked> Modo sombra</label>
-  <span class="muted small">Solo local. Datos inventados.</span>
-</header>
-
-<main>
-  <div>
-    <section>
-      <h2>Probar un mensaje</h2>
-      <div class="row">
-        <select id="source"><option value="whatsapp">WhatsApp</option><option value="gmail">Gmail</option></select>
-        <input id="chat" placeholder="Grupo o asunto (ej. Guardia Soporte TI)">
-        <input id="sender" placeholder="Remitente (ej. Mesa de ayuda)">
-      </div>
-      <textarea id="text" placeholder="Escribe el mensaje tal como llegaría de noche"></textarea>
-      <div class="row" style="margin-top:8px">
-        <label class="muted">Llegó a las <input id="at" type="datetime-local"></label>
-        <button class="primary" id="classify">Clasificar</button>
-      </div>
-    </section>
-
-    <section>
-      <h2>Qué decidió</h2>
-      <div id="result"></div>
-      <div id="after" hidden>
-        <div class="row" style="margin-top:12px">
-          <span class="muted">Feedback de Rodrigo:</span>
-          <button data-verdict="ok">Bien</button>
-          <button data-verdict="should_wake">Debió despertarme</button>
-          <button data-verdict="should_not_wake">No debió despertarme</button>
-          <span id="feedback-status" class="small"></span>
-        </div>
-        <div class="row">
-          <span class="muted">Tu criterio:</span>
-          <select id="case-expected"><option>DESPERTAR</option><option>PARTE</option><option>RUIDO</option></select>
-          <input id="case-why" placeholder="Por qué, en una línea">
-          <button id="save-case">Guardar como caso</button>
-          <span id="case-status" class="small"></span>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <h2>Memoria del usuario</h2>
-      <p class="muted small">Solo la escribe el usuario: desde aquí (como si fuera el chat) y con el feedback. Un mensaje clasificado nunca la escribe.</p>
-      <div class="row">
-        <select id="mem-kind"><option value="rule">Regla</option><option value="fact">Dato</option></select>
-        <input id="mem-text" placeholder="Ej. La impresora del segundo piso nunca es urgente">
-        <button id="mem-add">Agregar</button>
-        <span id="mem-status" class="small"></span>
-      </div>
-      <ul id="memory"></ul>
-      <h2 style="margin-top:14px">Feedback guardado</h2>
-      <ul id="feedback"></ul>
-    </section>
-  </div>
-
-  <div>
-    <section>
-      <h2>Semana simulada</h2>
-      <div class="row">
-        <button class="primary" id="run-week">Correr la semana</button>
-        <select id="filter">
-          <option value="all">Todos</option>
-          <option value="propuesto">Por confirmar</option>
-          <option value="confirmado">Confirmados</option>
-          <option value="failed">Fallados en la última corrida</option>
-        </select>
-        <span id="run-status" class="small muted"></span>
-      </div>
-      <div id="summary" class="summary"></div>
-      <ul id="cases"></ul>
-    </section>
-  </div>
-</main>
-
-<script>
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const pill = (d, extra = '') => `<span class="pill ${esc(d)} ${extra}">${esc(d)}</span>`;
-let last = null;            // last classified message and decision
-let week = { cases: [] };
-let lastRun = new Map();    // case_id -> result
-
-async function api(path, body) {
-  const res = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
-  return data;
-}
-
-function localNow() {
-  const d = new Date(); d.setSeconds(0, 0);
-  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-}
-function toIso(local) {
-  const d = new Date(local);
-  const off = -d.getTimezoneOffset(), sign = off >= 0 ? '+' : '-', abs = Math.abs(off);
-  return `${local}:00${sign}${String(Math.floor(abs / 60)).padStart(2, '0')}:${String(abs % 60).padStart(2, '0')}`;
-}
-
-function renderDecision(d, ms) {
-  const lines = [
-    `<div class="row">${pill(d.decision, 'big')} ${d.wake ? '<strong class="warn">Lo despierta</strong>' : '<span class="muted">No lo despierta</span>'}${d.shadow ? ' <span class="muted small">(modo sombra: no silencia nada)</span>' : ''}</div>`,
-    `<div style="font-size:15px;margin:6px 0">${esc(d.reason)}</div>`,
-    `<div class="muted small">Confianza ${d.confidence.toFixed(2)} · situación nueva: ${d.is_new ? 'sí' : 'no'} · motor: ${esc(d.engine)}${d.engine_decision !== d.decision ? ` · el motor dijo ${esc(d.engine_decision)}` : ''}${ms !== undefined ? ` · ${(ms / 1000).toFixed(1)} s` : ''}</div>`,
-  ];
-  for (const p of d.policy) lines.push(`<div class="small">Política: ${esc(p)}</div>`);
-  if (d.fallback_reason) lines.push(`<div class="small warn">Respondieron las reglas fijas porque falló el motor: ${esc(d.fallback_reason)}</div>`);
-  $('result').innerHTML = lines.join('');
-  $('after').hidden = false;
-  $('feedback-status').textContent = '';
-  $('case-status').textContent = '';
-  $('case-expected').value = d.decision;
-  $('case-why').value = '';
-}
-
-async function classify() {
-  const text = $('text').value.trim();
-  if (!text) return $('text').focus();
-  const message = {
-    id: `consola-${Date.now().toString(36)}`, user_id: $('user').value.trim(), source: $('source').value,
-    chat: $('chat').value.trim() || null, sender: $('sender').value.trim() || null, text,
-    received_at: toIso($('at').value || localNow()),
-  };
-  $('classify').disabled = true;
-  $('result').innerHTML = `<span class="muted">Clasificando con ${$('engine').value === 'codex' ? 'Codex (unos 10 a 15 s)' : 'reglas fijas'}…</span>`;
-  try {
-    const { decision, ms } = await api('/dev/classify', { engine: $('engine').value, message, context: { shadow: $('shadow').checked } });
-    last = { message, decision, from_case: $('text').dataset.case || null };
-    renderDecision(decision, ms);
-  } catch (e) {
-    $('result').innerHTML = `<span class="warn">${esc(e.message)}</span>`;
-  } finally {
-    $('classify').disabled = false;
-  }
-}
-
-async function sendFeedback(verdict) {
-  if (!last) return;
-  try {
-    const ex = await api('/dev/feedback', { user_id: last.message.user_id, message_id: last.message.id, verdict });
-    $('feedback-status').innerHTML = `<span class="good">Guardado. La próxima vez lo usa como ejemplo: ${esc(ex.correct_decision)}.</span>`;
-    loadMemory();
-  } catch (e) { $('feedback-status').innerHTML = `<span class="warn">${esc(e.message)}</span>`; }
-}
-
-async function saveCase(payload, statusEl) {
-  try {
-    await api('/dev/cases', payload);
-    statusEl.innerHTML = '<span class="good">Guardado en agent/cases/criterio-quito.json</span>';
-    await loadCases();
-  } catch (e) { statusEl.innerHTML = `<span class="warn">${esc(e.message)}</span>`; }
-}
-
-async function loadMemory() {
-  const user = encodeURIComponent($('user').value.trim());
-  const { memory, feedback } = await api(`/dev/users/${user}/memory`);
-  $('memory').innerHTML = memory.length
-    ? memory.map(m => `<li class="small">${m.kind === 'rule' ? '<strong>Regla</strong>' : 'Dato'}: ${esc(m.text)} <span class="muted">· ${esc(m.source)}${m.status === 'pending' ? ' · pendiente' : ''}</span></li>`).join('')
-    : '<li class="empty small">Sin memoria todavía.</li>';
-  $('feedback').innerHTML = feedback.length
-    ? feedback.slice(-8).reverse().map(f => `<li class="small">"${esc(f.text.slice(0, 90))}" → dijo ${pill(f.agent_decision)}, correcto ${pill(f.correct_decision)}</li>`).join('')
-    : '<li class="empty small">Sin feedback todavía.</li>';
-}
-
-function caseItem(c) {
-  const r = lastRun.get(c.id);
-  const time = new Date(c.received_at).toLocaleString('es-CL', { weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'America/Santiago' });
-  const run = r ? ` · última corrida: ${pill(r.got)} ${r.ok ? '<span class="good">✓</span>' : '<span class="warn">✗</span>'}` : '';
-  return `<li class="case" data-id="${esc(c.id)}">
-    <div class="small muted">${esc(c.id)} · ${esc(time)} · ${esc(c.source)} · ${esc(c.chat)} · ${esc(c.sender)}</div>
-    <div class="case-text">${esc(c.text)}</div>
-    <div class="small">${pill(c.expected)} ${c.status === 'confirmado' ? '<strong>confirmado por Quito</strong>' : '<span class="muted">propuesta del agente</span>'} · ${esc(c.why)}${run}</div>
-    ${c.edge ? `<div class="small muted">Caso borde: ${esc(c.edge)}</div>` : ''}
-    ${r && !r.ok ? `<div class="small muted">El agente dijo: ${esc(r.reason)}</div>` : ''}
-    <div class="row" style="margin:6px 0 0">
-      <button data-act="try">Probar</button>
-      <button data-act="judge">Dar mi veredicto</button>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="SOL, conversación"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>SOL</a>
+      <span class="connection" id="connection">Conectando</span>
+      <nav aria-label="Conversación">
+        <button class="quiet-button" id="context-toggle" disabled aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Lo que dejamos listo</button>
+        <a class="quiet-button" href="/tools" aria-label="Herramientas del agente"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4v16M16 4v16M4 9h8M12 15h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="9" r="2" fill="currentColor"/><circle cx="16" cy="15" r="2" fill="currentColor"/></svg><span class="tools-label">Herramientas</span></a>
+      </nav>
     </div>
-    <div class="row verdict">
-      <select><option ${c.expected === 'DESPERTAR' ? 'selected' : ''}>DESPERTAR</option><option ${c.expected === 'PARTE' ? 'selected' : ''}>PARTE</option><option ${c.expected === 'RUIDO' ? 'selected' : ''}>RUIDO</option></select>
-      <input placeholder="Por qué, en una línea" value="${c.status === 'confirmado' ? esc(c.why) : ''}">
-      <button data-act="save">Confirmar</button>
-      <span class="small"></span>
+  </header>
+  <main class="conversation" id="conversation" aria-label="Conversación con SOL">
+    <div class="thread">
+      <section class="intro" id="intro" hidden>
+        <div class="intro-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h1>¿Qué te está dando vueltas?</h1>
+        <p>Cuéntamelo como salga.<br>Vamos de a uno.</p>
+        <button class="example" id="example">Por ejemplo: «Tengo algo pendiente para mañana» ↗</button>
+      </section>
+      <div id="messages" role="log" aria-live="off" aria-label="Historial de la conversación"></div>
+      <div class="waiting" id="waiting" role="status"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="waiting-text">Recuperando nuestra conversación…</span></div>
     </div>
-  </li>`;
-}
+  </main>
+  <footer>
+    <div class="error" id="error" role="alert" hidden><span id="error-text"></span><button id="retry" type="button">Reintentar</button></div>
+    <form class="composer" id="composer" aria-label="Escribir a SOL">
+      <label class="sr-only" for="draft">Tu mensaje</label>
+      <textarea id="draft" rows="1" maxlength="2000" placeholder="Escribe lo que tienes en la cabeza…" aria-describedby="composer-note" disabled></textarea>
+      <button class="send" id="send" type="submit" aria-label="Enviar mensaje" disabled><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </form>
+    <div class="footnote" id="composer-note"><span>Conversación de prueba compartida · Usa datos ficticios</span><span class="keyboard-hint">Enter para enviar · ⇧ Enter para otra línea</span></div>
+  </footer>
+  <dialog id="context" aria-labelledby="context-title">
+    <div class="dialog-heading"><h2 id="context-title">Lo que dejamos listo</h2><button class="close" id="context-close" aria-label="Cerrar contexto">×</button></div>
+    <div class="context-block"><h3 class="context-label">Para retomar</h3><p id="concern"></p><p class="context-small" id="plan"></p></div>
+    <div class="context-block"><h3 class="context-label">Lo que SOL recuerda</h3><ul class="memory-list" id="memory"></ul><p class="context-small">Puedes corregirlo o pedir que lo olvide en la conversación.</p></div>
+  </dialog>
+  <dialog id="auth" aria-labelledby="auth-title">
+    <div class="dialog-heading"><h2 id="auth-title">Conectar la conversación</h2><button class="close" id="auth-close" aria-label="Cerrar conexión">×</button></div>
+    <form id="auth-form"><label for="password">Contraseña del piloto</label><input id="password" type="password" autocomplete="current-password" required><button class="connect" type="submit">Conectar</button></form>
+  </dialog>
+  <div class="sr-only" id="announcement" aria-live="polite"></div>
+  <script type="module">
+    const $ = id => document.getElementById(id);
+    const storageKey = 'sol-local-conversation-v1';
+    const state = { session: null, pending: null, busy: false, loading: true, authNeeded: false, error: '', password: '' };
+    let follow = true;
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) || '{}');
+      if (typeof saved.draft === 'string') $('draft').value = saved.draft.slice(0, 2000);
+      if (saved.pending && typeof saved.pending.text === 'string' && /^[0-9a-f-]{36}$/i.test(saved.pending.requestId)) state.pending = saved.pending;
+    } catch { /* The chat also works with browser storage disabled. */ }
 
-function renderCases() {
-  const f = $('filter').value;
-  const list = week.cases.filter(c => f === 'all' || (f === 'failed' ? lastRun.get(c.id) && !lastRun.get(c.id).ok : c.status === f));
-  const confirmed = week.cases.filter(c => c.status === 'confirmado').length;
-  $('run-status').textContent = `${week.cases.length} casos · ${confirmed} confirmados por ti`;
-  $('cases').innerHTML = list.length ? list.map(caseItem).join('') : '<li class="empty">No hay casos con este filtro.</li>';
-}
-
-async function loadCases() {
-  week = await api('/dev/cases');
-  renderCases();
-}
-
-async function runWeek() {
-  $('run-week').disabled = true;
-  lastRun = new Map();
-  $('summary').innerHTML = '<span class="muted">Corriendo…</span>';
-  try {
-    const res = await fetch('/dev/run-week', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ engine: $('engine').value, user_id: $('user').value.trim() }) });
-    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Error ${res.status}`);
-    const reader = res.body.getReader(), decoder = new TextDecoder();
-    let buffer = '';
-    for (;;) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n'); buffer = lines.pop();
-      for (const line of lines.filter(Boolean)) {
-        const msg = JSON.parse(line);
-        if (msg.type === 'result') {
-          lastRun.set(msg.result.case_id, msg.result);
-          $('summary').innerHTML = `<span class="muted">Corriendo… ${lastRun.size} de ${week.cases.length}</span>`;
-        } else if (msg.type === 'summary') {
-          const s = msg.summary, pct = (n, d) => d ? `${Math.round(100 * n / d)} %` : '—';
-          $('summary').innerHTML = `Confirmados por ti: <strong>${s.confirmed_ok} de ${s.confirmed}</strong> (${pct(s.confirmed_ok, s.confirmed)}) · propuestos: coincide en ${s.proposed_agree} de ${s.proposed}`
-            + (s.missed_wakes.length ? `<div class="warn small">No despertó en confirmados que debían despertar: ${esc(s.missed_wakes.join(', '))}</div>` : '')
-            + (s.fallbacks ? `<div class="warn small">Respondieron las reglas fijas en ${s.fallbacks} casos porque falló el motor.</div>` : '');
-        }
-      }
-      renderCases();
+    function persist() {
+      try { sessionStorage.setItem(storageKey, JSON.stringify({ draft: $('draft').value, pending: state.pending })); } catch {}
     }
-  } catch (e) {
-    $('summary').innerHTML = `<span class="warn">${esc(e.message)}</span>`;
-  } finally {
-    $('run-week').disabled = false;
-  }
-}
-
-$('cases').addEventListener('click', e => {
-  const act = e.target.dataset.act;
-  if (!act) return;
-  const li = e.target.closest('li.case');
-  const c = week.cases.find(x => x.id === li.dataset.id);
-  if (act === 'try') {
-    $('source').value = c.source; $('chat').value = c.chat || ''; $('sender').value = c.sender || ''; $('text').value = c.text;
-    $('text').dataset.case = c.id;
-    $('at').value = c.received_at.slice(0, 16);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    classify();
-  }
-  if (act === 'judge') li.querySelector('.verdict').classList.toggle('open');
-  if (act === 'save') {
-    const box = li.querySelector('.verdict');
-    saveCase({ from_case: c.id, source: c.source, chat: c.chat, sender: c.sender, text: c.text, expected: box.querySelector('select').value, why: box.querySelector('input').value }, box.querySelector('span'));
-  }
-});
-$('text').addEventListener('input', () => { delete $('text').dataset.case; });
-$('classify').addEventListener('click', classify);
-$('text').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) classify(); });
-document.querySelectorAll('[data-verdict]').forEach(b => b.addEventListener('click', () => sendFeedback(b.dataset.verdict)));
-$('save-case').addEventListener('click', () => last && saveCase({ from_case: last.from_case, source: last.message.source, chat: last.message.chat, sender: last.message.sender, text: last.message.text, expected: $('case-expected').value, why: $('case-why').value }, $('case-status')));
-$('mem-add').addEventListener('click', async () => {
-  const text = $('mem-text').value.trim();
-  if (!text) return;
-  try { await api('/dev/memory', { user_id: $('user').value.trim(), kind: $('mem-kind').value, text, source: 'chat' }); $('mem-text').value = ''; $('mem-status').textContent = ''; loadMemory(); }
-  catch (e) { $('mem-status').innerHTML = `<span class="warn">${esc(e.message)}</span>`; }
-});
-$('user').addEventListener('change', loadMemory);
-$('filter').addEventListener('change', renderCases);
-$('run-week').addEventListener('click', runWeek);
-$('at').value = localNow();
-loadMemory();
-loadCases();
-</script>
+    function fitInput() { $('draft').style.height = 'auto'; $('draft').style.height = Math.min($('draft').scrollHeight, 160) + 'px'; }
+    function uuid() {
+      if (crypto.randomUUID) return crypto.randomUUID();
+      const bytes = crypto.getRandomValues(new Uint8Array(16)); bytes[6] = bytes[6] & 15 | 64; bytes[8] = bytes[8] & 63 | 128;
+      return Array.from(bytes, (b, i) => ([4, 6, 8, 10].includes(i) ? '-' : '') + b.toString(16).padStart(2, '0')).join('');
+    }
+    function unavailable(message) { return message?.inference?.engine === 'unavailable' || message?.inference?.engine === 'hermes-unavailable'; }
+    function validateSession(value) {
+      if (!value || value.id !== 'demo:web' || !Array.isArray(value.messages) || !value.messages.every(m => typeof m.id === 'string' && ['user', 'assistant'].includes(m.role) && typeof m.text === 'string')) throw new Error('No pudimos recuperar la conversación.');
+      return value;
+    }
+    async function request(path, input) {
+      const headers = { 'content-type': 'application/json' };
+      if (state.password) headers.authorization = 'Basic ' + btoa(String.fromCharCode(...new TextEncoder().encode('solsets:' + state.password)));
+      let response;
+      try { response = await fetch(path, { method: input ? 'POST' : 'GET', headers, ...(input ? { body: JSON.stringify(input) } : {}), signal: AbortSignal.timeout(input ? 75000 : 12000) }); }
+      catch { throw new Error('No llegó la confirmación. Tu mensaje sigue aquí para reintentarlo.'); }
+      if (response.status === 401) { state.authNeeded = true; throw new Error('Conecta el piloto para recuperar la conversación.'); }
+      if (!response.ok) throw new Error(response.status === 400 ? 'Revisa el mensaje e inténtalo de nuevo.' : 'SOL no pudo responder ahora. Puedes reintentar en un momento.');
+      let body;
+      try { body = await response.json(); } catch { throw new Error('No pudimos leer la respuesta de SOL. Puedes volver a intentarlo.'); }
+      return validateSession(body.session || body.sessions?.find(s => s.id === 'demo:web'));
+    }
+    function node(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text !== undefined) el.textContent = text; return el; }
+    function renderMessages() {
+      const container = $('messages');
+      const oldTop = $('conversation').scrollTop;
+      const fragment = document.createDocumentFragment();
+      const messages = [...(state.session?.messages || [])];
+      if (state.pending && !messages.some(m => m.id === state.pending.requestId)) messages.push({ id: state.pending.requestId, role: 'user', text: state.pending.text });
+      for (const message of messages) {
+        const row = node('article', 'message ' + message.role + (unavailable(message) ? ' failed' : ''));
+        row.setAttribute('aria-label', message.role === 'user' ? 'Tú' : 'SOL');
+        if (message.role === 'assistant') row.append(node('span', 'speaker', '↗ SOL'));
+        row.append(node('p', '', message.text));
+        if (state.pending?.requestId === message.id) row.append(node('span', 'message-note', state.busy ? 'Enviando…' : 'Pendiente de respuesta'));
+        if (message.inference?.engine === 'rules') row.append(node('span', 'message-note', 'Respuesta de ejemplo · Sin IA'));
+        fragment.append(row);
+      }
+      container.replaceChildren(fragment);
+      $('intro').hidden = state.loading || messages.length > 0 || !state.session;
+      if (follow) requestAnimationFrame(() => { $('conversation').scrollTop = $('conversation').scrollHeight; });
+      else $('conversation').scrollTop = oldTop;
+    }
+    function update() {
+      $('connection').textContent = state.loading ? 'Conectando' : state.error ? 'Pendiente de conexión o respuesta' : 'En línea';
+      $('waiting').hidden = !state.loading && !state.busy;
+      $('waiting-text').textContent = state.busy ? 'SOL está preparando tu respuesta…' : 'Recuperando nuestra conversación…';
+      $('draft').disabled = !state.session || state.loading || state.authNeeded;
+      $('send').disabled = !state.session || state.loading || state.busy || !!state.pending || !$('draft').value.trim();
+      $('context-toggle').disabled = !state.session;
+      $('error').hidden = !state.error;
+      $('error-text').textContent = state.error;
+      $('retry').textContent = state.authNeeded ? 'Conectar' : state.pending ? 'Reintentar' : 'Volver a cargar';
+      $('retry').disabled = state.busy || state.loading;
+      $('conversation').setAttribute('aria-busy', String(state.loading));
+      fitInput();
+    }
+    function reconcile() {
+      if (!state.pending) return;
+      const reply = state.session?.messages.find(m => m.id === state.pending.requestId + ':reply');
+      if (reply && !unavailable(reply)) { state.pending = null; state.error = ''; }
+      else state.error = 'Hay un mensaje pendiente de confirmar. Reintenta el mismo envío para continuar.';
+      persist();
+    }
+    async function load() {
+      if (state.busy || state.loading && state.session) return;
+      state.loading = true; state.error = ''; update();
+      try { state.session = await request('/api/disconnect'); state.authNeeded = false; reconcile(); }
+      catch (error) { state.error = error.message; }
+      finally { state.loading = false; renderMessages(); update(); }
+    }
+    async function send() {
+      if (state.busy || !state.session || state.loading) return;
+      if (!state.pending) {
+        const text = $('draft').value.trim(); if (!text) return;
+        state.pending = { text, requestId: uuid() }; $('draft').value = '';
+      }
+      state.busy = true; state.error = ''; follow = true; persist(); renderMessages(); update();
+      try {
+        state.session = await request('/api/disconnect/messages', state.pending);
+        const reply = state.session.messages.find(m => m.id === state.pending.requestId + ':reply');
+        if (!reply || unavailable(reply)) state.error = 'SOL no pudo usar la IA ahora. Tu mensaje quedó guardado; puedes reintentarlo.';
+        else { state.pending = null; $('announcement').textContent = 'SOL respondió: ' + reply.text; }
+      } catch (error) { state.error = error.message; }
+      finally { state.busy = false; persist(); renderMessages(); update(); if (!state.error) $('draft').focus({ preventScroll: true }); }
+    }
+    $('composer').addEventListener('submit', event => { event.preventDefault(); if (!state.pending) send(); });
+    $('draft').addEventListener('input', () => { persist(); update(); });
+    $('draft').addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && !state.busy && !state.pending) { event.preventDefault(); $('composer').requestSubmit(); }
+    });
+    $('example').addEventListener('click', () => { if (!$('draft').value.trim()) $('draft').value = 'Tengo algo pendiente para mañana y me cuesta soltarlo.'; persist(); update(); $('draft').focus(); });
+    $('retry').addEventListener('click', () => { if (state.authNeeded) $('auth').showModal(); else if (state.pending) send(); else load(); });
+    $('conversation').addEventListener('scroll', () => { const el = $('conversation'); follow = el.scrollHeight - el.clientHeight - el.scrollTop < 120; }, { passive: true });
+    $('context-toggle').addEventListener('click', () => {
+      const session = state.session; if (!session) return;
+      $('concern').textContent = session.concern || 'Todavía no hay un pendiente anotado.';
+      $('plan').textContent = session.plan?.nextStep ? 'Primer paso: ' + session.plan.nextStep : '';
+      const list = document.createDocumentFragment();
+      for (const memory of session.memory || []) {
+        const item = node('li', '', memory.value);
+        if (memory.evidence) item.append(node('blockquote', '', '«' + memory.evidence + '»'));
+        list.append(item);
+      }
+      if (!list.childNodes.length) list.append(node('li', '', 'Aquí aparecerá lo que nos cuentes y quieras conservar.'));
+      $('memory').replaceChildren(list); $('context').showModal();
+    });
+    $('context-close').addEventListener('click', () => $('context').close());
+    $('auth-close').addEventListener('click', () => $('auth').close());
+    $('auth-form').addEventListener('submit', event => { event.preventDefault(); state.password = $('password').value; $('password').value = ''; $('auth').close(); load(); });
+    for (const id of ['context', 'auth']) $(id).addEventListener('click', event => {
+      if (event.target !== $(id)) return;
+      const r = $(id).getBoundingClientRect();
+      if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) $(id).close();
+    });
+    if (window.visualViewport) {
+      const resize = () => document.documentElement.style.setProperty('--app-height', window.visualViewport.height + 'px');
+      window.visualViewport.addEventListener('resize', resize); resize();
+    }
+    load();
+  </script>
 </body>
 </html>

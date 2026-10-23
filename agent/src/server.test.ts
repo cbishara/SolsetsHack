@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
 import { createAgent } from './agent.ts';
-import { createAgentServer } from './server.ts';
+import { chatCodexOptions, createAgentServer } from './server.ts';
 import { rulesEngine } from './engines/rules.ts';
 import { MemoryStore } from './store.ts';
 import { createChat } from './chat.ts';
@@ -19,6 +19,20 @@ async function start(opts: { token?: string; dev: boolean; chatPassword?: string
 }
 
 const message = { id: 's1', user_id: 'rodrigo', source: 'whatsapp', text: 'URGENTE: se cayó facturación', received_at: '2026-10-23T23:00:00-03:00' };
+
+test('chat deployment selects its own model, effort and Fast settings', () => {
+  const env = { CODEX_MODEL: 'classifier-model', CHAT_MODEL: 'gpt-6-luna', CHAT_REASONING_EFFORT: 'max', CHAT_FAST: 'true' };
+  const options = chatCodexOptions(env);
+  assert.equal(options.model, 'gpt-6-luna');
+  assert.equal(options.reasoningEffort, 'max');
+  assert.equal(options.fast, true);
+  assert.equal(env.CODEX_MODEL, 'classifier-model');
+  assert.equal(chatCodexOptions({ CODEX_MODEL: 'existing-model' }).model, 'existing-model');
+  assert.equal(chatCodexOptions({}).reasoningEffort, 'low');
+  assert.equal(chatCodexOptions({}).fast, false);
+  assert.throws(() => chatCodexOptions({ CHAT_REASONING_EFFORT: 'ultra' }), /CHAT_REASONING_EFFORT/);
+  assert.throws(() => chatCodexOptions({ CHAT_FAST: 'yes' }), /CHAT_FAST/);
+});
 
 test('the API asks for the token when there is one', async () => {
   const { base, close } = await start({ token: 'x'.repeat(32), dev: false });
@@ -69,13 +83,17 @@ test('the console and dev routes exist only in dev mode', async () => {
   const prod = await start({ token: 'x'.repeat(32), dev: false });
   try {
     assert.equal((await fetch(`${prod.base}/`)).status, 404);
+    assert.equal((await fetch(`${prod.base}/tools`)).status, 404);
     assert.equal((await fetch(`${prod.base}/dev/cases`)).status, 404);
   } finally { await prod.close(); }
   const dev = await start({ dev: true });
   try {
     const page = await fetch(`${dev.base}/`);
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /Consola del agente/);
+    assert.match(await page.text(), /SOL · Conversación/);
+    const tools = await fetch(`${dev.base}/tools`);
+    assert.equal(tools.status, 200);
+    assert.match(await tools.text(), /Consola del agente/);
     const r = await fetch(`${dev.base}/dev/classify`, { method: 'POST', body: JSON.stringify({ engine: 'rules', message }) });
     const body = await r.json();
     assert.equal(body.decision.decision, 'DESPERTAR');

@@ -1,5 +1,7 @@
 # Plan móvil de Amaru y coordinación
 
+> **Actualización de dirección:** Amaru rechazó la vista Ocaso descrita más abajo y confirmó Mi espacio `/demo` (blanco, azul y lima). La reconstrucción está en curso. La referencia vigente, los flujos y el reparto están en [DISENO_MOBILE.md](DISENO_MOBILE.md); diez skills instaladas y revisadas en [SKILLS_MOBILE.md](SKILLS_MOBILE.md). El contenido anterior se conserva como historial, no como guía para diseñar esta revisión. Pedido actualizado al agente de Quito: [#14](https://github.com/cbishara/SolsetsHack/issues/14).
+
 23 de octubre de 2026. Rama `amaru/mobile-expo`. Este documento registra una implementación experimental y las preguntas pendientes; **no convierte propuestas en ADR oficiales**.
 
 ## Documentación leída
@@ -73,3 +75,13 @@ Guía ejecutable y criterios de prueba en [mobile/README.md](../../../mobile/REA
 - Prebuild iOS genera app y las tres extensiones con entitlements. Sin compilación Swift ni firma.
 - Expo Doctor: 19/20 comprobaciones; pendiente CocoaPods/toolchain local. Se puede usar EAS para compilar cuando se configure la cuenta del equipo.
 - Auditoría de dependencias con avisos transitivos aún abiertos, detallados en el README móvil. No se declara lista para distribución.
+
+## Revisión para el checkpoint
+
+Revisadas las decisiones oficiales del PR #5, el onboarding propuesto en #12, el contrato de #6/#7, el benchmark y las imágenes `direcciones.png` y `c-variantes.png` de Quito. Brasa, Hora azul y Ocaso son propuestas visuales; no se encontró un ADR que apruebe C1 o C2 como variante definitiva. La app ya usa una interpretación de Ocaso (fondo nocturno, sol naranja, estados verdes y tarjetas legibles), no una reproducción exacta de esas pantallas.
+
+Se aplicaron ajustes de texto en Mi noche para mostrar el acuerdo confirmado y expresar la regla de urgencia, novedad o baja confianza. Se nombró explícitamente el parte de la mañana en Mi ritmo. Se conserva el aviso de simulación: no se muestra una guardia real como activa. Se mantienen las cuatro pestañas y el contrato API existente.
+
+Recorrido de checkpoint: confirmar guardia → anotar un pendiente en SOL → abrir Mi ritmo y revisar los tres mensajes ficticios → corregir una decisión → mostrar que se guardó. Los votos cambian la métrica local; todavía no demuestran aprendizaje del clasificador real. La propuesta check/X con motivo opcional y reglas visibles sigue por confirmar en #12. Las conexiones y la prueba física siguen pendientes; las métricas ficticias no habilitan modo real.
+
+Antes de presentarlo en un teléfono falta abrir esta versión en el iPhone de Amaru, recorrerla y cerrar/reabrir para comprobar persistencia allí. No presentar el experimento Screen Time ni las alertas por llamada/push como capacidades ya verificadas. Esta revisión no cambia las decisiones oficiales ni el reparto entre Quito, Bishara y Amaru.

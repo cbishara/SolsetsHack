@@ -2,7 +2,7 @@
 
 ## 1. Panel en Railway
 
-Desplegar este repositorio con el Dockerfile raíz. `railway.json` define healthcheck `/api/health` y una réplica. Configurar `APP_URL` con la URL HTTPS pública y `DASHBOARD_PASSWORD`. Para persistir sin Supabase, montar un volumen en `/app/.data`; con Supabase no es necesario. No colocar claves en variables VITE ni en el código del navegador.
+La infraestructura actual vive en `.railway/railway.ts`: backend con Dockerfile raíz, Hermes con Dockerfile en `/deploy/hermes`, PostgreSQL y sus volúmenes. Usar `railway config plan` y revisar que no haya destrucciones antes de `railway config apply --yes`. Las variables son unmanaged para configurar credenciales directamente en Railway sin guardarlas en GitHub. El backend usa healthcheck `/api/health`, una réplica y verifica PostgreSQL antes de cada despliegue. Configurar `APP_URL` con la URL HTTPS pública y `DASHBOARD_PASSWORD`. Sin PostgreSQL ni Supabase, montar un volumen en `/app/.data`. No colocar claves en variables VITE ni en el código del navegador.
 
 ## 2. Supabase
 
@@ -10,7 +10,7 @@ Desplegar este repositorio con el Dockerfile raíz. `railway.json` define health
 
 El proyecto `solsets-hack` contiene `backend`, `Postgres` y `hermes`. El backend recibe `DATABASE_URL` por referencia a `${{Postgres.DATABASE_URL}}`; las conexiones permanecen en la red privada. El arranque crea las tablas del esquema `solsets` mediante una transacción y un bloqueo de migración. El volumen de PostgreSQL conserva los datos entre despliegues. No configurar `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` a la vez que `DATABASE_URL`.
 
-Verificación dentro del servicio: `railway ssh --service backend node backend/verify-postgres.mjs`. Comprueba migración repetible, estado y tokens cifrados con un workspace sintético que elimina al terminar. Desplegar solo una réplica de backend: las decisiones se serializan en ese proceso.
+La fase pre-deploy ejecuta `node backend/verify-postgres.mjs` dentro de Railway. Comprueba migración repetible, estado y tokens cifrados con un workspace sintético que elimina al terminar. También puede ejecutarse por `railway ssh --service backend node backend/verify-postgres.mjs` si la cuenta tiene clave SSH registrada. Desplegar solo una réplica de backend: las decisiones se serializan en ese proceso.
 
 Cambiar de proveedor no importa datos automáticamente. Para volver a Supabase o al almacenamiento local, respaldar y transferir primero los datos deseados; quitar `DATABASE_URL` solo después. Las tablas PostgreSQL permanecen intactas. Las migraciones de Supabase siguientes se conservan para quien elija ese proveedor.
 

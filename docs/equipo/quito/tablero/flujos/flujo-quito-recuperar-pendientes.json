@@ -5,11 +5,11 @@
   "owner": "Quito",
   "summary": "Una preocupación escrita por la noche reaparece como pendiente, sin fingir que se resolvió.",
   "productStatus": "acordada",
-  "buildStatus": "sin-verificar",
-  "availability": "sin-verificar",
+  "buildStatus": "en-curso",
+  "availability": "rama",
   "updatedAt": "2026-10-23",
   "trigger": "Rodrigo quiere dejar de repasar algo que teme olvidar.",
-  "outcome": "El parte permite reconocer lo que dejó anotado. Fallos y confirmaciones siguen por definir.",
+  "outcome": "En el piloto se recupera un pendiente y un primer paso, incluso tras reiniciar el agente. Llevarlo al parte automático de la mañana sigue pendiente.",
   "example": "Rodrigo escribe «Revisar el turno de la próxima semana». Al despertar, ese mismo pendiente debe poder reconocerse en el parte, sin aparecer como ejecutado.",
   "featureIds": [
     "feat-quito-descarga"
@@ -38,8 +38,8 @@
       "id": "guardar",
       "kind": "action",
       "actor": "Solsets",
-      "title": "Conservarlo para el parte",
-      "detail": "El comportamiento de guardado y recuperación debe implementarse y probarse.",
+      "title": "Guardar y proponer el primer paso",
+      "detail": "El agente guarda el turno, el pendiente y la memoria del usuario en un archivo local. La interfaz muestra la respuesta de Codex y permite consultar Pendientes y Memoria.",
       "x": 860,
       "y": 80
     },
@@ -47,19 +47,28 @@
       "id": "manana",
       "kind": "end",
       "actor": "Rodrigo",
-      "title": "Encontrarlo por la mañana",
-      "detail": "Lo reconoce como pendiente; no se afirma que se haya ejecutado.",
+      "title": "Recuperarlo en Pendientes",
+      "detail": "Puede reconocer el pendiente en la interfaz y recuperar la conversación al reconectar. Esto todavía no demuestra un parte automático por la mañana.",
       "x": 1320,
       "y": 80
     },
     {
       "id": "error",
-      "kind": "pending",
-      "actor": "Equipo",
-      "title": "Definir fallo de guardado",
-      "detail": "Falta acordar qué confirmación ve Rodrigo y cómo se recupera un error.",
+      "kind": "action",
+      "actor": "Rodrigo",
+      "title": "Reintentar el mismo envío",
+      "detail": "Si el modelo falla o tarda más de 60 segundos, la interfaz informa que no pudo responder. El mensaje queda guardado y se reintenta con el mismo identificador, sin duplicarlo.",
       "x": 860,
       "y": 430
+    },
+    {
+      "id": "parte-pendiente",
+      "kind": "pending",
+      "actor": "Equipo",
+      "title": "Incorporarlo al parte de la mañana",
+      "detail": "Falta integrar este pendiente con el parte y definir su horario.",
+      "x": 1750,
+      "y": 80
     }
   ],
   "connections": [
@@ -76,23 +85,58 @@
     {
       "from": "guardar",
       "to": "manana",
-      "label": "Parte de la mañana"
+      "label": "Leer el pendiente guardado"
     },
     {
       "from": "guardar",
       "to": "error",
-      "label": "Si no puede guardarse"
+      "label": "Si el motor no responde"
+    },
+    {
+      "from": "error",
+      "to": "guardar",
+      "label": "Reintento manual"
+    },
+    {
+      "from": "manana",
+      "to": "parte-pendiente",
+      "label": "Integración pendiente"
     }
   ],
   "questions": [
-    "Confirmación de guardado, edición y borrado.",
-    "Horario y zona horaria del parte."
+    "Horario y zona horaria del parte.",
+    "Integrar el pendiente con el parte matinal y el backend del equipo."
   ],
-  "verification": [],
+  "verification": [
+    {
+      "date": "2026-10-23",
+      "environment": "Vista web de Amaru contra el agente local con Codex; pruebas Node 24",
+      "result": "Respuesta, pendiente y memoria visibles; recuperación idéntica tras reinicio. Fallos y reintentos comprobados mediante pruebas automatizadas. Parte e iPhone pendientes.",
+      "evidence": "agent/README.md; agent/src/chat.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "API del piloto con Codex real y dos procesos aislados en Node 24",
+      "result": "El horario ficticio cambia de 18:00 a 19:00 y Codex recupera la corrección tras reiniciar el servicio. Repetir el mismo envío no crea otra inferencia. La comprobación no usa la interfaz ni acredita un parte matinal automático.",
+      "evidence": "agent/VERIFY-CHAT.md; agent/scripts/verify-chat.ts"
+    }
+  ],
   "evidence": [
     {
       "label": "Acuerdo 5",
       "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    },
+    {
+      "label": "Recorrido de prueba reproducible",
+      "path": "agent/README.md"
+    },
+    {
+      "label": "Pruebas del chat y su recuperación",
+      "path": "agent/src/chat.test.ts"
+    },
+    {
+      "label": "Recuperación y corrección con el motor real entre dos procesos",
+      "path": "agent/VERIFY-CHAT.md"
     }
   ]
 }

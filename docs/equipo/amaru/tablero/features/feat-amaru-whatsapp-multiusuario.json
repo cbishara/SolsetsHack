@@ -1,0 +1,16 @@
+{
+  "type": "feature", "id": "feat-amaru-whatsapp-multiusuario", "title": "Un bot, identidades separadas y chats elegidos", "owner": "Amaru",
+  "updatedAt": "2026-10-23", "moment": "preparar", "productStatus": "acordada", "buildStatus": "en-curso", "availability": "rama",
+  "summary": "Vincular cada cuenta mediante QR y código de SOL, mostrar sugerencias por metadatos y monitorear solo la selección del usuario.",
+  "need": "Que cada usuario reciba ayuda con su propio contexto sin que un bot compartido mezcle personas o lea chats no elegidos.",
+  "userActions": ["Conectar WhatsApp desde la app.", "Introducir el código recibido desde SOL.", "Elegir chats sugeridos o cualquier otro del catálogo.", "Desmarcar un chat para detener su uso."],
+  "systemActions": ["Resolver identidad con sesión individual y propietario canónico.", "Mostrar nombres y tipos antes de acceder al contenido.", "Guardar selección y mensajes con ámbito de usuario.", "Invalidar operaciones pendientes al revocar permisos."],
+  "example": "Ana selecciona Trabajo y Ben selecciona Familia; ambos escriben al mismo número SOL y solo ven su propia bandeja.",
+  "rules": ["El modelo no concede permisos.", "Código de un usuario no sirve en la sesión de otro.", "Mensaje propio, antiguo o duplicado no genera respuesta.", "Una cuenta vinculada no se reasigna a otro usuario."],
+  "limits": ["Candidato no desplegado; prueba del proveedor real pendiente.", "Sesión por instalación: falta login y recuperación entre dispositivos.", "Sugerencias y respuestas reales dependen de Quito #30/#31.", "Desmarcar no borra datos antiguos; borrado y retención pendientes."],
+  "acceptance": ["Dos usuarios no pueden cruzar mensajes, cuentas ni códigos.", "Catálogo completo paginado sin leer mensajes.", "Un chat no recomendado sigue siendo seleccionable.", "Revocar durante una descarga impide persistirla."],
+  "questions": ["Cerrar v1 de sugerencias y evidencia autorizada con Quito antes de entregar frontend."],
+  "flowIds": ["flujo-amaru-whatsapp-multiusuario"], "relatedFeatureIds": ["feat-amaru-whatsapp-context"],
+  "verification": [{"date":"2026-10-23","environment":"HTTP local y proveedor sintético","result":"63 pruebas server pasan, incluidas 42 nuevas de identidad, selección, proveedor y HTTP; no acredita modelo ni proveedor real.","evidence":"server/test/multiuser-http.test.ts"}],
+  "evidence": [{"label":"Plan, reparto, contrato y límites","path":"docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md"},{"label":"Prueba HTTP con dos usuarios","path":"server/test/multiuser-http.test.ts"}]
+}

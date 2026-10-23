@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { BackendProvider } from '../api/backend';
 import { StoreProvider, useStore } from '../data/store';
 import { ThemeProvider, useTheme } from '../theme/theme';
 
@@ -33,7 +34,9 @@ function Themed() {
   if (!ready) return null;
   return (
     <ThemeProvider initial={state.night} onChange={(night) => dispatch({ type: 'setNight', night })}>
-      <Navigator />
+      <BackendProvider>
+        <Navigator />
+      </BackendProvider>
     </ThemeProvider>
   );
 }

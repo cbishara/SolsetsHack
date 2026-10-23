@@ -3,6 +3,7 @@ import { ArrowUp, CalendarClock, Mic, Square, Sun, Undo2, X } from 'lucide-react
 import { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useBackend } from '../api/backend';
 import { Chip, IconButton, SourceTag, T, tap } from '../components/ui';
 import { dumpToTasks } from '../data/dump';
 import { useStore } from '../data/store';
@@ -24,6 +25,7 @@ export default function Sol() {
   const { p, scheme } = useTheme();
   const { voice } = useLocalSearchParams<{ voice?: string }>();
   const { state, addTasks, dispatch, events } = useStore();
+  const backend = useBackend();
   const [draft, setDraft] = useState('');
   const [recording, setRecording] = useState(voice === '1');
   const [seconds, setSeconds] = useState(0);
@@ -63,9 +65,19 @@ export default function Sol() {
       setMessages((m) => [...m, me, { id: uid(), from: 'sol', text: reply }]);
     } else {
       const { reply, tasks } = dumpToTasks(t, fromVoice ? 'voice' : 'you');
-      if (tasks.length) addTasks(tasks);
-      setMessages((m) => [...m, me, { id: uid(), from: 'sol', text: reply }, ...(tasks.length ? [{ id: uid(), from: 'tasks' as const, tasks }] : [])]);
+      if (tasks.length) {
+        addTasks(tasks);
+        backend.saveWorries(tasks.map((x) => x.title));
+      }
+      const replyId = uid();
+      setMessages((m) => [...m, me, { id: replyId, from: 'sol', text: reply }, ...(tasks.length ? [{ id: uid(), from: 'tasks' as const, tasks }] : [])]);
       if (tasks.length) tap('success');
+      // When the agent is connected to server/, its answer replaces the local one.
+      if (backend.status === 'connected') {
+        backend.chat(t).then((agentReply) => {
+          if (agentReply) setMessages((m) => m.map((x) => (x.id === replyId && x.from === 'sol' ? { ...x, text: agentReply } : x)));
+        }).catch(() => {});
+      }
     }
     scrollDown();
   };

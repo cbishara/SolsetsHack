@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consola del agente · Solsets</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg: #f5f4f0; --card: #fff; --ink: #1d1d1b; --muted: #6b6a65; --line: #e2e0d8;
+    --wake: #b42318; --wake-bg: #fde8e6; --part: #8a5a00; --part-bg: #fdf1d8; --noise: #55534d; --noise-bg: #ecebe6; --ok: #1f6f43; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  header { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 15px; margin: 0 12px 0 0; }
+  header label { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 16px 20px 40px; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 10px; }
+  input, select, textarea, button { font: inherit; }
+  input, select, textarea { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: #fff; color: var(--ink); }
+  textarea { width: 100%; min-height: 90px; resize: vertical; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  .row > input { flex: 1; min-width: 120px; }
+  button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  button:hover { border-color: var(--ink); }
+  button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  button:disabled { opacity: .5; cursor: wait; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+  .DESPERTAR { color: var(--wake); background: var(--wake-bg); }
+  .PARTE { color: var(--part); background: var(--part-bg); }
+  .RUIDO { color: var(--noise); background: var(--noise-bg); }
+  .big { font-size: 20px; padding: 4px 12px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+  .warn { color: var(--wake); }
+  .good { color: var(--ok); }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li.case { border-top: 1px solid var(--line); padding: 10px 0; }
+  li.case:first-child { border-top: 0; }
+  .case-text { margin: 4px 0 6px; white-space: pre-wrap; }
+  .verdict { display: none; margin-top: 6px; }
+  .verdict.open { display: flex; }
+  .summary { font-size: 15px; margin: 8px 0; }
+  .empty { color: var(--muted); font-style: italic; }
+  #result:empty::before { content: "Todavía no clasificas nada."; color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Consola del agente</h1>
+  <a href="/" style="color:inherit;text-underline-offset:3px">Volver al chat</a>
+  <label>Usuario <input id="user" value="rodrigo-demo" size="14"></label>
+  <label>Motor
+    <select id="engine">
+      <option value="rules">Reglas fijas (sin claves)</option>
+      <option value="codex">Codex con tu plan</option>
+    </select>
+  </label>
+  <label><input type="checkbox" id="shadow" checked> Modo sombra</label>
+  <span class="muted small">Solo local. Datos inventados.</span>
+</header>
+
+<main>
+  <div>
+    <section>
+      <h2>Probar un mensaje</h2>
+      <div class="row">
+        <select id="source"><option value="whatsapp">WhatsApp</option><option value="gmail">Gmail</option></select>
+        <input id="chat" placeholder="Grupo o asunto (ej. Guardia Soporte TI)">
+        <input id="sender" placeholder="Remitente (ej. Mesa de ayuda)">
+      </div>
+      <textarea id="text" placeholder="Escribe el mensaje tal como llegaría de noche"></textarea>
+      <div class="row" style="margin-top:8px">
+        <label class="muted">Llegó a las <input id="at" type="datetime-local"></label>
+        <button class="primary" id="classify">Clasificar</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Qué decidió</h2>
+      <div id="result"></div>
+      <div id="after" hidden>
+        <div class="row" style="margin-top:12px">
+          <span class="muted">Feedback de Rodrigo:</span>
+          <button data-verdict="ok">Bien</button>
+          <button data-verdict="should_wake">Debió despertarme</button>
+          <button data-verdict="should_not_wake">No debió despertarme</button>
+          <span id="feedback-status" class="small"></span>
+        </div>
+        <div class="row">
+          <span class="muted">Tu criterio:</span>
+          <select id="case-expected"><option>DESPERTAR</option><option>PARTE</option><option>RUIDO</option></select>
+          <input id="case-why" placeholder="Por qué, en una línea">
+          <button id="save-case">Guardar como caso</button>
+          <span id="case-status" class="small"></span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Memoria del usuario</h2>
+      <p class="muted small">Solo la escribe el usuario: desde aquí (como si fuera el chat) y con el feedback. Un mensaje clasificado nunca la escribe.</p>
+      <div class="row">
+        <select id="mem-kind"><option value="rule">Regla</option><option value="fact">Dato</option></select>
+        <input id="mem-text" placeholder="Ej. La impresora del segundo piso nunca es urgente">
+        <button id="mem-add">Agregar</button>
+        <span id="mem-status" class="small"></span>
+      </div>
+      <ul id="memory"></ul>
+      <h2 style="margin-top:14px">Feedback guardado</h2>
+      <ul id="feedback"></ul>
+    </section>
+  </div>
+
+  <div>
+    <section>
+      <h2>Semana simulada</h2>
+      <div class="row">
+        <button class="primary" id="run-week">Correr la semana</button>
+        <select id="filter">
+          <option value="all">Todos</option>
+          <option value="propuesto">Por confirmar</option>
+          <option value="confirmado">Confirmados</option>
+          <option value="failed">Fallados en la última corrida</option>
+        </select>
+        <span id="run-status" class="small muted"></span>
+      </div>
+      <div id="summary" class="summary"></div>
+      <ul id="cases"></ul>
+    </section>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pill = (d, extra = '') => `<span class="pill ${esc(d)} ${extra}">${esc(d)}</span>`;
+let last = null;            // last classified message and decision
+let week = { cases: [] };
+let lastRun = new Map();    // case_id -> result
+
+async function api(path, body) {
+  const res = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+  return data;
+}
+
+function localNow() {
+  const d = new Date(); d.setSeconds(0, 0);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+function toIso(local) {
+  const d = new Date(local);
+  const off = -d.getTimezoneOffset(), sign = off >= 0 ? '+' : '-', abs = Math.abs(off);
+  return `${local}:00${sign}${String(Math.floor(abs / 60)).padStart(2, '0')}:${String(abs % 60).padStart(2, '0')}`;
+}
+
+function renderDecision(d, ms) {
+  const lines = [
+    `<div class="row">${pill(d.decision, 'big')} ${d.wake ? '<strong class="warn">Lo despierta</strong>' : '<span class="muted">No lo despierta</span>'}${d.shadow ? ' <span class="muted small">(modo sombra: no silencia nada)</span>' : ''}</div>`,
+    `<div style="font-size:15px;margin:6px 0">${esc(d.reason)}</div>`,
+    `<div class="muted small">Confianza ${d.confidence.toFixed(2)} · situación nueva: ${d.is_new ? 'sí' : 'no'} · motor: ${esc(d.engine)}${d.engine_decision !== d.decision ? ` · el motor dijo ${esc(d.engine_decision)}` : ''}${ms !== undefined ? ` · ${(ms / 1000).toFixed(1)} s` : ''}</div>`,
+  ];
+  for (const p of d.policy) lines.push(`<div class="small">Política: ${esc(p)}</div>`);
+  if (d.fallback_reason) lines.push(`<div class="small warn">Respondieron las reglas fijas porque falló el motor: ${esc(d.fallback_reason)}</div>`);
+  $('result').innerHTML = lines.join('');
+  $('after').hidden = false;
+  $('feedback-status').textContent = '';
+  $('case-status').textContent = '';
+  $('case-expected').value = d.decision;
+  $('case-why').value = '';
+}
+
+async function classify() {
+  const text = $('text').value.trim();
+  if (!text) return $('text').focus();
+  const message = {
+    id: `consola-${Date.now().toString(36)}`, user_id: $('user').value.trim(), source: $('source').value,
+    chat: $('chat').value.trim() || null, sender: $('sender').value.trim() || null, text,
+    received_at: toIso($('at').value || localNow()),
+  };
+  $('classify').disabled = true;
+  $('result').innerHTML = `<span class="muted">Clasificando con ${$('engine').value === 'codex' ? 'Codex (unos 10 a 15 s)' : 'reglas fijas'}…</span>`;
+  try {
+    const { decision, ms } = await api('/dev/classify', { engine: $('engine').value, message, context: { shadow: $('shadow').checked } });
+    last = { message, decision, from_case: $('text').dataset.case || null };
+    renderDecision(decision, ms);
+  } catch (e) {
+    $('result').innerHTML = `<span class="warn">${esc(e.message)}</span>`;
+  } finally {
+    $('classify').disabled = false;
+  }
+}
+
+async function sendFeedback(verdict) {
+  if (!last) return;
+  try {
+    const ex = await api('/dev/feedback', { user_id: last.message.user_id, message_id: last.message.id, verdict });
+    $('feedback-status').innerHTML = `<span class="good">Guardado. La próxima vez lo usa como ejemplo: ${esc(ex.correct_decision)}.</span>`;
+    loadMemory();
+  } catch (e) { $('feedback-status').innerHTML = `<span class="warn">${esc(e.message)}</span>`; }
+}
+
+async function saveCase(payload, statusEl) {
+  try {
+    await api('/dev/cases', payload);
+    statusEl.innerHTML = '<span class="good">Guardado en agent/cases/criterio-quito.json</span>';
+    await loadCases();
+  } catch (e) { statusEl.innerHTML = `<span class="warn">${esc(e.message)}</span>`; }
+}
+
+async function loadMemory() {
+  const user = encodeURIComponent($('user').value.trim());
+  const { memory, feedback } = await api(`/dev/users/${user}/memory`);
+  $('memory').innerHTML = memory.length
+    ? memory.map(m => `<li class="small">${m.kind === 'rule' ? '<strong>Regla</strong>' : 'Dato'}: ${esc(m.text)} <span class="muted">· ${esc(m.source)}${m.status === 'pending' ? ' · pendiente' : ''}</span></li>`).join('')
+    : '<li class="empty small">Sin memoria todavía.</li>';
+  $('feedback').innerHTML = feedback.length
+    ? feedback.slice(-8).reverse().map(f => `<li class="small">"${esc(f.text.slice(0, 90))}" → dijo ${pill(f.agent_decision)}, correcto ${pill(f.correct_decision)}</li>`).join('')
+    : '<li class="empty small">Sin feedback todavía.</li>';
+}
+
+function caseItem(c) {
+  const r = lastRun.get(c.id);
+  const time = new Date(c.received_at).toLocaleString('es-CL', { weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'America/Santiago' });
+  const run = r ? ` · última corrida: ${pill(r.got)} ${r.ok ? '<span class="good">✓</span>' : '<span class="warn">✗</span>'}` : '';
+  return `<li class="case" data-id="${esc(c.id)}">
+    <div class="small muted">${esc(c.id)} · ${esc(time)} · ${esc(c.source)} · ${esc(c.chat)} · ${esc(c.sender)}</div>
+    <div class="case-text">${esc(c.text)}</div>
+    <div class="small">${pill(c.expected)} ${c.status === 'confirmado' ? '<strong>confirmado por Quito</strong>' : '<span class="muted">propuesta del agente</span>'} · ${esc(c.why)}${run}</div>
+    ${c.edge ? `<div class="small muted">Caso borde: ${esc(c.edge)}</div>` : ''}
+    ${r && !r.ok ? `<div class="small muted">El agente dijo: ${esc(r.reason)}</div>` : ''}
+    <div class="row" style="margin:6px 0 0">
+      <button data-act="try">Probar</button>
+      <button data-act="judge">Dar mi veredicto</button>
+    </div>
+    <div class="row verdict">
+      <select><option ${c.expected === 'DESPERTAR' ? 'selected' : ''}>DESPERTAR</option><option ${c.expected === 'PARTE' ? 'selected' : ''}>PARTE</option><option ${c.expected === 'RUIDO' ? 'selected' : ''}>RUIDO</option></select>
+      <input placeholder="Por qué, en una línea" value="${c.status === 'confirmado' ? esc(c.why) : ''}">
+      <button data-act="save">Confirmar</button>
+      <span class="small"></span>
+    </div>
+  </li>`;
+}
+
+function renderCases() {
+  const f = $('filter').value;
+  const list = week.cases.filter(c => f === 'all' || (f === 'failed' ? lastRun.get(c.id) && !lastRun.get(c.id).ok : c.status === f));
+  const confirmed = week.cases.filter(c => c.status === 'confirmado').length;
+  $('run-status').textContent = `${week.cases.length} casos · ${confirmed} confirmados por ti`;
+  $('cases').innerHTML = list.length ? list.map(caseItem).join('') : '<li class="empty">No hay casos con este filtro.</li>';
+}
+
+async function loadCases() {
+  week = await api('/dev/cases');
+  renderCases();
+}
+
+async function runWeek() {
+  $('run-week').disabled = true;
+  lastRun = new Map();
+  $('summary').innerHTML = '<span class="muted">Corriendo…</span>';
+  try {
+    const res = await fetch('/dev/run-week', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ engine: $('engine').value, user_id: $('user').value.trim() }) });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `Error ${res.status}`);
+    const reader = res.body.getReader(), decoder = new TextDecoder();
+    let buffer = '';
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n'); buffer = lines.pop();
+      for (const line of lines.filter(Boolean)) {
+        const msg = JSON.parse(line);
+        if (msg.type === 'result') {
+          lastRun.set(msg.result.case_id, msg.result);
+          $('summary').innerHTML = `<span class="muted">Corriendo… ${lastRun.size} de ${week.cases.length}</span>`;
+        } else if (msg.type === 'summary') {
+          const s = msg.summary, pct = (n, d) => d ? `${Math.round(100 * n / d)} %` : '—';
+          $('summary').innerHTML = `Confirmados por ti: <strong>${s.confirmed_ok} de ${s.confirmed}</strong> (${pct(s.confirmed_ok, s.confirmed)}) · propuestos: coincide en ${s.proposed_agree} de ${s.proposed}`
+            + (s.missed_wakes.length ? `<div class="warn small">No despertó en confirmados que debían despertar: ${esc(s.missed_wakes.join(', '))}</div>` : '')
+            + (s.fallbacks ? `<div class="warn small">Respondieron las reglas fijas en ${s.fallbacks} casos porque falló el motor.</div>` : '');
+        }
+      }
+      renderCases();
+    }
+  } catch (e) {
+    $('summary').innerHTML = `<span class="warn">${esc(e.message)}</span>`;
+  } finally {
+    $('run-week').disabled = false;
+  }
+}
+
+$('cases').addEventListener('click', e => {
+  const act = e.target.dataset.act;
+  if (!act) return;
+  const li = e.target.closest('li.case');
+  const c = week.cases.find(x => x.id === li.dataset.id);
+  if (act === 'try') {
+    $('source').value = c.source; $('chat').value = c.chat || ''; $('sender').value = c.sender || ''; $('text').value = c.text;
+    $('text').dataset.case = c.id;
+    $('at').value = c.received_at.slice(0, 16);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    classify();
+  }
+  if (act === 'judge') li.querySelector('.verdict').classList.toggle('open');
+  if (act === 'save') {
+    const box = li.querySelector('.verdict');
+    saveCase({ from_case: c.id, source: c.source, chat: c.chat, sender: c.sender, text: c.text, expected: box.querySelector('select').value, why: box.querySelector('input').value }, box.querySelector('span'));
+  }
+});
+$('text').addEventListener('input', () => { delete $('text').dataset.case; });
+$('classify').addEventListener('click', classify);
+$('text').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) classify(); });
+document.querySelectorAll('[data-verdict]').forEach(b => b.addEventListener('click', () => sendFeedback(b.dataset.verdict)));
+$('save-case').addEventListener('click', () => last && saveCase({ from_case: last.from_case, source: last.message.source, chat: last.message.chat, sender: last.message.sender, text: last.message.text, expected: $('case-expected').value, why: $('case-why').value }, $('case-status')));
+$('mem-add').addEventListener('click', async () => {
+  const text = $('mem-text').value.trim();
+  if (!text) return;
+  try { await api('/dev/memory', { user_id: $('user').value.trim(), kind: $('mem-kind').value, text, source: 'chat' }); $('mem-text').value = ''; $('mem-status').textContent = ''; loadMemory(); }
+  catch (e) { $('mem-status').innerHTML = `<span class="warn">${esc(e.message)}</span>`; }
+});
+$('user').addEventListener('change', loadMemory);
+$('filter').addEventListener('change', renderCases);
+$('run-week').addEventListener('click', runWeek);
+$('at').value = localNow();
+loadMemory();
+loadCases();
+</script>
+</body>
+</html>

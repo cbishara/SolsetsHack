@@ -1,124 +1,67 @@
-# SOL: menos trabajo para dejar algo encaminado
+# SOL: ayudar a desconectar en el contexto de cada persona
 
-Documento de producto · 23 de octubre de 2026. Basado en el handoff de personalización y en la inspección del repositorio. Las metas y la expansión comercial son hipótesis por validar.
+Actualización de enfoque · 23 de octubre de 2026 · Rama `codex/sol-desconexion-whatsapp`.
 
-## La propuesta
+## Problema
 
-**Cuéntale un pendiente a SOL. Recibe algo preparado, decide lo imprescindible y retoma después sin empezar de cero.**
+Las personas pueden terminar su jornada y seguir sosteniendo mentalmente tareas, decisiones y asuntos incompletos. Una lista registra el pendiente, pero no necesariamente ayuda a entender qué impide soltarlo. Configurar otro sistema también exige esfuerzo.
 
-El producto debe ahorrarle a la persona el trabajo de diseñar, configurar, operar y mantener su propio sistema. Claude, Codex y otros asistentes pueden servir para construir soluciones: la comparación relevante es cuánto esfuerzo exige conseguir un resultado confiable durante varias semanas.
+Para Rodrigo, salir del turno no resuelve la incertidumbre sobre un registro o un relevo. En otros contextos puede faltar claridad para empezar, sobrar carga o aparecer una distracción. Son situaciones para preguntar y comprobar, no diagnósticos que podamos deducir del tiempo de pantalla.
 
-El valor de SOL se vuelve concreto cuando Rodrigo termina con un registro preparado y un próximo paso claro; un profesor ve qué curso necesita atención; un coach sabe qué alumno espera una revisión. Una interfaz sencilla ayuda, pero la ventaja comercial necesita procesos específicos, integraciones mantenidas y recuperación ante errores.
+## Objetivo del producto y entrega concreta
 
-La salida también debe ser fácil: copiar o exportar resultados, corregir contexto y desconectar fuentes. La preferencia por SOL debería venir del trabajo que evita.
+La visión es una app móvil/web que ayude a desconectar según la situación de cada persona y ajuste su ayuda con el tiempo. Su valor se mide en carga operativa evitada y pendientes encaminados con menos esfuerzo.
 
-## Una entrada, tres decisiones como objetivo
+**La entrega actual es una demo funcional conectable a WhatsApp, con un panel web que comparte el contexto de esas conversaciones.** No es construir toda la app móvil ni obtener todo el contexto de una vida. Se prueba un ciclo pequeño y verificable:
 
-1. **Contarlo:** «Terminé el turno y me falta registrar la incidencia de acceso». No pedir profesión, todas las cuentas ni un perfil completo.
-2. **Revisar algo útil:** mostrar un borrador editable con hechos aportados, incógnitas y siguiente paso. Preguntar únicamente por un dato que cambie ese resultado.
-3. **Conservar o actuar:** guardar sin conexión. Si la persona quiere una operación externa, mostrar destino y contenido, pedir el permiso pertinente y comprobar el resultado.
+1. La persona cuenta un pendiente ficticio por texto.
+2. SOL pregunta qué le impide avanzar: falta de claridad, demasiados pendientes o distracción.
+3. Prepara una acción breve y un texto para retomar el asunto.
+4. La persona corrige: «MÁS PEQUEÑO» o «CAMBIAR».
+5. SOL modifica la propuesta; la preferencia explícita por dos minutos se conserva en el siguiente pendiente.
+6. «ME AYUDÓ» registra una respuesta del usuario, sin declarar una mejora de sueño ni una obligación resuelta.
 
-Al volver, abrir el asunto activo: «Tienes un borrador listo y un dato por confirmar». Evitar otra bienvenida que obligue a reconstruir el contexto. El objetivo de dos minutos y unas tres intervenciones viene del handoff; todavía no es una métrica obtenida.
+## Estado analizado y decisión
 
-## Un núcleo común y procesos por contexto
+Antes de este experimento había una landing, un panel React, borradores locales por persona ilustrativa y un backend de clasificación de guardias. Las dos memorias estaban separadas. El adaptador Kapso, el webhook firmado y la cola persistida ofrecían la vía más corta para probar continuidad real.
 
-El núcleo comparte personas o recursos, obligaciones, fechas, borradores, dependencias, permisos y evidencia. Cada proceso específico aporta los campos, las preguntas, la vista y el criterio de terminado. Seleccionar un ejemplo de profesión ayuda a empezar; no debería encasillar a la persona ni convertirse en una entrevista obligatoria.
+Esta rama reutiliza esa infraestructura y agrega una conversación persistente por remitente. El navegador permite probar el mismo motor sin claves; su sesión es independiente de los teléfonos. El panel puede leer las conversaciones de WhatsApp. La autenticación sigue siendo la del equipo y no representa aislamiento comercial entre cuentas.
 
-| Contexto | Primera ayuda sin conectar | Proceso recurrente que justificaría volver | Conexión siguiente, cuando aporte valor |
-| --- | --- | --- | --- |
-| Rodrigo, guardias | Borrador del registro y pendiente explícito | Cierre de turno: registros, incidencias abiertas y relevo confirmado | Sistema de tickets real de Rodrigo; fuente autorizada de turnos |
-| Profesor de matemáticas | Plan de una clase o lista de pendientes de un curso | Vista por curso: próxima clase, evaluaciones, materiales y revisión pendiente | Calendario o plataforma de cursos realmente utilizada |
-| Coach de gimnasio | Ficha de seguimiento o agenda de una revisión | Vista por alumno: siguiente sesión, seguimiento pendiente y cambios confirmados | Calendario y sistema de gestión que ya use |
-| Vida personal | Próximo paso de una preocupación concreta | Coordinación y pendientes con responsables y fechas confirmados | Una fuente concreta de calendario o correo |
+El motor nuevo es una conversación guiada con reglas y plantillas, no un agente conversacional general. Se eligió para verificar el ciclo y el transporte sin depender de configurar Hermes. El clasificador Hermes anterior permanece disponible para el laboratorio de guardia y Gmail; no interviene en este nuevo recorrido.
 
-Las vistas de cursos y alumnos requieren entidades persistentes y relaciones. Cambiar el saludo o generar un texto distinto no equivale a administrar un curso o una cartera de alumnos. En la demostración, estos contextos prueban la adaptación del primer resultado; su operación completa sigue siendo expansión de producto.
+## Contexto mínimo y memoria
 
-Un proceso reutilizable debería declarar: cuándo aplica, qué resultado prepara, campos imprescindibles, pregunta siguiente, capacidades necesarias, criterio de resolución, permisos, errores y forma de retomar. Así se pueden componer nuevos casos sin construir una aplicación distinta para cada cliente.
+Se guardan el pendiente aportado, el obstáculo elegido, la propuesta, la preferencia explícita por pasos pequeños y el feedback. La conversación sobrevive a una recarga y al reinicio del backend mediante el almacenamiento existente. «CAMBIAR» conserva el pendiente e invalida la propuesta anterior. «NUEVO» inicia otro pendiente y conserva la preferencia. «BORRAR» elimina el contenido y las preferencias de esa conversación en SOL, sin borrar mensajes en WhatsApp.
 
-## Qué aporta la base actual
+Se conservan como máximo 60 entradas de historial por conversación, 20 respuestas de feedback y los últimos 2.000 identificadores de procesamiento del espacio para evitar duplicados. La protección contra replays se limita a esa ventana. No hay embeddings, monitorización pasiva ni inferencias psicológicas en esta entrega.
 
-Inventario del código previo a este rediseño; existencia de un adaptador no implica que esté configurado ni verificado con una cuenta real.
+## Una demo con evidencia
 
-| Capacidad | Evidencia en el repositorio | Límite relevante |
-| --- | --- | --- |
-| Tareas, configuración y persistencia | `backend/store.mjs`, `backend/postgres.mjs` | Un espacio de demostración compartido; no es un producto multiusuario |
-| Clasificación de mensajes | `backend/agent.mjs`, `classifier/policy.mjs` | Escenarios sintéticos por reglas; Hermes requiere configuración y actúa como clasificador |
-| WhatsApp | Webhook firmado, cola y adaptador Kapso | No demuestra acceso a cualquier grupo existente; entrega final y elegibilidad deben verificarse |
-| Gmail | OAuth, consulta manual de correos con `[SOLSETS-DEMO]`, creación de borradores | No es lectura universal ni envío automático de correos |
-| Calendar | Creación de eventos con recordatorio | No hay sincronización general de turnos ni recepción garantizada en un reloj |
-| Permisos y pausa | Política del backend y configuración | No sustituyen autorización por versión para nuevas operaciones externas |
-| Feedback | Correcciones de clasificación conservadas para Hermes | No equivale a una memoria personal completa con alcance, caducidad y borrado de derivados |
-| Tickets, cursos, alumnos | Ejemplos y propuesta de producto | No hay un adaptador real de tickets ni conectores de gestión educativa o deportiva |
+- Los mensajes entrantes deben tener firma válida y pertenecer a números de prueba permitidos.
+- Solo se recibe texto; audios y otros medios se ignoran en esta entrega.
+- La respuesta se dirige al mismo remitente; la prueba web nunca puede elegir un teléfono ni generar un envío.
+- Pausa impide procesar la cola; al reanudar se retoma. Modo sombra prepara respuestas sin enviarlas y no las envía retroactivamente.
+- El envío requiere permiso automático para responder, modo sombra desactivado y timestamp entrante verificable de menos de 23 horas: margen conservador dentro de la ventana de 24 horas.
+- Antes del envío se persisten respuesta e identificador. Una falla de red o interrupción puede dejar el resultado incierto: se muestra para revisión en Kapso y no se reintenta automáticamente. No se promete entrega exactamente una vez.
+- Una aceptación del proveedor con identificador queda registrada; entrega y lectura no se verifican todavía.
+- El sistema guarda un pendiente abierto y una propuesta preparada. El feedback favorable no cierra el pendiente.
 
-La nueva experiencia puede preparar, editar y conservar borradores de demo en este navegador sin depender de las integraciones. Debe decir dónde se guardan y mantener ese almacenamiento separado de credenciales o información sensible real. Los servicios existentes continúan siendo una capa distinta.
+## Criterio de éxito
 
-## Alcance del rediseño entregado
+La validación final requiere que un teléfono permitido envíe el ejemplo al número del bot, reciba la respuesta, corrija su preferencia y reciba una segunda propuesta adaptada. El panel debe mostrar el mismo contexto después de recargar. Reenviar el mismo webhook no debe duplicar la respuesta.
 
-La landing lleva a `/demo`, una experiencia pública de preparación local. Permite elegir un caso ilustrativo o escribir un pendiente; SOL organiza el texto con plantillas guiadas, muestra el resultado editable y conserva borradores por contexto en este navegador. Los ejemplos de cursos y alumnos agrupan los detalles aportados sin inventar personas, cursos ni horarios. Se puede copiar un borrador, pausarlo, retomarlo y corregir dos preferencias: extensión de la respuesta y momento propuesto de revisión. Este último no programa un aviso.
+Las pruebas automatizadas ejercitan transición, adaptación, borrado, permisos, deduplicación, autenticación, webhook HTTP y SDK Kapso con transporte simulado. **La prueba real queda pendiente del número y las credenciales de Kapso.** Hasta entonces se presenta como flujo funcional local con conexión preparada.
 
-El dashboard distingue preparados, decisiones, espera y actividad. Los registros heredados del backend no se cuentan como obligaciones resueltas. La demo local no consulta ni modifica integraciones. `/app` conserva el acceso protegido al espacio operativo de Rodrigo; el enlace a ese espacio realiza una navegación real para que se aplique la autenticación. La landing, la demo y los recursos compilados son públicos; la API y OAuth siguen protegidos cuando se configura la contraseña del panel.
+En un piloto posterior mediríamos tiempo hasta la primera ayuda útil, intervenciones necesarias, correcciones, repetición de preguntas y valoración del usuario. Menos tiempo de pantalla por sí solo no demuestra que desconectó mejor.
 
-Esto demuestra la entrada y continuidad de la ayuda, no todo el alcance P0 del handoff original. Sigue pendiente el circuito nuevo de autorización por versión, ejecución mediante adaptador, comprobante y recuperación de un resultado incierto. La memoria implementada no es todavía un registro general de hechos con vigencia y dependencias. Tampoco hay gestión completa de cursos o alumnos, agente conversacional general en este flujo, sincronización entre dispositivos ni automatización recurrente de estos borradores. La infraestructura previa de guardia se conserva como experiencia operativa separada.
+## Después de demostrar el recorrido
 
-## Estados que merecen confianza
+Primero observar usuarios con este ciclo y mejorar las propuestas. Después incorporar razonamiento con contexto estructurado, una integración que quite trabajo, identidad por usuario y una app móvil con capacidades nativas verificadas. Monitorización y bloqueos adaptativos son hipótesis posteriores: dependen de permisos, límites de iOS/Android y aceptación del usuario. Cada intervención debe permanecer dentro de capacidades probadas y reglas aceptadas.
 
-Separar el pendiente humano de la acción digital:
+## Referencias de implementación
 
-- **Preparado:** hay un borrador utilizable. Todavía no se registró fuera de SOL.
-- **Necesita tu decisión:** falta una respuesta concreta o una autorización.
-- **En espera:** existe una dependencia identificada o un resultado todavía incierto.
-- **Acción confirmada:** el servicio devolvió evidencia de la operación específica.
-- **Obligación resuelta:** se cumplió su criterio de resolución, con evidencia pertinente.
-
-«Ticket creado» no significa «incidencia solucionada». «Respuesta enviada» no significa «acceso restablecido». Una ejecución simulada debe seguir identificada como simulada después de recargar.
-
-El backend anterior usa `resolved` para algunas respuestas aceptadas y efectos simulados, y el panel anterior agrupaba borradores con resueltas. El nuevo panel debe interpretar esos registros como acciones del escenario y mostrar su evidencia; no convertirlos en una afirmación de que la obligación humana terminó. Una evolución posterior del backend debe separar ambas máquinas de estados.
-
-La memoria necesita un origen y un alcance. «Hoy salgo a las 08:00» modifica ese turno, no toda la semana. Una corrección material invalida las aprobaciones dependientes. Una preferencia de formato nunca amplía permisos. Un resumen de cierre indica también qué fuentes no se consultaron y qué relevo no está confirmado.
-
-## Landing y dashboard
-
-La landing debe prometer el resultado que la demostración efectivamente permite probar: empezar con un pendiente, obtener ayuda concreta y conservar contexto. Los ejemplos de Rodrigo, profesor y coach son casos ilustrativos, no clientes o testimonios. No mostrar ahorro de tiempo, número de usuarios o mejoras del sueño como resultados medidos.
-
-La referencia visual se traduce en azul profundo que se degrada a blanco, flechas repetidas que responden al cursor, amarillo ácido para la acción principal, títulos grandes, espacio generoso y listas con líneas finas. Los retratos de flechas y sus detalles al pasar el cursor pueden explicar cómo cambia el resultado por contexto. El efecto debe tener alternativa por foco o toque y respetar movimiento reducido.
-
-El dashboard continúa ese lenguaje y reduce las decisiones: una entrada a SOL, el siguiente pendiente y una lista breve por estado. Conexiones y permisos aparecen accesibles, pero la persona no necesita configurarlos todos para recibir valor. La complejidad técnica de modelos, agentes y servidores pertenece a la administración del producto.
-
-## Criterios para verificar la experiencia
-
-Estos son criterios de aceptación, no un registro de pruebas ya aprobadas.
-
-| Recorrido | Resultado comprobable |
-| --- | --- |
-| Entrar desde la landing | El CTA abre el espacio adecuado y conserva el ejemplo o texto introducido |
-| Primera ayuda | Se obtiene un borrador editable sin cuentas conectadas ni perfil largo |
-| «No sé por dónde empezar» | Ofrece una entrada pequeña y útil; no inicia una encuesta |
-| Incidencia sin estado conocido | Permite «No lo sé» y conserva la incertidumbre |
-| Corregir el borrador | Los cambios sobreviven al guardado y a la recarga |
-| Guardar dos veces | No aparecen dos copias por un doble clic accidental |
-| Pausar y volver | Recupera el asunto y su paso actual sin repetir preguntas respondidas |
-| Cambiar de contexto | Cambian ejemplos y campos pertinentes sin mezclar borradores entre personas ilustrativas |
-| Corregir o borrar memoria | Cambia el comportamiento posterior; no reaparece desde un resumen viejo |
-| Rechazar conexión | Se conserva el borrador y se puede terminar por ahora |
-| Fuente no disponible | Explica el límite, conserva la entrada y ofrece continuar localmente |
-| Resultado y contador | Borradores, ejecuciones simuladas y obligaciones resueltas no se cuentan como lo mismo |
-| Móvil y teclado | Se completa el recorrido sin desbordes, trampas de foco ni controles dependientes solo de hover |
-| Servicios existentes | Se mantienen rutas, estados, permisos y manejo de error de la API |
-
-Para operaciones externas futuras añadir pruebas de autorización por versión, doble envío, resultado incierto, reconexión y aislamiento entre usuarios. No presentar estos contratos como implementados por un cambio visual.
-
-## Secuencia recomendada después de la demo
-
-1. **Cerrar el caso Rodrigo:** identificar su sistema real de tickets y un proceso de fin de turno. Implementar ese circuito con evidencia y probarlo durante varias jornadas.
-2. **Convertir el resultado en continuidad:** asuntos abiertos, próximos pasos y memoria corregible. Ofrecer una rutina recurrente cuando Rodrigo vea el beneficio y la autorice.
-3. **Conectar la fuente que elimina más trabajo:** priorizar por pasos ahorrados y fiabilidad, no por el tamaño del catálogo.
-4. **Añadir una segunda vertical:** elegir profesor o coach según acceso a usuarios y uso repetido. Reutilizar el núcleo y construir las entidades de cursos o alumnos que hagan falta.
-5. **Preparar operación comercial:** identidad y aislamiento por usuario, políticas de retención, observabilidad de fallos, soporte y costes por resultado.
-
-## Cómo saber si ganamos por facilidad
-
-Comparar el mismo trabajo con SOL y con un asistente general bien configurado. Medir la primera vez y varias repeticiones: tiempo activo, cantidad de decisiones, preguntas repetidas, correcciones, acciones con resultado comprobado, recuperación ante fallos y soporte manual del equipo.
-
-La prueba decisiva es que una persona vuelva porque le cuesta menos conseguir y mantener su resultado. Un piloto pagado con alcance concreto permite contrastar ese beneficio con el coste de modelos, infraestructura, integraciones y soporte. El interés por una landing o una demostración no prueba disposición a pagar.
-
-El beneficio buscado es liberar carga operativa y facilitar la desconexión. Cualquier mejora del sueño requiere evaluación aparte; no debe usarse como promesa clínica ni justificar ocultar alertas o asumir cobertura.
+- [Eventos y payload v2 de Kapso](https://docs.kapso.ai/docs/platform/webhooks/message-events).
+- [Firma HMAC e idempotencia de webhooks](https://docs.kapso.ai/docs/platform/webhooks/security).
+- `backend/disconnect-flow.mjs`: conversación y preferencias.
+- `backend/disconnect.mjs`: persistencia, deduplicación y envío.
+- `web/src/DisconnectDemo.jsx`: prueba web y lectura del contexto de WhatsApp.

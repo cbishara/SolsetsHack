@@ -7,15 +7,20 @@ Entrega el sábado 24: solución funcionando + este repo con README de una pági
 - Solo datos sintéticos. Nada de mensajes, correos ni tickets reales de nadie.
 - Todo el código se escribe en el evento. Nada de código, prompts o configuraciones hechos antes (tampoco la carpeta `research/`).
 
-## La solución en una frase
-Un agente que hace la guardia de noche por Rodrigo (soporte TI, turnos rotativos, guardia por WhatsApp): revisa lo que entra, lo despierta solo si algo es urgente o nuevo (vibración en el reloj, vía notificación de WhatsApp reflejada) y deja el resto para el parte de la mañana. Las primeras semanas trabaja en modo sombra (no silencia nada, solo muestra qué habría hecho) hasta que Rodrigo confía. Ante la duda, despierta.
+## Objetivo de esta rama: desconexión por WhatsApp
 
-## Núcleo técnico
-- Clasificación con Claude: DESPERTAR / PARTE / RUIDO + motivo de una línea + `es_nuevo` + `confianza`.
-- La política va en código, no en el prompt: `es_nuevo` o `confianza < 0.7` → DESPERTAR; duplicado de un incidente ya despertado en 30 min → no re-despertar; modo sombra nunca silencia.
-- Feedback de un toque ("Bien" / "Debió despertarme" / "No debió despertarme") que se guarda y se usa como ejemplo en la siguiente clasificación; puede convertirse en regla.
-- Fuentes: WhatsApp entrante a un número de demo (no el de Solsets) + consola web de respaldo + semana simulada. La API oficial no lee grupos existentes: la fuente real queda simulada.
-- Ventana de 24 h de WhatsApp: Rodrigo escribe primero antes de la demo.
+Rama `codex/sol-desconexion-whatsapp`. La visión es una app móvil/web que ayude a desconectar según el contexto de cada persona. La entrega concreta es una demo funcional conectable a WhatsApp: pendiente ficticio → obstáculo confirmado → propuesta pequeña → corrección → adaptación conservada. No construir la app nativa completa ni monitorización o bloqueos del teléfono.
+
+- `/desconectar`: prueba web del mismo motor y vista del contexto de cada remitente permitido de WhatsApp. La sesión web es compartida por el equipo y no envía mensajes.
+- Motor guiado y determinista en `backend/disconnect-flow.mjs`; persistencia y transporte en `backend/disconnect.mjs`. No presentarlo como comprensión general por IA.
+- Reutilizar webhook Kapso firmado, lista de remitentes, cola persistida y almacenamiento existente. Responder al mismo remitente, nunca al número fijo de Rodrigo.
+- Modo sombra no envía. Pausa conserva la cola. Solo enviar con `reply=auto` y timestamp original verificable dentro de la ventana conservadora de 23 h. Resultados ambiguos no se reintentan automáticamente.
+- Memoria explícita: pendiente, obstáculo y preferencia por pasos de dos minutos. `BORRAR` elimina contenido y derivados; se conservan identificadores de deduplicación.
+- La conexión real sigue pendiente del número de Kapso. Las pruebas locales del SDK usan transporte simulado. Aceptación del proveedor no significa entrega.
+- `/app` y `/demo` conservan el prototipo anterior para comparar. Gmail y escenarios de guardia conservan su clasificador y políticas; los mensajes entrantes de WhatsApp ahora usan el flujo de desconexión.
+- No declarar obligaciones resueltas, relevo confirmado ni mejoras de sueño a partir de un borrador o feedback favorable.
+
+Leer `docs/PRODUCTO_SOL.md`, `docs/DEMO.md` y `SETUP.md` para el alcance vigente.
 
 ## Documentos de contexto (leer solo la sección que haga falta)
 - Plan de construcción, alcance, datos, mensajes, escenario de prueba y horario: `/Users/bisos/Desktop/experimental/hackathon-sueno/PLAN-HACKATON.md`

@@ -1,3 +1,5 @@
+import { proposedFeed } from "./proposed-fixtures";
+
 export type Feedback = "correct" | "should-wake" | "should-wait";
 export type Message = {
   id: string;
@@ -26,39 +28,21 @@ export type LocalState = {
   feedback: Record<string, Feedback>;
   acknowledged: string[];
   session: Session;
-  focusMinutes: number;
-  focusFeedback: "helped" | "hard" | null;
 };
 
-export const examples = [
-  {
-    id: "demo-1",
-    time: "23:41",
-    title: "El servicio de prueba no responde",
-    text: "Caso ficticio: la VPN del entorno de demo está caída y no hay un procedimiento registrado.",
-    decision: "DESPERTAR",
-    reason: "Incidente nuevo. En una guardia confirmada, requiere revisión.",
-    source: "WhatsApp de prueba",
-  },
-  {
-    id: "demo-2",
-    time: "00:18",
-    title: "El informe puede esperar",
-    text: "Caso ficticio: piden el informe del turno para mañana a las 10:00.",
-    decision: "PARTE",
-    reason: "Tiene plazo para mañana; no describe una caída actual.",
-    source: "WhatsApp de prueba",
-  },
-  {
-    id: "demo-3",
-    time: "00:23",
-    title: "Un aviso repetido",
-    text: "Caso ficticio: vuelve el mismo aviso de VPN cinco minutos después.",
-    decision: "RUIDO",
-    reason: "Ejemplo de duplicado de un incidente ya avisado.",
-    source: "Semana simulada",
-  },
-] as const;
+export const examples = proposedFeed.map(({ title, message, verdict }) => ({
+  id: message.id,
+  title,
+  text: message.text,
+  time: message.receivedAt.slice(11, 16),
+  decision: verdict.wouldWake
+    ? "DESPERTAR"
+    : verdict.why === "duplicate" || verdict.decision === "noise"
+      ? "RUIDO"
+      : "PARTE",
+  reason: verdict.reason,
+  source: "Semana simulada",
+}));
 
 export function emptySession(): Session {
   return {
@@ -78,8 +62,6 @@ export function initialState(): LocalState {
     feedback: {},
     acknowledged: [],
     session: emptySession(),
-    focusMinutes: 15,
-    focusFeedback: null,
   };
 }
 

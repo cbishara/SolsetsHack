@@ -29,6 +29,8 @@ Adaptador temporal, acordado con la sesión local de Hermes:
 
 Esta conversación es **compartida por el equipo**, no una cuenta individual. La guardia, los votos y los ejemplos siguen siendo locales. La app no envía esos datos al contrato provisional. Tampoco vincula el teléfono de WhatsApp a la sesión móvil. El contrato oficial de identidad, alertas y turnos está solicitado en [#7](https://github.com/cbishara/SolsetsHack/issues/7).
 
+El agente de Quito respondió con un borrador. Los fixtures de `src/proposed-fixtures.ts` ya usan sus tipos `IncomingMessage`/`Classification`/`Verdict`; la envoltura del feed, identidad, idempotencia y lectura del historial siguen por acordar. Esto no habilita endpoints oficiales ni confunde `decision` del clasificador con `wouldWake` de la política.
+
 Para un backend local de prueba sin contraseña se permite HTTP en desarrollo, usando la IP privada del Mac (no `localhost` en el iPhone). No se permite enviar contraseñas por HTTP. El QR de Expo publica el frontend, no el backend. Una vista web necesita que el servidor autorice su origen/CORS; esta app no relaja las reglas del backend.
 
 La rama `main` de partida no contiene el piloto `/api/disconnect`. Para probarlo se necesita el checkout de `codex/sol-desconexion-whatsapp` con el trabajo de SOL/Hermes de la otra sesión, o un despliegue de testing equivalente. Una URL de producción no sustituye ese paso.

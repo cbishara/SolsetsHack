@@ -10,12 +10,14 @@ Diferencia reconocida: el equipo centra la demo oficial en la guardia de Rodrigo
 
 ## Comunicación comprobada
 
-- Quito: [#6](https://github.com/cbishara/SolsetsHack/issues/6), plan completo y solicitud de opinión, asignado a `Quitogonzalez`. Enviado; al último chequeo no había respuesta.
-- Bishara: [#7](https://github.com/cbishara/SolsetsHack/issues/7), contrato API, identidad, persistencia, alertas y URL de testing. Enviado; al último chequeo no había respuesta.
+- Quito: [#6](https://github.com/cbishara/SolsetsHack/issues/6), plan completo y solicitud de opinión, asignado a `Quitogonzalez`. **Su agente respondió** con un borrador de contrato compartido; no lo declaró oficial. Opal y elección de proveedor siguen pendientes de Quito.
+- Bishara: [#7](https://github.com/cbishara/SolsetsHack/issues/7), contrato API, identidad, persistencia, alertas y URL de testing. El agente de Quito también respondió aquí con el borrador; falta confirmación de Bishara y servicio disponible.
 - Sesión local «Revisa documentación y desarrolla»: comunicación directa entre hilos de Codex, **recepción y respuesta confirmadas**. Es dueña del piloto Hermes; no toca `mobile/`. Confirmó contrato y limitaciones. La app no ejecuta su verificador de consumo.
 - Esa sesión solicitó OAuth y modelo de la cuenta de Quito en [#8](https://github.com/cbishara/SolsetsHack/issues/8). No se usó ninguna cuenta personal de Amaru.
 
-Los agentes remotos reciben las tareas al revisar el protocolo GitHub. Enviar/asignar un issue no prueba que Quito ya lo leyó ni que aprobó el plan. No hay un canal de chat directo con su sesión privada.
+El intercambio con el agente remoto está comprobado mediante sus comentarios y nuestras respuestas. Su borrador no representa aprobación humana de todo el plan. No hay un canal de chat directo con su sesión privada.
+
+El borrador propone noche, feed, alertas, feedback, pendientes, parte, métricas, settings y chat. `mobile/src/proposed-fixtures.ts` adopta `IncomingMessage`, `Classification` y `Verdict` solo para datos locales. En #7 propuse precisar identidad, un feed con mensaje/veredicto/alerta, idempotencia de escrituras, lectura de historial/contexto, borrado, zona horaria y denominador de métricas. No se crean rutas reales sobre un contrato sin confirmar ni se edita `shared/` por cuenta propia.
 
 Recibida de Quito la [tarea #10](https://github.com/cbishara/SolsetsHack/issues/10): actualizar main, comprobar gh y leer las reglas. Se atiende dentro de la solicitud de Amaru. La rama móvil se actualiza sobre main; el checkout compartido del piloto Hermes no se cambia de rama ni se mezcla.
 
@@ -44,7 +46,7 @@ flowchart LR
 
 | Etapa | Evidencia / pendiente |
 | --- | --- |
-| Coordinación | Sesión Hermes respondió. Quito y Bishara tienen tareas; opinión y contrato oficial pendientes. |
+| Coordinación | Sesión Hermes y agente de Quito respondieron. Borrador recibido y contestado; aprobación de alcance, proveedor y contrato oficial pendientes. |
 | Diseño Expo Go | Proyecto implementado y bundles para iOS/Android/web. Falta confirmación de apertura en el iPhone de Amaru. |
 | Persistencia | Pruebas locales de adaptación, deduplicación y reinicio del backend del piloto con archivos. PostgreSQL/entorno de testing sin verificar. |
 | Native build | Configuración y extensiones preparadas. Compilación, firma, instalación y entitlement de distribución pendientes. |

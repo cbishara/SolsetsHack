@@ -2,7 +2,7 @@
 
 Estado: por confirmar
 Fecha: 2026-10-23
-Decidió: la decide Quito; afecta el deploy de Bishara
+Decidió: la decide Quito; afecta el deploy de Amaru
 Carril: quito
 
 ## Contexto

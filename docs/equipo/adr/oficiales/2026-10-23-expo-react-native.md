@@ -3,7 +3,7 @@
 Estado: oficial
 Fecha: 2026-10-23
 Decidió: Quito
-Carril: amaru
+Carril: bishara
 
 ## Contexto
 
@@ -26,3 +26,5 @@ Hay que resolverlo temprano.
 3. Ni Expo ni la PWA garantizan pasar el modo concentración del iPhone. Por eso la alerta tiene un segundo canal, la llamada telefónica (ver `2026-10-23-cinco-funcionalidades.md`, funcionalidad 2).
 
 ## Cambios
+
+- 2026-10-23: el carril pasa de Amaru a Bishara por el trueque (`2026-10-23-trueque-bishara-amaru.md`).

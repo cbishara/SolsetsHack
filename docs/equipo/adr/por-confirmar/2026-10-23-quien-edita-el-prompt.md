@@ -14,6 +14,8 @@ Dos documentos dicen cosas distintas.
 
 ## La pregunta
 
-Si el prompt vive en `agent/`, lo edita Quito y Amaru define el tono? O hay un segundo prompt, el de lo que el agente le escribe a Rodrigo, que vive en `server/` y edita Bishara?
+Si el prompt vive en `agent/`, lo edita Quito y Bishara define el tono? O hay un segundo prompt, el de lo que el agente le escribe a Rodrigo, que vive en `server/` y edita Amaru?
+
+Nota del 2026-10-23: con el trueque de carriles (`oficiales/2026-10-23-trueque-bishara-amaru.md`), el tono pasa a Bishara (app) y `server/` a Amaru. La cita de arriba es anterior al trueque.
 
 ## Cambios

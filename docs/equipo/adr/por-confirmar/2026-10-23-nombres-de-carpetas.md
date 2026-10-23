@@ -11,6 +11,6 @@ Carril: los tres
 
 ## La pregunta
 
-Quedan `agent/` para Quito y `server/` para Bishara, o se cambian antes de crear las carpetas?
+Quedan `agent/` para Quito y `server/` para Amaru, o se cambian antes de crear las carpetas?
 
 ## Cambios

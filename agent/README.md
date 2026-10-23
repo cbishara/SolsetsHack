@@ -13,7 +13,7 @@ npm run check
 PORT=4181 npm start
 ```
 
-El modo predeterminado usa reglas y no requiere claves. En el chat devuelve una respuesta fija identificada como `rules`; no extrae memoria. La consola auxiliar de clasificación está en http://localhost:4181/.
+El modo predeterminado usa reglas y no requiere claves. En el chat devuelve una respuesta fija identificada como `rules`; no extrae memoria. El chat web está en http://localhost:4181/ y la consola auxiliar de clasificación en http://localhost:4181/tools.
 
 Para usar el Codex instalado en este módulo, comprobar su sesión y elegir el motor:
 
@@ -22,7 +22,27 @@ npx --no-install codex login status
 AGENT_ENGINE=codex PORT=4181 npm start
 ```
 
-El adaptador ejecuta `codex exec --output-schema` sin herramientas ni configuración personal; el CLI mantiene el login y las llamadas. No copiar credenciales a la app ni al repo. No se declara un modelo concreto si `CODEX_MODEL` no está fijado.
+El adaptador ejecuta `codex exec --output-schema` sin herramientas ni configuración personal; el CLI mantiene el login y las llamadas. No copiar credenciales a la app ni al repo. El chat usa `CHAT_MODEL` si está definido; si no, hereda `CODEX_MODEL`. Sin ninguno, la CLI elige el predeterminado.
+
+## Conversar desde la web local
+
+Abrir **http://localhost:4181** cuando el agente corre en ese puerto. La entrada muestra una conversación conectada al piloto, con historial, escritura fija abajo, Enter para enviar y Shift+Enter para otra línea. «Lo que dejamos listo» permite consultar el pendiente y la memoria sin abandonar el hilo.
+
+El borrador y el identificador de un envío pendiente se conservan al recargar esa pestaña. Un fallo de red o del motor muestra un reintento explícito con el mismo UUID; no genera una respuesta ficticia ni repite automáticamente la inferencia. La contraseña del piloto, si se exige, permanece solo en memoria del navegador.
+
+Las herramientas de clasificación, feedback y semana simulada se conservan en **http://localhost:4181/tools**. Ambas páginas están disponibles solo en modo de desarrollo. La web utiliza las mismas rutas `/api/disconnect` del chat y la misma conversación local; no reemplaza ni modifica `mobile/`.
+
+## Luna max y Fast en el piloto
+
+El piloto web del Mac usa Luna con razonamiento `max` y solicita Fast con configuración explícita del chat:
+
+```sh
+AGENT_ENGINE=codex CHAT_MODEL=gpt-6-luna CHAT_REASONING_EFFORT=max CHAT_FAST=true PORT=4181 npm start
+```
+
+Conservar `AGENT_DATA_FILE` y `CHAT_USER_ID` del proceso anterior al actualizarlo mantiene la conversación. `CHAT_MODEL` tiene prioridad sobre `CODEX_MODEL` solo para el chat; la clasificación conserva su configuración. `CHAT_REASONING_EFFORT` admite `none`, `minimal`, `low`, `medium`, `high`, `xhigh` o `max` (predeterminado `low`); el modelo elegido debe soportar el nivel. `CHAT_FAST` admite `true`/`1` y `false`/`0`; solicita `service_tier="priority"` y activa `features.fast_mode`. Un valor inválido impide arrancar para evitar un despliegue con otra configuración por error. Cada arranque informa el modelo, el esfuerzo y si Fast fue solicitado. La respuesta identifica el modelo seleccionado en `inference.model`; el nivel de servicio efectivo del proveedor no se acredita con ese campo.
+
+La comparación sintética del 23 de octubre dio una mediana de 12,7 s para Luna `max` con Fast solicitado y 8,5 s para Sol `low` (tres repeticiones de la misma entrada por configuración). Luna aprobó ocho comprobaciones de memoria, corrección, reintento y borrado. Quito pidió activar esta combinación después de revisar el resultado; no se presenta como una mejora de velocidad. [Configuración oficial de Fast](https://learn.chatgpt.com/docs/agent-configuration/speed).
 
 ## Probar con el chat de main
 
@@ -84,6 +104,7 @@ También existen `POST /v1/feedback`, `POST /v1/memory` y `GET /v1/users/:id/{me
 | `AGENT_DATA_FILE` | Archivo local; por defecto `agent/.data/state.json`. Usar una instancia por archivo. |
 | `CHAT_USER_ID` | Usuario de la conversación de testing. No cambiarlo sobre una sesión existente. |
 | `CODEX_BIN`, `CODEX_MODEL` | Binario y modelo opcionales para el adaptador. |
+| `CHAT_MODEL`, `CHAT_REASONING_EFFORT`, `CHAT_FAST` | Modelo del chat, esfuerzo (low por defecto) y solicitud de Fast (false por defecto). |
 | `CODEX_TIMEOUT_MS`, `CHAT_TIMEOUT_MS` | Límites de clasificación y chat: 25000 y 60000 ms. |
 | `CHAT_CORS_ORIGIN` | Origen permitido para la vista web. En desarrollo el valor predeterminado es `*`. |
 | `AGENT_TOKEN`, `CHAT_PASSWORD` | Bearer de operador para `/v1/*` y Basic `solsets` para el chat. Con `NODE_ENV=production` se exigen 24 y 16 caracteres como mínimo. No es autenticación de usuarios finales. |
@@ -97,8 +118,10 @@ npm run check
 node scripts/verify-chat.ts --codex --report ../.context/agent-chat-verification.json
 ```
 
-`check` ejecuta TypeScript, 47 pruebas y la semana sintética con reglas: 2/2 casos confirmados y coincidencia con 22/39 propuestos. No mide precisión de Codex ni convierte los casos propuestos en criterio aprobado.
+`check` ejecuta TypeScript, 66 pruebas y la semana sintética con reglas: 2/2 casos confirmados y coincidencia con 22/39 propuestos. No mide precisión de Codex ni convierte los casos propuestos en criterio aprobado.
 
 La [aceptación con Codex real](./VERIFY-CHAT.md) pasó seis comprobaciones con tres llamadas y dos procesos de servidor: horario declarado, corrección a las 19:00, reintento sin otra inferencia, recuperación tras reiniciar, recuerdo del horario y preferencia, y memoria separada para otro usuario. El informe de cada ejecución queda local; el comando permite repetirla.
 
 Pendientes: servidor compartido, identidad app–WhatsApp, base remota, dispositivo físico y canales de alerta. El trabajador saliente y las funciones de voz que se desarrollan en paralelo se entregan por separado.
+
+La conversación web pasó nueve comprobaciones de interfaz con transporte simulado y diez comprobaciones de recorrido con Codex real y datos aislados: corrección del horario, recarga, NUEVO, BORRAR y separación de memoria. El piloto de localhost:4181 conserva su conversación después de activar Luna max y Fast solicitado. Esto no verifica móvil, WhatsApp ni Railway. Los informes de esta sesión permanecen locales en `.context/`; no se publican datos de conversaciones.

@@ -10,7 +10,7 @@
   "moment": "preparar",
   "productStatus": "acordada",
   "buildStatus": "en-curso",
-  "availability": "rama",
+  "availability": "main",
   "updatedAt": "2026-10-23",
   "summary": "El chat de prueba guarda el pendiente actual, propone un primer paso y recuerda preferencias; el parte de la mañana sigue pendiente.",
   "need": "Poder dejar de repasar mentalmente un pendiente por miedo a olvidarlo.",
@@ -21,7 +21,8 @@
   "systemActions": [
     "Conserva la conversación, el pendiente actual y un primer paso en el agente local.",
     "Recuerda preferencias expresadas por el usuario con una cita literal, y permite corregirlas o borrar lo aprendido en el chat.",
-    "Muestra un fallo visible si Codex no responde y permite reintentar el mismo mensaje sin duplicarlo."
+    "Muestra un fallo visible si Codex no responde y permite reintentar el mismo mensaje sin duplicarlo.",
+    "En la web local del agente, conversa directamente y consulta el pendiente y la memoria desde «Lo que dejamos listo»; las herramientas técnicas quedan en una vista secundaria."
   ],
   "example": "Ejemplo ficticio probado: «Mañana revisar la impresora del segundo piso. Prefiero empezar con un paso de dos minutos». Codex respondió desde la interfaz móvil de Amaru, preparó un paso de dos minutos y la preferencia apareció en Memoria. Tras reiniciar el agente y reconectar la web, seguía disponible.",
   "rules": [
@@ -75,6 +76,30 @@
       "environment": "Servicio candidato sintético de Railway, trabajador del Mac y Codex real",
       "result": "Tres inferencias reales aceptadas en 16,7, 12,4 y 21,3 s: memoria de dos minutos, corrección a cinco y usuario B separado. Repetir UUID recuperó el mismo trabajo sin otra inferencia; sesiones y memoria sobrevivieron al redespliegue del servidor. No acredita Expo, iPhone, OTP ni WhatsApp.",
       "evidence": "agent/INTEGRATION.md; https://github.com/cbishara/SolsetsHack/issues/24#issuecomment-6377022311"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Chrome de escritorio y ancho 390; web local del agente en localhost:4181",
+      "result": "La entrada es una conversación; el contexto se consulta en un diálogo y las herramientas quedan en /tools. Se comprobó borrador al recargar, reintento con el mismo UUID, errores visibles, autenticación y una respuesta de Codex real con estado aislado. La activación conservó la conversación previa. Esta interfaz todavía es un cambio local sin publicar.",
+      "evidence": "agent/console/index.html; agent/src/server.test.ts; agent/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Chrome de escritorio y Codex real, web local f659ca0 con interfaz nueva; proceso y archivo aislados en 4182",
+      "result": "Diez comprobaciones adicionales desde Chrome con Codex real y estado sintético aislado: horario con evidencia literal y paso de dos minutos; corrección de 18:00 a 19:00; recarga con memoria visible; NUEVO conserva memoria e historial y vacía pendiente/plan; recuperación de horario y esfuerzo; BORRAR limpia chat y recuerdos aprendidos, conserva onboarding y no cambia otro usuario; después del borrado Codex desconoce el horario; sin errores JavaScript y conversación activa de 4181 intacta. Cuatro respuestas del modelo y dos comandos. Informe local en .context/chat-web-journey.json; no acredita teléfono ni WhatsApp.",
+      "evidence": "docs/equipo/quito/tablero/cambios/cambio-quito-20261023-chat-web.json; agent/console/index.html; agent/VERIFY-CHAT.md"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Piloto del Mac, Chrome y Codex real; chat en localhost:4181 con Luna max y Fast solicitado",
+      "result": "Activación autorizada por Quito. TypeScript, 49 pruebas de la copia de ejecución y diez comprobaciones de conversación en Chrome aprobadas. El proceso activo fija Luna/max/Fast y conserva idénticos el hilo y el archivo de estado. Mediana medida previamente: Luna 12,7 s y Sol low 8,5 s, tres repeticiones por configuración. Fast solicitado, sin confirmación del nivel servido. No acredita integración con Railway, móvil ni WhatsApp. Código local sin publicar.",
+      "evidence": "agent/README.md; agent/src/server.test.ts; agent/src/engines/codex.test.ts; docs/equipo/quito/tablero/cambios/cambio-quito-20261023-desplegar-luna.json"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Entrega aislada preparada sobre origin/main, Node 24",
+      "result": "El chat web y la configuración independiente de Luna/Fast se prepararon sin los cambios en curso de integración o voz. TypeScript, 66 pruebas del agente, evaluación de reglas y tablero build/check aprobados. La versión del piloto ya activa se verificó por separado con Chrome y Codex real. La evaluación sintética de reglas conserva 2/2 casos confirmados y 22/39 propuestos; no mide precisión general del modelo.",
+      "evidence": "agent/README.md; agent/src/engines/codex.test.ts; agent/src/server.test.ts"
     }
   ],
   "evidence": [
@@ -101,6 +126,14 @@
     {
       "label": "Puente candidato con el servidor y límites de la verificación",
       "path": "agent/INTEGRATION.md"
+    },
+    {
+      "label": "Conversación web local y recuperación del hilo",
+      "path": "agent/console/index.html"
+    },
+    {
+      "label": "Activación local de Luna max y Fast solicitado",
+      "path": "docs/equipo/quito/tablero/cambios/cambio-quito-20261023-desplegar-luna.json"
     }
   ]
 }

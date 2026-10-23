@@ -2,8 +2,8 @@
 
 Estado: por confirmar
 Fecha: 2026-10-23
-Decidió: la deciden Amaru (pantalla) y Bishara (API)
-Carril: amaru
+Decidió: la deciden Bishara (pantalla) y Amaru (API), desde el trueque de carriles
+Carril: bishara
 
 ## Contexto
 

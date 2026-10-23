@@ -3,8 +3,10 @@
 Cada uno tiene una funcionalidad completa y es dueño de los archivos de esa funcionalidad. Nadie edita archivos de otro carril sin avisar. Así dos personas nunca tocan el mismo archivo a la vez. En el prototipo, `web/src/main.jsx` tenía el panel entero en un solo archivo, y si dos lo editaban el merge se rompía.
 
 1. [Quito](./quito/): que el agente decida bien, y poder demostrarlo.
-2. [Cristóbal Bishara](./bishara/): que el mensaje llegue y la alerta salga.
-3. [Amaru](./amaru/): que Rodrigo entienda qué hizo el agente y confíe en él.
+2. [Amaru](./amaru/): que el mensaje llegue y la alerta salga.
+3. [Cristóbal Bishara](./bishara/): que Rodrigo entienda qué hizo el agente y confíe en él.
+
+Bishara y Amaru intercambiaron estos carriles el 2026-10-23 ([ADR](./adr/oficiales/2026-10-23-trueque-bishara-amaru.md)).
 
 Lo decidido (producto, stack de la app y funcionalidades con su dueño) está en [adr/oficiales](./adr/oficiales/), una decisión por archivo. Las ideas y preguntas abiertas, en [adr/por-confirmar](./adr/por-confirmar/). Cómo entra una decisión nueva, en [adr/README.md](./adr/README.md).
 

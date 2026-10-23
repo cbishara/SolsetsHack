@@ -2,8 +2,8 @@
 
 Estado: por confirmar
 Fecha: 2026-10-23
-Decidió: la decide Bishara (conexiones)
-Carril: bishara
+Decidió: la decide Amaru (conexiones, desde el trueque de carriles)
+Carril: amaru
 
 ## Contexto
 

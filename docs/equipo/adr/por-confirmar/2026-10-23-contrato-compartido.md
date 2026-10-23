@@ -7,7 +7,7 @@ Carril: los tres
 
 ## Contexto
 
-Cada carril construye por su lado: Amaru la app (`mobile/`), Bishara el servidor (`server/`) y Quito el agente (`agent/`). Si no fijan antes la forma de los datos que se pasan, cada uno inventa la suya y choca al unir.
+Cada carril construye por su lado: Bishara la app (`mobile/`), Amaru el servidor (`server/`), desde el trueque de carriles, y Quito el agente (`agent/`). Si no fijan antes la forma de los datos que se pasan, cada uno inventa la suya y choca al unir.
 
 ## La pregunta
 

@@ -3,8 +3,9 @@
 set -euo pipefail
 
 ROOT=$(git rev-parse --show-toplevel)
-ALLOW_FILE=$(git rev-parse --git-path carril-permitido)
-ME_CACHE=$(git rev-parse --git-path carril-yo)
+# --path-format=absolute: sin esto, desde una subcarpeta la ruta sale relativa a esa subcarpeta.
+ALLOW_FILE=$(git rev-parse --path-format=absolute --git-path carril-permitido)
+ME_CACHE=$(git rev-parse --path-format=absolute --git-path carril-yo)
 case "$ALLOW_FILE" in /*) ;; *) ALLOW_FILE="$ROOT/$ALLOW_FILE" ;; esac
 case "$ME_CACHE" in /*) ;; *) ME_CACHE="$ROOT/$ME_CACHE" ;; esac
 
@@ -12,8 +13,9 @@ case "$ME_CACHE" in /*) ;; *) ME_CACHE="$ROOT/$ME_CACHE" ;; esac
 owner_of() {
   case "$1" in
     agent/*|docs/equipo/quito/*) echo quito ;;
-    server/*|docs/equipo/bishara/*) echo bishara ;;
-    mobile/*|docs/equipo/amaru/*) echo amaru ;;
+    # Bishara y Amaru intercambiaron carriles: docs/equipo/adr/oficiales/2026-10-23-trueque-bishara-amaru.md
+    mobile/*|docs/equipo/bishara/*) echo bishara ;;
+    server/*|docs/equipo/amaru/*) echo amaru ;;
     web/*|backend/*|classifier/*|supabase/*|deploy/*|.railway/*) echo prototipo ;;
     *) echo libre ;;
   esac

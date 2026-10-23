@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-amaru-20261023-agente-v1",
+  "title": "Preparar chat compartido, sugerencias y respuestas durables",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "summary": "Servidor v1 con permisos versionados y respuestas al canal del turno, más prueba real del puente v0.",
+  "before": "El bot guardaba mensajes pero no tenía cola real, sugerencias ni salida persistente.",
+  "after": "El candidato implementa chat y sugerencias v1, inbox/outbox durables y acceso compartido; flags separados mantienen la activación bajo control del contrato verificado.",
+  "reason": "Convertir el contexto elegido en ayuda útil sin mezclar personas ni duplicar respuestas al reiniciar.",
+  "checked": "119 pruebas server y TypeScript; revisión independiente de cola. Tres inferencias v0 reales con el Codex de Quito en Railway, memoria corregida y usuarios aislados. V1 exacto y OTP real pendientes.",
+  "availability": "Implementado en rama con v1 apagado; v0 y login compartido desplegados. Emparejamiento del mismo iPhone preparado, pendiente de respuesta real de proveedor.",
+  "featureIds": ["feat-amaru-whatsapp-multiusuario"],
+  "flowIds": ["flujo-amaru-whatsapp-multiusuario"]
+}

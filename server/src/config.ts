@@ -34,7 +34,7 @@ export function loadConfig(): Config {
     apiToken: env.API_TOKEN || undefined,
     databaseUrl: env.DATABASE_URL || undefined,
     localDataFile: env.LOCAL_DATA_FILE || undefined,
-    unipile: env.UNIPILE_API_KEY ? {
+    unipile: env.UNIPILE_API_KEY && env.SOL_MULTIUSER_ENABLED !== 'true' ? {
       dsn: unipileOrigin(env.UNIPILE_DSN || ''), apiKey: env.UNIPILE_API_KEY,
       accountId: env.UNIPILE_ACCOUNT_ID || '', webhookSecret: env.UNIPILE_WEBHOOK_SECRET || '', publicUrl: env.PUBLIC_URL || undefined,
     } : undefined,

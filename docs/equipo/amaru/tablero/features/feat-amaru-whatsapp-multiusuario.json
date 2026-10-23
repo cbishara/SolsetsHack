@@ -1,0 +1,90 @@
+{
+  "type": "feature",
+  "id": "feat-amaru-whatsapp-multiusuario",
+  "title": "Un bot, identidades separadas y chats elegidos",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "moment": "preparar",
+  "productStatus": "acordada",
+  "buildStatus": "en-curso",
+  "availability": "rama",
+  "summary": "Vincular cada cuenta mediante QR y código de SOL, mostrar sugerencias por metadatos y monitorear solo la selección del usuario.",
+  "need": "Que cada usuario reciba ayuda con su propio contexto sin que un bot compartido mezcle personas o lea chats no elegidos.",
+  "userActions": [
+    "Conectar WhatsApp desde la app.",
+    "Introducir el código recibido desde SOL.",
+    "Elegir chats sugeridos o cualquier otro del catálogo.",
+    "Desmarcar un chat para detener su uso.",
+    "Acceder desde otro dispositivo con código de WhatsApp, conservando su identidad."
+  ],
+  "systemActions": [
+    "Resolver identidad con sesión individual y propietario canónico.",
+    "Mostrar nombres y tipos antes de acceder al contenido.",
+    "Guardar selección y mensajes con ámbito de usuario.",
+    "Invalidar operaciones pendientes al revocar permisos."
+  ],
+  "example": "Ana selecciona Trabajo y Ben selecciona Familia; ambos escriben al mismo número SOL y solo ven su propia bandeja.",
+  "rules": [
+    "El modelo no concede permisos.",
+    "Código de un usuario no sirve en la sesión de otro.",
+    "Mensaje propio, antiguo o duplicado no genera respuesta.",
+    "Una cuenta vinculada no se reasigna a otro usuario."
+  ],
+  "limits": [
+    "V0 y login desplegados; v1 implementado y apagado hasta cotejo exacto con Quito. OTP real e integración física pendientes.",
+    "Login compartido implementado; cliente web/iPhone y recuperación ante cambio de número pendientes.",
+    "Servidor de sugerencias/chat/outbox construido; trabajador v1 final y cliente Bishara pendientes de acoplamiento.",
+    "Desmarcar no borra datos antiguos; borrado y retención pendientes."
+  ],
+  "acceptance": [
+    "Dos usuarios no pueden cruzar mensajes, cuentas ni códigos.",
+    "Catálogo completo paginado sin leer mensajes.",
+    "Un chat no recomendado sigue siendo seleccionable.",
+    "Revocar durante una descarga impide persistirla."
+  ],
+  "questions": [
+    "Cotejar v1 exacto de Quito y verificar recorrido personal antes de entregar la integración completa."
+  ],
+  "flowIds": [
+    "flujo-amaru-whatsapp-multiusuario"
+  ],
+  "relatedFeatureIds": [
+    "feat-amaru-whatsapp-context"
+  ],
+  "verification": [
+    {
+      "date": "2026-10-23",
+      "environment": "HTTP local y proveedor sintético",
+      "result": "75 pruebas server pasan, incluidas 54 nuevas; interoperabilidad con trabajador/procesador exactos de Quito y persistencia en PostgreSQL 17 local verificadas. Cero llamadas reales al modelo; proveedor real pendiente.",
+      "evidence": "server/test/multiuser-http.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "PostgreSQL 17.11 temporal local y contrato Quito 8f939ee",
+      "result": "Concurrencia, rollback, OTP único, identidad/chat/memoria tras reinicio, acuse perdido recuperado sin inferir de nuevo y borrado aislado A/B.",
+      "evidence": "docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "HTTP local / Railway candidato",
+      "result": "89 pruebas server con login compartido. Candidato cba8980: salud200, sesiones A/B y estado200, sin worker503, API global bloqueada503, worker sin token401.",
+      "evidence": "docs/equipo/amaru/LOGIN_COMPARTIDO.md"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Railway y Codex real del Mac de Quito, entradas ficticias",
+      "result": "Tres inferencias reales: 16,7s,12,4s,21,3s. Memoria A corregida a5min, B permanece2min; UUID idempotente y persistencia tras despliegue.",
+      "evidence": "docs/equipo/amaru/PRUEBA_AGENTE_RAILWAY.md"
+    }
+  ],
+  "evidence": [
+    {
+      "label": "Plan, reparto, contrato y límites",
+      "path": "docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md"
+    },
+    {
+      "label": "Prueba HTTP con dos usuarios",
+      "path": "server/test/multiuser-http.test.ts"
+    }
+  ]
+}

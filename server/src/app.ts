@@ -19,13 +19,21 @@ const safeEqual = (a = '', b = '') => {
 
 const fail = (res: Response, code: number, error: string) => res.status(code).json({ error });
 
-export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoChat' | 'allowSimulate'> & Pick<Partial<Config>, 'unipile'>, whatsapp?: WhatsAppService) {
+export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoChat' | 'allowSimulate'> & Pick<Partial<Config>, 'unipile'>, whatsapp?: WhatsAppService, multiUser?: express.Router, bridge?: { worker?: express.Router; demo?: express.Router; liveWorker?: express.Router; liveClient?: express.Router }) {
   if (whatsapp && !config.apiToken) throw new Error('La API de WhatsApp requiere autenticación.');
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '256kb' }));
 
   app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'solsets-server' }));
+  if (bridge?.worker) app.use('/internal/agent/v0', bridge.worker);
+  if (bridge?.demo) app.use('/api/v1/demo', bridge.demo);
+  if (bridge?.liveWorker) app.use('/internal/agent/v1', bridge.liveWorker);
+  if (bridge?.liveClient) app.use('/api/v1', bridge.liveClient);
+  if (multiUser) app.use('/api/v1', multiUser);
+  else app.use('/api/v1', (_req, res) => res.status(503).json({ error: 'multiuser_not_enabled' }));
+  // The candidate must never expose the pilot's global state through legacy routes.
+  if (multiUser) app.use('/api', (_req, res) => res.status(503).json({ error: 'legacy_api_disabled' }));
   app.use('/api/webhooks/unipile', unipileWebhook(whatsapp, config.unipile?.webhookSecret));
 
   // Webhooks: authenticated by the secret in the URL, not by the app token.

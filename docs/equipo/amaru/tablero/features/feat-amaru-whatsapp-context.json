@@ -61,8 +61,8 @@
     },
     {
       "date": "2026-10-23",
-      "environment": "Unipile real y servidor Railway con Postgres",
-      "result": "Mensaje entrante del grupo de prueba recuperado por historial y consultado una vez desde la API. La recepción automática requiere validar la corrección de formato; 21 pruebas pasan.",
+      "environment": "Unipile real → Railway → Postgres → API autenticada",
+      "result": "Mensaje entrante recibido automáticamente por webhook sin importación manual, guardado en unos 1,5 s. Mensaje previo de historial sin duplicados y conservado tras nuevo despliegue. Campo incompatible identificado: account_info.user_id. TypeScript y 21 pruebas pasan. Agente/UI siguen pendientes.",
       "evidence": "docs/equipo/amaru/WHATSAPP_UNIPILE.md"
     }
   ],

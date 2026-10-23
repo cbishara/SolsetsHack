@@ -12,12 +12,13 @@ El servicio de prueba es independiente del `backend` del prototipo y de Hermes. 
 
 ### Verificación de despliegue, 2026-10-23
 
-- Servicio `sol-whatsapp-demo`: [health público](https://sol-whatsapp-demo-production.up.railway.app/api/health), responde `{ok:true,service:"solsets-server"}`. Despliegue Railway `4a36220a-fa16-4a7f-beb9-6a2ac01ad72f`, estado SUCCESS; Postgres conectado y selección persistida.
+- Servicio `sol-whatsapp-demo`: [health público](https://sol-whatsapp-demo-production.up.railway.app/api/health), responde `{ok:true,service:"solsets-server"}`. Despliegue Railway vigente `122d046b-ff6d-4ac9-80ec-c566c2653866`, estado SUCCESS; Postgres conectado y selección persistida.
 - Cuenta real verificada en estado `OK`. Grupo de prueba encontrado y seleccionado explícitamente por Amaru; no se publican identificadores personales.
 - Ambos webhooks creados y verificados como habilitados, con filtro de cuenta y cabecera secreta.
 - En el servidor público: API privada sin Bearer → 401; webhook sin secreto → 401; evento sintético de cuenta ajena → 200 ignorado; agente todavía no conectado → 503.
-- La primera importación del grupo devolvió cero mensajes y cursor nulo. Después del envío del participante, Unipile recibió un mensaje entrante; una importación explícita lo guardó en Postgres y la API devolvió una sola copia. Esto verifica el recorrido de recuperación por historial, no todavía la captura automática.
-- Los logs HTTP confirmaron que la notificación de ese mensaje llegó al webhook con HTTP 200, pero el validador la descartó por su formato. Se añadió recuperación canónica por ID para notificaciones de cuenta/chat autorizados cuyos campos opcionales difieran del ejemplo. Se registran solo rutas de campos incompatibles, nunca su contenido. Hace falta un mensaje nuevo para verificar la corrección en la entrega del proveedor.
+- La primera importación del grupo devolvió cero mensajes y cursor nulo. Después del envío del participante, Unipile recibió un mensaje entrante; una importación explícita lo guardó en Postgres y la API devolvió una sola copia. Repetir la importación produjo `imported:0, skipped:1`; el mensaje y la selección sobrevivieron al reemplazo del contenedor durante el despliegue.
+- Los logs HTTP confirmaron que la primera notificación llegó con HTTP 200 pero el validador la descartó. La prueba posterior identificó el campo incompatible: `account_info.user_id` (`invalid_type`). La recuperación canónica por ID resuelve esta variante sin confiar en metadatos opcionales ni guardar el cuerpo crudo. Los logs guardan solo nombres de campos y códigos de validación.
+- **Recorrido automático verificado:** un segundo mensaje de prueba enviado a las 22:25:34 UTC se guardó a las 22:25:35.540 UTC con `origin:webhook` y `direction:incoming`, sin invocar la importación. La API muestra dos mensajes: el recuperado por historial y el recibido automáticamente. Latencia observada de esa prueba: aproximadamente 1,5 segundos; no es una garantía de servicio. Se omiten texto e identificadores del grupo en esta evidencia pública.
 
 ## Tutorial para Amaru
 

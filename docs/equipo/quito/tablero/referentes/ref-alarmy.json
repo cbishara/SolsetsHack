@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-alarmy",
+  "title": "Alarmy",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Misiones para apagar alarmas, comprobación de despertar y funciones de sueño.",
+  "aesthetic": "Promoción cian/amarilla; interfaz oscura y números grandes; acciones concretas.",
+  "takeaway": "Confirmación explícita de que Rodrigo recibió y atendió una alerta.",
+  "limit": "Resolver misiones no es adecuado para responder una emergencia de soporte.",
+  "url": "https://alar.my/en",
+  "appStore": "https://apps.apple.com/us/app/alarmy-loud-alarm-clock/id1163786766?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/alarmy.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/a6/aa/29/a6aa29f4-3c85-8b23-5884-758da5f1ede7/26Q2S6_EN_ios-2.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

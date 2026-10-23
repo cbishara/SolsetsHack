@@ -1,0 +1,12 @@
+{
+  "type": "flow", "id": "flujo-persona-recorrido", "title": "Nombre del recorrido humano", "owner": "Responsable funcional", "summary": "De qué situación a qué resultado lleva.",
+  "productStatus": "propuesta", "buildStatus": "sin-verificar", "availability": "sin-verificar", "updatedAt": "2026-10-23",
+  "trigger": "Qué lo inicia.", "outcome": "Cómo termina o qué queda pendiente.", "example": "Un caso ficticio completo.",
+  "featureIds": [],
+  "steps": [
+    {"id":"inicio","kind":"start","actor":"Rodrigo","title":"Iniciar recorrido","detail":"Situación o acción concreta.","x":0,"y":80},
+    {"id":"resultado","kind":"end","actor":"Solsets","title":"Observar el resultado","detail":"Resultado explicado en palabras humanas.","x":430,"y":80}
+  ],
+  "connections": [{"from":"inicio","to":"resultado","label":"Qué hace avanzar"}],
+  "questions": [], "verification": [], "evidence": [{"label":"Decisión o evidencia","path":"docs/equipo/adr/README.md"}]
+}

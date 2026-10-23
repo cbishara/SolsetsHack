@@ -1,0 +1,9 @@
+{
+  "type": "feature", "id": "feat-persona-tema", "title": "Acción y resultado para Rodrigo", "owner": "Responsable funcional", "collaborators": [],
+  "moment": "preparar", "productStatus": "propuesta", "buildStatus": "sin-verificar", "availability": "sin-verificar", "updatedAt": "2026-10-23",
+  "summary": "Qué puede conseguir y por qué importa.", "need": "Situación humana que motiva esta capacidad.",
+  "userActions": ["Qué ve o hace Rodrigo."], "systemActions": ["Qué hace Solsets en respuesta."],
+  "example": "Un caso ficticio de principio a fin.", "rules": [], "limits": [], "acceptance": ["Resultado observable para comprobarlo."], "questions": [],
+  "flowIds": [], "relatedFeatureIds": [], "verification": [],
+  "evidence": [{"label":"Decisión o evidencia que respalda esta ficha","path":"docs/equipo/adr/README.md"}]
+}

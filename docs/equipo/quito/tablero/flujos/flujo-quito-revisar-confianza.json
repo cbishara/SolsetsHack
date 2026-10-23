@@ -1,0 +1,84 @@
+{
+  "type": "flow",
+  "id": "flujo-quito-revisar-confianza",
+  "title": "Aprender del feedback y revisar el modo sombra",
+  "owner": "Amaru",
+  "summary": "Conectar decisiones, feedback y una eventual propuesta de modo real, mostrando lo que falta decidir.",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "trigger": "Rodrigo revisa lo que el agente propuso durante sus noches.",
+  "outcome": "Puede evaluar los resultados; la graduación queda pendiente de criterios explícitos.",
+  "example": "Rodrigo marca decisiones ficticias como correctas o equivocadas. El resumen permite revisarlas. Antes de sugerir modo real, el equipo todavía debe definir muestra, umbral y confirmación.",
+  "featureIds": [
+    "feat-amaru-confianza"
+  ],
+  "steps": [
+    {
+      "id": "decisiones",
+      "kind": "start",
+      "actor": "Rodrigo",
+      "title": "Revisar decisiones de la noche",
+      "detail": "Ve lo que habría hecho el agente.",
+      "x": 0,
+      "y": 80
+    },
+    {
+      "id": "feedback",
+      "kind": "action",
+      "actor": "Rodrigo",
+      "title": "Marcar qué estuvo bien o mal",
+      "detail": "El feedback permite evaluar decisiones concretas.",
+      "featureId": "feat-amaru-confianza",
+      "x": 430,
+      "y": 80
+    },
+    {
+      "id": "resumen",
+      "kind": "action",
+      "actor": "Solsets",
+      "title": "Mostrar resultados y período",
+      "detail": "Relacionar cifras con feedback; no contar horas de sueño no medidas.",
+      "x": 860,
+      "y": 80
+    },
+    {
+      "id": "criterio",
+      "kind": "pending",
+      "actor": "Equipo",
+      "title": "Definir cuándo proponer modo real",
+      "detail": "Están abiertos el número de noches, umbral, confirmación y vuelta atrás.",
+      "x": 1320,
+      "y": 80
+    }
+  ],
+  "connections": [
+    {
+      "from": "decisiones",
+      "to": "feedback",
+      "label": "Dar feedback"
+    },
+    {
+      "from": "feedback",
+      "to": "resumen",
+      "label": "Revisar aciertos"
+    },
+    {
+      "from": "resumen",
+      "to": "criterio",
+      "label": "Graduación por definir"
+    }
+  ],
+  "questions": [
+    "Qué significa acierto sin feedback.",
+    "Condiciones y confirmación para el modo real."
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo 4",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    }
+  ]
+}

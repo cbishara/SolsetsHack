@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Solsets, cada funcionalidad en el celular</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{zoom:.5;background:#0a0a0b;font-family:system-ui,-apple-system,"SF Pro Text","Helvetica Neue",sans-serif;padding:40px 40px 40px;width:1350px;color:#DEDAD5}
+  .board-title{font-size:26px;font-weight:700;letter-spacing:-.02em;color:#e6e2dc;margin:0 0 6px 4px}
+  .board-sub{font-size:16px;color:#8a8780;margin:0 0 30px 4px}
+  .grid{display:grid;grid-template-columns:repeat(3,390px);column-gap:50px;row-gap:40px;justify-content:center}
+  .col{display:flex;flex-direction:column;gap:16px;align-items:center}
+  .caption{color:#c9c6c1;font-size:19px;font-weight:600;letter-spacing:-.01em;text-align:center}
+  .caption small{display:block;color:#8a8780;font-size:14px;font-weight:400;margin-top:4px}
+
+  .phone{--bg:#171A26;--card:#1F2331;--card2:#282C3D;--sep:#30344A;--ink:#DEDAD5;--ink2:#9496A9;--ember:#EE754E;--on:#1E1310;--calm:#7CC4B0;--alert:#FF6161;
+    width:390px;height:844px;border-radius:54px;overflow:hidden;position:relative;outline:10px solid #1d1d1f;box-shadow:0 30px 80px rgba(0,0,0,.6);color:var(--ink);
+    background:linear-gradient(180deg,#151824 0%,#171A26 44%,#1D1C2B 70%,#2B2333 100%)}
+  .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;border-radius:20px;background:#000;z-index:9}
+  .status{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:center;padding:6px 34px 0 46px;font-size:16px;font-weight:600;z-index:8}
+  .status .icons{display:flex;gap:6px;align-items:center}
+  .bat{width:25px;height:12px;border-radius:4px;border:1.5px solid currentColor;position:relative}
+  .bat:after{content:"";position:absolute;inset:1.5px 6px 1.5px 1.5px;background:currentColor;border-radius:1.5px}
+  .screen{position:absolute;inset:0;padding:62px 20px 0;display:flex;flex-direction:column}
+  svg{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  .num{font-variant-numeric:tabular-nums}
+  .display{font-family:Manrope,system-ui,sans-serif;letter-spacing:-.03em;font-weight:700}
+  .muted{color:var(--ink2)}
+  .navbar{display:flex;align-items:center;gap:8px;height:44px;margin:0 -4px 6px}
+  .navbar svg{width:24px;height:24px;color:var(--ink2)}
+  .navbar .t{font-size:17px;font-weight:600}
+  .navbar .t small{display:block;font-size:12px;color:var(--ink2);font-weight:400}
+  .group{border-radius:20px;overflow:hidden;background:rgba(31,35,49,.86)}
+  .rowi{display:flex;align-items:center;gap:12px;padding:12px 16px;min-height:52px;font-size:17px;line-height:22px}
+  .rowi + .rowi{box-shadow:inset 0 1px 0 var(--sep)}
+  .rowi .lbl{flex:1}
+  .rowi .lbl small{display:block;font-size:13px;line-height:18px;margin-top:1px;color:var(--ink2)}
+  .rowi .ico{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--card2);flex:none}
+  .rowi .ico svg{width:18px;height:18px}
+  .chev{width:16px;height:16px;opacity:.5}
+  .btn{height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;gap:8px}
+  .btn.primary{background:radial-gradient(circle at 50% 0%,#F7A072 0%,#EE754E 60%,#E26A44 100%);color:var(--on);box-shadow:0 8px 30px rgba(238,117,78,.25)}
+  .btn.secondary{background:var(--card2);color:var(--ink)}
+  .chip{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:999px;font-size:15px;font-weight:500;background:var(--card2);color:var(--ink)}
+  .chip.sel{background:rgba(124,196,176,.16);color:var(--calm);box-shadow:inset 0 0 0 1px rgba(124,196,176,.35)}
+  .section{font-size:13px;line-height:18px;color:var(--ink2);margin:18px 4px 8px;font-weight:600}
+
+  /* 1 Contrato de la noche + calendario */
+  .week{display:flex;justify-content:space-between;margin:10px 0 4px}
+  .day{width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--ink2)}
+  .day b{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:16px;font-weight:600;color:var(--ink);background:transparent}
+  .day.today b{background:var(--card2);box-shadow:inset 0 0 0 1.5px var(--ember)}
+  .day i{width:6px;height:6px;border-radius:50%;background:transparent}
+  .day.guard i{background:var(--ember)}
+  .q{font-size:32px;line-height:38px;margin:26px 4px 8px}
+  .qsub{font-size:17px;line-height:22px;color:var(--ink2);margin:0 4px 20px}
+  .qsub b{color:var(--ink);font-weight:600}
+
+  /* 2 Home C2 */
+  .state{padding:30px 4px 26px}
+  .big{font-size:64px;line-height:68px;font-weight:600}
+  .big small{font-size:28px;color:var(--ink2);margin:0 6px 0 4px}
+  .sub{font-size:17px;line-height:22px;color:var(--ink2);margin-top:6px}
+  .sub b{color:var(--ember);font-weight:600}
+  .status-line{padding:0 4px;margin-bottom:14px}
+  .status-line strong{display:block;font-size:20px;line-height:25px;color:var(--calm)}
+  .status-line span{display:block;font-size:15px;line-height:20px;margin-top:3px;color:var(--ink2)}
+  .spacer{flex:1}
+  .bar{position:relative;height:96px;margin:0 -20px}
+  .sunwrap{position:absolute;left:50%;top:-62px;transform:translateX(-50%);width:120px;height:120px}
+  .halo{position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle,rgba(238,117,78,.30) 0%,rgba(238,117,78,.10) 45%,rgba(238,117,78,0) 70%)}
+  .sun{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 28%,#F7A072 0%,#EE754E 55%,#D9603C 100%);box-shadow:0 0 0 10px rgba(238,117,78,.09)}
+  .glass{position:absolute;inset:0;background:rgba(36,30,44,.80);box-shadow:inset 0 1px 0 #4A3F55;backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);display:flex;justify-content:space-between;padding:12px 46px 0}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:500;width:72px;color:var(--ink2)}
+  .tab svg{width:25px;height:25px}
+  .tab.on{color:var(--ink)}
+  .sunlbl{position:absolute;left:50%;top:44px;transform:translateX(-50%);font-size:11px;font-weight:600;color:var(--ember);z-index:2}
+
+  /* 3 Alerta en pantalla bloqueada */
+  .lock{background:linear-gradient(180deg,#10121B 0%,#151826 50%,#2A2232 100%)}
+  .lock .date{text-align:center;font-size:20px;font-weight:600;margin-top:40px;color:#cfcbd6}
+  .lock .clock{text-align:center;font-size:96px;line-height:100px;font-weight:600;letter-spacing:-.03em;color:#e9e5ee}
+  .notif{margin-top:40px;border-radius:24px;background:rgba(58,52,70,.72);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);padding:14px 16px 16px}
+  .notif .top{display:flex;align-items:center;gap:8px;font-size:13px;color:#b9b4c4}
+  .notif .appi{width:22px;height:22px;border-radius:6px;background:radial-gradient(circle at 50% 30%,#F7A072,#EE754E 60%,#D9603C);display:grid;place-items:center}
+  .notif .appi span{width:10px;height:10px;border-radius:50%;background:#1E1310;opacity:.0}
+  .notif .tag{margin-left:auto;display:inline-flex;align-items:center;gap:4px;color:var(--alert);font-weight:600}
+  .notif .tag svg{width:14px;height:14px;stroke-width:2.2}
+  .notif h4{font-size:17px;line-height:22px;font-weight:600;margin-top:8px;color:#f0ecf4}
+  .notif p{font-size:15px;line-height:20px;margin-top:3px;color:#d6d1dd}
+  .actions{margin-top:10px;border-radius:20px;overflow:hidden;background:rgba(58,52,70,.72);backdrop-filter:blur(30px)}
+  .actions div{height:50px;display:flex;align-items:center;justify-content:center;font-size:17px}
+  .actions div + div{box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+  .actions .seen{color:var(--ember);font-weight:600}
+  .callnote{margin-top:16px;display:flex;align-items:center;gap:10px;font-size:15px;line-height:20px;color:#b9b4c4;padding:0 8px}
+  .callnote svg{width:20px;height:20px;color:var(--ember);flex:none}
+  .lockbottom{position:absolute;left:0;right:0;bottom:30px;display:flex;justify-content:space-between;padding:0 48px}
+  .lockbottom span{width:50px;height:50px;border-radius:50%;background:rgba(58,52,70,.6);display:grid;place-items:center}
+  .lockbottom svg{width:22px;height:22px;color:#cfcbd6}
+  .homeind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#e9e5ee;opacity:.8}
+
+  /* 4 Chat descarga de pendientes */
+  .sol-av{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#F7A072,#EE754E 60%,#D9603C);flex:none}
+  .msgs{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .m{max-width:78%;padding:10px 14px;border-radius:20px;font-size:17px;line-height:22px}
+  .m.sol{background:var(--card);border-bottom-left-radius:6px;align-self:flex-start}
+  .m.me{background:#3A3550;align-self:flex-end;border-bottom-right-radius:6px}
+  .m.note{align-self:flex-start;background:transparent;padding:0 4px;font-size:13px;color:var(--ink2)}
+  .count{align-self:center;font-size:12px;color:var(--ink2);padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.05);margin:4px 0}
+  .quick{display:flex;gap:8px;margin:14px 0 12px}
+  .quick .chip.go{background:rgba(238,117,78,.14);color:var(--ember);box-shadow:inset 0 0 0 1px rgba(238,117,78,.35)}
+  .input{height:48px;border-radius:999px;background:var(--card);display:flex;align-items:center;padding:0 8px 0 18px;font-size:17px;color:var(--ink2);margin-bottom:34px}
+  .input .mic{margin-left:auto;width:36px;height:36px;border-radius:50%;background:var(--card2);display:grid;place-items:center}
+  .input .mic svg{width:18px;height:18px;color:var(--ink)}
+
+  /* 5 Parte de la mañana */
+  .morning{background:linear-gradient(180deg,#3A2A33 0%,#2A2433 22%,#1D1E2B 48%,#171A26 100%)}
+  .rise{position:absolute;left:50%;top:-120px;transform:translateX(-50%);width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(247,160,114,.35) 0%,rgba(238,117,78,.12) 40%,rgba(238,117,78,0) 70%)}
+  .hello{font-size:30px;line-height:36px;margin:18px 4px 4px}
+  .woke{border-radius:20px;background:rgba(31,35,49,.9);padding:14px 16px}
+  .woke .h{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+  .woke .h b{color:var(--alert);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+  .woke .h b svg{width:14px;height:14px;stroke-width:2.2}
+  .woke h5{font-size:17px;line-height:22px;font-weight:600;margin-top:6px}
+  .woke p{font-size:13px;line-height:18px;color:var(--ink2);margin-top:2px}
+  .fb{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+  .fb .chip{height:32px;font-size:14px;padding:0 12px}
+
+  /* 6 Métricas */
+  .ringwrap{position:relative;width:250px;height:250px;margin:14px auto 6px}
+  .ringwrap svg{position:absolute;inset:0}
+  .ringc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ringc strong{font-size:52px;line-height:56px;font-weight:600}
+  .ringc span{font-size:15px;color:var(--ink2);margin-top:2px}
+  .stats{display:flex;gap:10px;margin:14px 0 16px}
+  .stat{flex:1;border-radius:18px;background:rgba(31,35,49,.86);padding:12px}
+  .stat b{display:block;font-size:24px;line-height:28px;font-weight:600}
+  .stat span{display:block;font-size:13px;line-height:17px;color:var(--ink2);margin-top:2px}
+  .grad{border-radius:22px;background:rgba(31,35,49,.92);padding:16px}
+  .grad h5{font-size:20px;line-height:25px}
+  .grad p{font-size:15px;line-height:20px;color:var(--ink2);margin:4px 0 14px}
+  .grad .btn{height:48px;font-size:16px}
+  .grad .btn + .btn{margin-top:8px}
+</style>
+</head>
+<body>
+<div class="board-title">Solsets en el celular, dirección Ocaso</div>
+<div class="board-sub">Una pantalla por funcionalidad oficial. Datos de ejemplo, inventados.</div>
+<div class="grid">
+
+<!-- 1 -->
+<div class="col">
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status"><span class="num">22:31</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+    <div class="screen">
+      <div class="navbar" style="justify-content:space-between;padding:0 4px"><span class="t">Tus turnos<small>Octubre, semana 43</small></span><svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></div>
+      <div class="week">
+        <div class="day guard"><span>L</span><b>20</b><i></i></div>
+        <div class="day"><span>M</span><b>21</b><i></i></div>
+        <div class="day guard"><span>M</span><b>22</b><i></i></div>
+        <div class="day today guard"><span>J</span><b>23</b><i></i></div>
+        <div class="day"><span>V</span><b>24</b><i></i></div>
+        <div class="day"><span>S</span><b>25</b><i></i></div>
+        <div class="day guard"><span>D</span><b>26</b><i></i></div>
+      </div>
+      <div class="q display">Te toca guardia esta noche?</div>
+      <div class="qsub">Tu calendario dice que <b>sí, de 23:00 a 07:00</b>. Solo confírmalo.</div>
+      <div class="btn primary">Sí, me toca</div>
+      <div class="btn secondary" style="margin-top:10px">No, esta noche no</div>
+      <div class="section">Si dices que sí, te despierto solo por esto</div>
+      <div class="group">
+        <div class="rowi"><span class="ico" style="color:var(--alert)"><svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="lbl">Un servicio crítico se cae</span></div>
+        <div class="rowi"><span class="ico" style="color:var(--ember)"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/></svg></span><span class="lbl">Algo nuevo que no conozco</span></div>
+        <div class="rowi"><span class="ico" style="color:var(--ink2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span><span class="lbl">Cuando no estoy seguro</span></div>
+      </div>
+      <div class="qsub" style="font-size:13px;line-height:18px;margin-top:10px">Te aviso con una notificación. Si no tocas "Lo vi" en 3 minutos, te llamo.</div>
+    </div>
+  </div>
+  <div class="caption">1. Contrato de la noche<small>Con la respuesta sugerida por el calendario de turnos (3)</small></div>
+</div>
+
+<!-- 2 -->
+<div class="col">
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status"><span class="num">02:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+    <div class="screen">
+      <div style="padding:6px 4px 0"><div class="display" style="font-size:26px;line-height:32px">Buenas noches, Rodrigo</div><div class="muted" style="font-size:15px;margin-top:2px">Guardia de soporte hasta las 07:00</div></div>
+      <div class="state">
+        <div class="big display num">4<small>h</small>19<small>min</small></div>
+        <div class="sub">para tu alarma. <b>Sol está de guardia.</b></div>
+      </div>
+      <div class="status-line"><strong class="display">Todo tranquilo</strong><span>Revisé 14 mensajes. Ninguno era urgente.</span></div>
+      <div class="group">
+        <div class="rowi"><span class="lbl">Para el parte de la mañana<small>Reseteo de clave de Paula, el último</small></span><span class="num">6</span><svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        <div class="rowi"><span class="lbl">Modo sombra<small>No silencio nada, solo te muestro qué haría</small></span><span>Activo</span></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="bar">
+        <div class="sunwrap"><div class="halo"></div><div class="sun"></div></div>
+        <nav class="glass">
+          <span class="tab on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</span>
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg>Ajustes</span>
+        </nav>
+        <span class="sunlbl">Guardia</span>
+      </div>
+    </div>
+  </div>
+  <div class="caption">Inicio de noche<small>El sol que asoma es el botón de la guardia</small></div>
+</div>
+
+<!-- 3 -->
+<div class="col">
+  <div class="phone lock">
+    <div class="island"></div>
+    <div class="status"><span></span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+    <div class="screen">
+      <div class="date">viernes 24 de octubre</div>
+      <div class="clock num">3:12</div>
+      <div class="notif">
+        <div class="top"><span class="appi"></span>SOL<span class="tag"><svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>Urgente</span></div>
+        <h4>Se cayó la VPN de la sucursal Ñuñoa</h4>
+        <p>12 personas sin acceso desde las 03:05. Es nuevo y crítico, por eso te desperté.</p>
+      </div>
+      <div class="actions"><div class="seen">Lo vi</div><div>Abrir en Sol</div></div>
+      <div class="callnote"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Si no tocas "Lo vi", te llamo a las 3:15 y repito la llamada.</span></div>
+      <div class="lockbottom"><span><svg viewBox="0 0 24 24"><path d="M9 2h6M10 2v3l-3 5v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V10l-3-5V2"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg></span></div>
+      <div class="homeind"></div>
+    </div>
+  </div>
+  <div class="caption">2. Alerta imposible de perder<small>Push con "Lo vi" y llamada si no responde</small></div>
+</div>
+
+<!-- 4 -->
+<div class="col">
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status"><span class="num">22:38</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+    <div class="screen">
+      <div class="navbar"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg><span class="sol-av"></span><span class="t">Sol<small>Descarga de la noche, menos de un minuto</small></span></div>
+      <div class="msgs">
+        <div class="m sol">Antes de dormir, qué te está dando vueltas? Lo anoto y mañana te lo muestro.</div>
+        <div class="m me">Renovar el certificado del correo antes de las 10</div>
+        <div class="m sol">Anotado. Va primero en el parte de las 07:00. Algo más?</div>
+        <div class="m me">Llamar a Paula por el notebook nuevo</div>
+        <div class="count">2 pendientes guardados para mañana</div>
+        <div class="m sol">Listo. Con eso puedes soltar el teléfono, yo me quedo de guardia.</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="quick"><span class="chip go">Eso es todo</span><span class="chip">Uno más</span></div>
+      <div class="input">Escribe o dicta<span class="mic"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></span></div>
+    </div>
+  </div>
+  <div class="caption">5. Descarga de pendientes<small>En el chat con Sol, antes de acostarse</small></div>
+</div>
+
+<!-- 5 -->
+<div class="col">
+  <div class="phone morning">
+    <div class="rise"></div>
+    <div class="island"></div>
+    <div class="status"><span class="num">07:02</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+    <div class="screen">
+      <div class="hello display">Buenos días, Rodrigo</div>
+      <div class="muted" style="font-size:17px;line-height:22px;margin:0 4px">Anoche te desperté una vez. Lo demás te esperó.</div>
+      <div class="section">Te desperté</div>
+      <div class="woke">
+        <div class="h"><b><svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>Urgente</b><span class="num">03:12, lo viste a las 03:13</span></div>
+        <h5>Se cayó la VPN de la sucursal Ñuñoa</h5>
+        <div class="fb"><span class="chip sel">Bien</span><span class="chip">No debió despertarme</span></div>
+      </div>
+      <div class="section">Te esperó hasta ahora</div>
+      <div class="group">
+        <div class="rowi"><span class="lbl">Renovar certificado del correo<small>Lo anotaste tú anoche</small></span></div>
+        <div class="rowi"><span class="lbl">Reseteo de clave de Paula<small>01:47, por WhatsApp</small><div class="fb" style="margin-top:8px"><span class="chip">Bien</span><span class="chip">Debió despertarme</span></div></span></div>
+        <div class="rowi"><span class="lbl">Cambio de turno del sábado<small>Falta que confirmes la fecha</small></span><svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+      </div>
+      <div class="group" style="margin-top:10px"><div class="rowi"><span class="lbl">7 mensajes sin importancia<small>Los revisé y no hacen falta</small></span><svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div></div>
+    </div>
+  </div>
+  <div class="caption">Parte de la mañana<small>Con el feedback de un toque que alimenta la 4</small></div>
+</div>
+
+<!-- 6 -->
+<div class="col">
+  <div class="phone">
+    <div class="island"></div>
+    <div class="status"><span class="num">07:05</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+    <div class="screen">
+      <div class="navbar"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg><span class="t">Cómo voy en modo sombra</span></div>
+      <div class="ringwrap">
+        <svg viewBox="0 0 250 250"><circle cx="125" cy="125" r="112" stroke="rgba(124,196,176,.14)" stroke-width="12"/><circle cx="125" cy="125" r="112" stroke="#7CC4B0" stroke-width="12" stroke-dasharray="654.6 704" transform="rotate(-90 125 125)"/></svg>
+        <div class="ringc"><strong class="display num">41<small style="font-size:26px;color:var(--ink2)"> de 44</small></strong><span style="text-align:center;max-width:160px">decisiones bien,<br>según tu feedback</span></div>
+      </div>
+      <div class="group" style="margin:12px 0 14px">
+        <div class="rowi"><span class="lbl">Noches en modo sombra</span><span class="num">3</span></div>
+        <div class="rowi"><span class="lbl">Te habría despertado de más</span><span class="num">2</span></div>
+        <div class="rowi"><span class="lbl">Debí despertarte y no lo hice</span><span class="num">1</span></div>
+      </div>
+      <div class="grad">
+        <h5 class="display">Listo para el modo real?</h5>
+        <p>En modo real dejo de mostrarte todo y solo te despierto por lo urgente. Ante la duda, igual te despierto.</p>
+        <div class="btn primary">Pasar a modo real</div>
+        <div class="btn secondary">Una noche más en sombra</div>
+      </div>
+    </div>
+  </div>
+  <div class="caption">4. Métricas y graduación<small>Cuánto acertó y la propuesta de salir del modo sombra</small></div>
+</div>
+
+</div>
+</body>
+</html>

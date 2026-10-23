@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-rise",
+  "title": "RISE",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Estimaciones de deuda de sueño y energía; hábitos y recordatorios.",
+  "aesthetic": "Negro/morado, curvas y eje horario; una métrica ocupa el centro.",
+  "takeaway": "Parte temporal de la noche y próximos hitos comprensibles.",
+  "limit": "Solsets todavía no mide el sueño ni puede calcular esa deuda.",
+  "url": "https://www.risescience.com/",
+  "appStore": "https://apps.apple.com/us/app/rise-sleep-tracker/id1453884781?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/rise.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d2/f2/d3/d2f2d366-e031-0f54-7ae9-308f94d76f49/6c0d466d-dd53-4e7e-a3e7-fe3bdb1f5f29_5.5_SS2.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

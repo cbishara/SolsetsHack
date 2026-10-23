@@ -1,0 +1,55 @@
+{
+  "type": "feature",
+  "id": "feat-quito-descarga",
+  "title": "Dejar pendientes en el chat para la mañana",
+  "owner": "Quito",
+  "collaborators": [
+    "Quito: comportamiento del chat y recuperación",
+    "Amaru: pantalla del chat"
+  ],
+  "moment": "preparar",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "summary": "Rodrigo deja lo que le preocupa antes de dormir y lo encuentra en el parte de la mañana.",
+  "need": "Poder dejar de repasar mentalmente un pendiente por miedo a olvidarlo.",
+  "userActions": [
+    "Anota en el chat, en una descarga breve de menos de un minuto antes de acostarse, lo que le preocupa.",
+    "Vuelve a encontrar esos pendientes en el parte de la mañana."
+  ],
+  "systemActions": [
+    "Recoge los pendientes escritos dentro del chat.",
+    "Los incorpora al parte de la mañana sin afirmar que fueron resueltos."
+  ],
+  "example": "Ejemplo ficticio del acuerdo: antes de dormir, Rodrigo escribe «Mañana revisar el turno de la próxima semana». En el parte debe poder reconocer ese pendiente. La ficha todavía no acredita almacenamiento o recuperación implementados.",
+  "rules": [
+    "El lugar acordado para la descarga es el chat.",
+    "Guardar un pendiente no equivale a resolverlo ni a ejecutar una acción externa.",
+    "El límite actual del ADR es menos de un minuto, antes de acostarse."
+  ],
+  "limits": [
+    "No introducir información privada en ejemplos o capturas del tablero.",
+    "No convertir una preocupación escrita en una orden de compra, envío o cambio de horario sin un flujo específico."
+  ],
+  "acceptance": [
+    "Un pendiente ficticio escrito por la noche se puede identificar en el parte.",
+    "Rodrigo distingue lo guardado de lo que realmente se resolvió."
+  ],
+  "questions": [
+    "¿Cómo se confirma que el pendiente quedó guardado?",
+    "¿Qué ocurre con ediciones, borrados o fallos de conexión?",
+    "¿Qué horario y zona horaria definen el parte de la mañana?"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ],
+  "relatedFeatureIds": [],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo de producto: descarga de pendientes",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    }
+  ]
+}

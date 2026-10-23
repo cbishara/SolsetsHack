@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-freedom",
+  "title": "Freedom",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "Bloqueo de apps y webs, sesiones entre dispositivos, horarios recurrentes y modo estricto.",
+  "aesthetic": "Verde bosque y salvia; pantallas claras; listas y temporizador sobrios.",
+  "takeaway": "Mostrar alcance y duración de una sesión.",
+  "limit": "Verificar excepciones de guardia antes de adoptar bloqueos estrictos.",
+  "url": "https://freedom.to/",
+  "appStore": "https://apps.apple.com/us/app/freedom-screen-time-control/id1269788228?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/freedom.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/85/b0/0b/85b00b5d-67b9-e389-2852-eb90bf1000f4/EN_-_iOS_-_1.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

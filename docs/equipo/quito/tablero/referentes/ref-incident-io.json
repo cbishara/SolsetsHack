@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-incident-io",
+  "title": "incident.io",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "guardia-profesional",
+  "summary": "Conecta fuentes, rutas, calendarios y escalamiento; permite confirmar, posponer, cancelar o reasignar.",
+  "aesthetic": "",
+  "takeaway": "Enseña a hacer visible quién recibe una alerta y cómo avanza.",
+  "limit": "Es una solución de operación de incidentes; la documentación revisada no presenta el acompañamiento cotidiano de Rodrigo.",
+  "url": "https://docs.incident.io/on-call/escalations",
+  "appStore": null,
+  "image": "docs/equipo/quito/tablero/referentes/img/incident-io.jpg",
+  "imageSource": "https://docs.incident.io/mintlify-assets/_mintlify/favicons/incidentio-18bb4170/YazI2mNDinjO9EIY/_generated/favicon/android-chrome-192x192.png",
+  "evidence": [
+    {
+      "label": "Soluciones existentes",
+      "path": "docs/equipo/quito/research/wellness/soluciones.md"
+    }
+  ]
+}

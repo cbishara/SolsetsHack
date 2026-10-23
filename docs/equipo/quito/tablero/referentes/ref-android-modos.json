@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-android-modos",
+  "title": "Android: Modos y No molestar",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "controles-nativos",
+  "summary": "Horarios de descanso y filtros de personas, conversaciones, apps, alarmas y otras interrupciones. Las opciones dependen del fabricante y la versión.",
+  "aesthetic": "",
+  "takeaway": "Puede cubrir parte del problema de notificaciones.",
+  "limit": "Hay que separar la configuración del dispositivo de la lógica que clasifica mensajes y genera el parte.",
+  "url": "https://support.google.com/android/answer/9069335?hl=en",
+  "appStore": null,
+  "image": null,
+  "imageSource": null,
+  "evidence": [
+    {
+      "label": "Soluciones existentes",
+      "path": "docs/equipo/quito/research/wellness/soluciones.md"
+    }
+  ]
+}

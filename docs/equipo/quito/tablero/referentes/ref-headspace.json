@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-headspace",
+  "title": "Headspace",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Meditaciones, recursos para dormir y ejercicios/programas por necesidad.",
+  "aesthetic": "Ilustración simple, amarillo/naranja; tonos oscuros en contenido de sueño.",
+  "takeaway": "Explicaciones cercanas y prácticas breves ligadas al momento.",
+  "limit": "Evitar sumar cursos o tareas a alguien ya sobrecargado.",
+  "url": "https://www.headspace.com/",
+  "appStore": "https://apps.apple.com/us/app/headspace-sleep-meditation/id493145008?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/headspace.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/32/c2/9d/32c29ddf-48c3-99a3-1f38-e05fa2a739f5/4e362280-094d-45b5-9b86-4c93af24d424_1242x2208bb__U002834_U0029.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

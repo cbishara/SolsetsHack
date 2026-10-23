@@ -1,0 +1,54 @@
+{
+  "type": "feature",
+  "id": "feat-amaru-confianza",
+  "title": "Revisar aciertos antes de activar el modo real",
+  "owner": "Amaru",
+  "collaborators": [
+    "Amaru: métricas y propuesta de graduación",
+    "Quito: criterio de las decisiones del agente"
+  ],
+  "moment": "manana",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "summary": "El feedback de Rodrigo permite revisar aciertos y plantear el paso de modo sombra a modo real.",
+  "need": "Construir confianza con ejemplos y resultados comprensibles antes de delegar decisiones.",
+  "userActions": [
+    "Indica si una decisión fue correcta o si debió actuar de otra forma.",
+    "Revisa el resumen de resultados y una eventual propuesta de pasar a modo real."
+  ],
+  "systemActions": [
+    "Relaciona las decisiones con el feedback que dio Rodrigo.",
+    "Muestra métricas de acierto y, tras algunas noches, una propuesta de graduación según los criterios que el equipo defina."
+  ],
+  "example": "Ejemplo del objetivo acordado: Rodrigo revisa decisiones ficticias de varias noches y marca cuáles fueron adecuadas. El panel debería ayudarlo a entender esos resultados. El número de noches y el umbral de graduación siguen abiertos.",
+  "rules": [
+    "Las métricas deben indicar qué feedback y período consideran.",
+    "La propuesta de graduación no acredita que ya exista un criterio implementado."
+  ],
+  "limits": [
+    "No convertir el número de aciertos en una afirmación de horas de sueño ganadas.",
+    "No presentar una muestra ficticia como validación con personas o dispositivos reales."
+  ],
+  "acceptance": [
+    "Una persona puede relacionar una cifra del resumen con las decisiones que la componen.",
+    "Los criterios pendientes de graduación están visibles."
+  ],
+  "questions": [
+    "¿Qué significa acierto cuando falta feedback?",
+    "¿Cuántas noches y qué umbral permiten proponer la graduación?",
+    "¿Cómo confirma Rodrigo el cambio y cómo vuelve atrás?"
+  ],
+  "flowIds": [
+    "flujo-quito-revisar-confianza"
+  ],
+  "relatedFeatureIds": [],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo de producto: métricas y modo sombra",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    }
+  ]
+}

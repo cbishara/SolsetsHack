@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-fabulous",
+  "title": "Fabulous",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "reflexion-planificacion",
+  "summary": "Rutinas, hábitos, coaching, objetivos, diario y prácticas de autocuidado.",
+  "aesthetic": "Ilustración editorial, tarjetas de papel y secuencias coloridas de acciones.",
+  "takeaway": "Ritual corto y gradual.",
+  "limit": "Ajustarlo a turnos rotativos y evitar listas rígidas que produzcan culpa.",
+  "url": "https://www.thefabulous.co/",
+  "appStore": "https://apps.apple.com/us/app/fabulous-daily-habit-tracker/id1203637303?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/fabulous.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/68/bc/81/68bc81ea-e95c-23f7-655f-bd5c9aff374d/0x0ss-1.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

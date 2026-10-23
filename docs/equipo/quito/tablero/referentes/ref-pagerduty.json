@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-pagerduty",
+  "title": "PagerDuty",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "guardia-profesional",
+  "summary": "Calendarios on-call, servicios y políticas que escalan al siguiente responsable si no hay respuesta.",
+  "aesthetic": "",
+  "takeaway": "Referente operativo para responsabilidad, confirmación y respaldo.",
+  "limit": "Requiere configurar fuentes y servicios; el flujo documentado no equivale a leer y gestionar todo el WhatsApp personal.",
+  "url": "https://docs.pagerduty.com/incident-management/schedules/escalation-policies-and-schedules",
+  "appStore": null,
+  "image": "docs/equipo/quito/tablero/referentes/img/pagerduty.jpg",
+  "imageSource": "https://docs.pagerduty.com/images/kb/9f320fe657553a50d46238d58ab4722b965faba511236a6d3abf2ef256a19f91-primary-schedule.webp",
+  "evidence": [
+    {
+      "label": "Soluciones existentes",
+      "path": "docs/equipo/quito/research/wellness/soluciones.md"
+    }
+  ]
+}

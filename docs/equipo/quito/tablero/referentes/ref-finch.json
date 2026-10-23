@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-finch",
+  "title": "Finch",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "reflexion-planificacion",
+  "summary": "Mascota, objetivos pequeños, chequeos de ánimo, diario y respiración.",
+  "aesthetic": "Personajes, ilustración, verdes y cielo azul; checklist y recompensas.",
+  "takeaway": "Feedback amable y breve; reconocer avances sin penalizar el descanso.",
+  "limit": "El tono lúdico y la mascota requieren validación con Rodrigo.",
+  "url": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748",
+  "appStore": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/finch.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e8/ca/ee/e8caee25-4118-702c-c751-02a9ce6b8c66/iPhone_social_large_02.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

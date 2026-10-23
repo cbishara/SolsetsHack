@@ -2,7 +2,7 @@
 
 Funcionalidad: que Rodrigo entienda qué hizo el agente y confíe en él.
 
-Archivos del carril: `mobile/` (la app Expo, en TypeScript). Se parte de cero; `web/` es el prototipo de Amaru y queda como referencia. El tono de lo que el agente le escribe a Rodrigo lo define Bishara; quién edita el archivo del prompt está abierto en `adr/por-confirmar/2026-10-23-quien-edita-el-prompt.md`.
+Archivos del carril: `mobile/` (la app Expo, en TypeScript). Se parte de cero; `web/` es el prototipo de Amaru y queda como referencia. El prompt del agente vive en `agent/` y lo edita Quito (`adr/oficiales/2026-10-23-quien-edita-el-prompt.md`). Ese ADR le da el tono a Amaru; si el tono pasa a Bishara con la app, hay que confirmarlo con Quito y Amaru.
 
 Tomó este carril el 2026-10-23, en el trueque con Amaru (`adr/oficiales/2026-10-23-trueque-bishara-amaru.md`). Antes llevaba `server/`; esa base quedó en el PR #15 y pasó a Amaru.
 

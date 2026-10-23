@@ -7,7 +7,7 @@
   "updatedAt": "2026-10-23",
   "moment": "preparar",
   "summary": "Antes de dormir, la app pregunta si esa noche le toca guardia, con la respuesta sugerida por el calendario de turnos. Si dice que sí, muestra qué lo va a despertar y por qué canal.",
-  "designStatus": "propuesta",
+  "designStatus": "retirada",
   "buildStatus": "por-hacer",
   "featureIds": [
     "feat-quito-contrato-noche",
@@ -51,11 +51,18 @@
   ],
   "design": {
     "image": "docs/equipo/quito/tablero/pantallas/img/contrato-noche.png",
-    "label": "Maqueta, dirección Ocaso",
+    "label": "Referencia funcional; estética Ocaso reemplazada",
     "date": "2026-10-23",
     "source": "docs/equipo/quito/diseno/funcionalidades.html"
   },
   "notes": [
+    "Estética Ocaso retirada por docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md. La app usa Mi espacio con modo noche. Esta maqueta se conserva solo como referencia de contenido y flujo; no es el diseño visual vigente.",
     "La respuesta sugerida depende de que el calendario de turnos esté conectado. Sin calendario, la pregunta llega sin sugerencia."
+  ],
+  "evidence": [
+    {
+      "label": "Dirección visual vigente: Mi espacio con modo noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md"
+    }
   ]
 }

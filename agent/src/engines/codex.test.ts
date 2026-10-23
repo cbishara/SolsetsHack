@@ -59,3 +59,14 @@ test('the model flag is passed only when set', () => {
   assert.ok(!codexArgs('s', 'o', 'd', {}).includes('-m'));
   assert.deepEqual(codexArgs('s', 'o', 'd', { model: 'gpt-x' }).slice(-3), ['-m', 'gpt-x', '-']);
 });
+
+test('Luna max requests Fast explicitly without changing the default classifier arguments', () => {
+  const defaults = codexArgs('s', 'o', 'd', {});
+  assert.ok(defaults.includes('model_reasoning_effort="low"'));
+  assert.ok(!defaults.includes('service_tier="priority"'));
+  const args = codexArgs('s', 'o', 'd', { model: 'gpt-6-luna', reasoningEffort: 'max', fast: true });
+  assert.ok(args.includes('model_reasoning_effort="max"'));
+  assert.ok(args.includes('service_tier="priority"'));
+  assert.ok(args.includes('features.fast_mode=true'));
+  assert.deepEqual(args.slice(-3), ['-m', 'gpt-6-luna', '-']);
+});

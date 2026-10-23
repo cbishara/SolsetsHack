@@ -14,7 +14,9 @@ export interface CodexOptions {
   /** Path to the codex binary. Defaults to `codex` on PATH. */
   bin?: string;
   model?: string;
-  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
+  reasoningEffort?: 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+  /** Request Fast mode on the signed-in account. The CLI uses priority for this tier. */
+  fast?: boolean;
   timeoutMs?: number;
   /** Codex processes allowed at once. Protects the plan's rate limits. */
   maxConcurrent?: number;
@@ -27,6 +29,7 @@ export function codexArgs(schemaPath: string, outPath: string, workDir: string, 
     '--ignore-user-config', '--ignore-rules', '--skip-git-repo-check', '--ephemeral',
     '-s', 'read-only',
     '-c', `model_reasoning_effort="${opts.reasoningEffort ?? 'low'}"`,
+    ...(opts.fast ? ['-c', 'service_tier="priority"', '-c', 'features.fast_mode=true'] : []),
     // A classifier needs no tools: no shell, no web.
     '-c', 'features.shell_tool=false', '-c', 'features.unified_exec=false', '-c', 'web_search="disabled"',
     '-C', workDir,

@@ -32,6 +32,8 @@ export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoCh
   }
   if (multiUser) app.use('/api/v1', multiUser);
   else app.use('/api/v1', (_req, res) => res.status(503).json({ error: 'multiuser_not_enabled' }));
+  // The candidate must never expose the pilot's global state through legacy routes.
+  if (multiUser) app.use('/api', (_req, res) => res.status(503).json({ error: 'legacy_api_disabled' }));
   app.use('/api/webhooks/unipile', unipileWebhook(whatsapp, config.unipile?.webhookSecret));
 
   // Webhooks: authenticated by the secret in the URL, not by the app token.

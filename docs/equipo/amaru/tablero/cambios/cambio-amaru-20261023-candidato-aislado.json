@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-amaru-20261023-candidato-aislado",
+  "title": "Preparar el candidato sin acceso a los datos globales del piloto",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "summary": "El servidor multiusuario abre solo su almacén y bloquea la API global anterior.",
+  "before": "Habilitar multiusuario mantenía accesibles rutas del piloto y abría también su esquema de base.",
+  "after": "El candidato conserva salud y API v1; rutas globales y webhooks antiguos devuelven legacy_api_disabled. No abre el almacén persistente del piloto.",
+  "reason": "Desplegar y probar el trabajador de Quito en un servicio separado sin mezclar el contexto del piloto.",
+  "checked": "Prueba HTTP de lecturas, escrituras y webhooks antiguos rechazados; salud y v1 disponibles.",
+  "availability": "Rama amaru/whatsapp-multiuser; despliegue candidato en preparación.",
+  "featureIds": ["feat-amaru-whatsapp-multiusuario"],
+  "flowIds": ["flujo-amaru-whatsapp-multiusuario"]
+}

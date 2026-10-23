@@ -29,7 +29,8 @@ const multiUser = multiConfig && multiStore && provider && identity ? multiUserR
   store: multiStore, identity, provider, catalog: new CatalogService(multiStore, identity, provider),
   publicUrl: multiConfig.publicUrl, webhookSecret: multiConfig.webhookSecret, rateSecret: multiConfig.identitySecret,
 }) : undefined;
-const store: Store = config.databaseUrl ? await PostgresStore.connect(config.databaseUrl) : config.localDataFile ? await FileStore.connect(config.localDataFile) : new MemoryStore();
+// Multiuser uses sol_identity only; do not even open the pilot's server schema.
+const store: Store = multiConfig ? new MemoryStore() : config.databaseUrl ? await PostgresStore.connect(config.databaseUrl) : config.localDataFile ? await FileStore.connect(config.localDataFile) : new MemoryStore();
 const guard = new Guard(store, stubAgent);
 const whatsapp = config.unipile ? new WhatsAppService(store, new UnipileClient(config.unipile.dsn, config.unipile.apiKey, config.unipile.accountId)) : undefined;
 

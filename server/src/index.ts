@@ -14,12 +14,17 @@ import { IdentityService } from './multiuser/identity.ts';
 import { CatalogService } from './multiuser/catalog.ts';
 import { UnipileMultiUserProvider } from './multiuser/provider.ts';
 import { multiUserRouter } from './multiuser/routes.ts';
+import { SyntheticAgentQueue, workerRouter, fixtureRouter } from './multiuser/agent-queue.ts';
 
 const config = loadConfig();
 const multiConfig = loadMultiUserConfig(process.env);
 const multiStore = multiConfig ? await PostgresMultiUserStore.connect(multiConfig.databaseUrl) : undefined;
 const provider = multiConfig ? new UnipileMultiUserProvider(multiConfig.dsn, multiConfig.apiKey, multiConfig.botAccountId) : undefined;
 const identity = multiConfig && multiStore ? new IdentityService(multiStore, { secret: multiConfig.identitySecret }) : undefined;
+const queue = multiConfig?.workerToken && multiStore && identity ? new SyntheticAgentQueue(multiStore, identity) : undefined;
+const bridge = queue && identity && multiConfig?.workerToken ? {
+  worker: workerRouter(queue, { workerToken: multiConfig.workerToken }), demo: fixtureRouter(queue, identity),
+} : undefined;
 const multiUser = multiConfig && multiStore && provider && identity ? multiUserRouter({
   store: multiStore, identity, provider, catalog: new CatalogService(multiStore, identity, provider),
   publicUrl: multiConfig.publicUrl, webhookSecret: multiConfig.webhookSecret, rateSecret: multiConfig.identitySecret,
@@ -31,7 +36,7 @@ const whatsapp = config.unipile ? new WhatsAppService(store, new UnipileClient(c
 if (config.email) startEmailPolling(guard, config.email);
 if (config.twoChat.webhookToken) await guard.setSource('whatsapp', 'whatsapp', 'unknown', 'Esperando el primer evento de 2Chat');
 
-const server = createApp(guard, config, whatsapp, multiUser).listen(config.port, '0.0.0.0', () => {
+const server = createApp(guard, config, whatsapp, multiUser, bridge).listen(config.port, '0.0.0.0', () => {
   console.log(
     `solsets-server · puerto ${config.port} · base ${config.databaseUrl ? 'postgres' : config.localDataFile ? 'archivo local' : 'memoria'} · ` +
       `whatsapp ${whatsapp ? 'Unipile configurado (verificar /api/whatsapp/status)' : config.twoChat.webhookToken ? '2Chat' : 'apagado'} · correo ${config.email ? 'activo' : 'apagado'}`,

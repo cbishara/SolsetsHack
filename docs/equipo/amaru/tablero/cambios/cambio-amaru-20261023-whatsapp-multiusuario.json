@@ -1,10 +1,19 @@
 {
-  "type":"change", "id":"cambio-amaru-20261023-whatsapp-multiusuario", "title":"Separar usuarios antes de conectar el bot", "owner":"Amaru", "updatedAt":"2026-10-23",
-  "summary":"Candidato de backend con QR/código, selección explícita y aislamiento para un bot compartido.",
-  "before":"PR23 recibía chats elegidos por un solo propietario con Bearer global.",
-  "after":"Nueva API candidata con sesiones, verificación exclusiva, catálogo sin contenido y bandejas separadas. El agente sigue explícitamente pendiente.",
-  "reason":"Amaru pidió coordinar con Quito el backend multiusuario y entregar a Bishara después de verificarlo.",
-  "checked":"63 pruebas server y TypeScript aprobados. Plan/reparto enviados en #30; Quito publicó puente sintético #31. Sin despliegue ni códigos reales.",
-  "availability":"Rama amaru/whatsapp-multiuser, desactivada por defecto; no sustituye el piloto desplegado.",
-  "featureIds":["feat-amaru-whatsapp-multiusuario"], "flowIds":["flujo-amaru-whatsapp-multiusuario"]
+  "type": "change",
+  "id": "cambio-amaru-20261023-whatsapp-multiusuario",
+  "title": "Separar usuarios antes de conectar el bot",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "summary": "Candidato de backend con QR/código, selección explícita y aislamiento para un bot compartido.",
+  "before": "PR23 recibía chats elegidos por un solo propietario con Bearer global.",
+  "after": "Nueva API candidata con sesiones, verificación exclusiva, catálogo sin contenido y bandejas separadas. El agente sigue explícitamente pendiente.",
+  "reason": "Amaru pidió coordinar con Quito el backend multiusuario y entregar a Bishara después de verificarlo.",
+  "checked": "75 pruebas server y TypeScript pasan. Puente v0 interoperable con código exacto de Quito; PostgreSQL 17 local verifica concurrencia/reinicio. Cero llamadas al modelo ni códigos reales. Plan v1 pendiente #30.",
+  "availability": "Rama amaru/whatsapp-multiuser, desactivada por defecto; no sustituye el piloto desplegado.",
+  "featureIds": [
+    "feat-amaru-whatsapp-multiusuario"
+  ],
+  "flowIds": [
+    "flujo-amaru-whatsapp-multiusuario"
+  ]
 }

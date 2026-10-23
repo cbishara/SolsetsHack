@@ -103,6 +103,26 @@ Opt-in `SOL_MULTIUSER_ENABLED=true`, Postgres obligatorio, `UNIPILE_BOT_ACCOUNT_
 
 El candidato todavía no es un sistema completo de login/recuperación: crea identidad por instalación con sesión de 30 días. No sincroniza otra instalación ni recupera una sesión perdida; rechaza reasignar una cuenta ya vinculada. Hay que cerrar login/recuperación antes de distribuirlo a usuarios finales. El límite de creación usa IP del socket sin confiar en cabeceras del cliente; ajustar el edge verificado antes de escalar tras proxy.
 
-No se han enviado OTP reales ni activado este candidato en Railway. La integración real del trabajador, las sugerencias del modelo, respuestas salientes del agente, borrado/retención y frontend siguen pendientes. Quito publicó v0 sintético en PR #31; se está construyendo el extremo de servidor. La ampliación v1 para sugerencias y evidencia de chats se propuso en #30; no enviar esos trabajos a v0.
+No se han enviado OTP reales ni activado este candidato en Railway. La integración real del trabajador, las sugerencias del modelo, respuestas salientes del agente, borrado/retención y frontend siguen pendientes. Quito publicó v0 sintético en PR #31; el extremo de servidor y la interoperabilidad ya están verificados abajo. La ampliación v1 para sugerencias y evidencia de chats se propuso en #30; no enviar esos trabajos a v0.
 
-Evidencia inicial: 63 pruebas server aprobadas (42 nuevas de identidad, catálogo, proveedor y HTTP); TypeScript pasa. Las pruebas HTTP ejercitan dos usuarios, callback/OTP/activación, selección manual, revocación durante REST, bot compartido, mensajes propios/antiguos ignorados y reintento tras falla de suscripción. Son fixtures sintéticos del proveedor, no una prueba real de Unipile ni del modelo. Postgres real se registra aparte cuando se verifique.
+Evidencia actual: 75 pruebas server aprobadas (54 nuevas de identidad, catálogo, proveedor, HTTP y cola); TypeScript pasa. Las pruebas HTTP ejercitan dos usuarios, callback/OTP/activación, selección manual, revocación durante REST, bot compartido, mensajes propios/antiguos ignorados y reintento tras falla de suscripción. Son fixtures sintéticos del proveedor, no una prueba real de Unipile ni del modelo.
+
+## Puente de Quito: v0 probado, v1 pendiente
+
+`server/src/multiuser/agent-queue.ts` implementa el servidor del contrato de Quito `8f939eeadcda82b5ed02b179b71bffcd5471b09f`: `POST /internal/agent/v0/claim`, `/jobs/:id/result` y `/jobs/:id/failure`. Autenticación exclusiva del trabajador; resultado y memoria se aplican atómicamente si la reserva y versión siguen vigentes. Repetir una entrega idéntica no la aplica dos veces. Una inferencia interrumpida o reserva vencida queda incierta; no se vuelve a ejecutar automáticamente.
+
+Se habilita solamente con `SOL_AGENT_DEMO_ENABLED=true` y `SOL_AGENT_WORKER_TOKEN` propio. API de prueba, también con sesión individual: `POST /api/v1/demo/chat` acepta `{requestId:UUID,scenario}` y responde 202; `GET /api/v1/demo/chat` devuelve estado persistido y operaciones. Escenarios permitidos: `two_minute_steps`, `correct_routine`, `new_concern`, `forget_chat`. Sin trabajador que haya reservado recientemente devuelve 503. No acepta texto libre ni mensajes reales como si fueran sintéticos. `/api/v1/chat` y recomendaciones reales permanecen explícitamente no conectados.
+
+Prueba reproducible del contrato exacto de Quito:
+
+```sh
+git fetch cbishara quito/puente-agente
+cd server
+node --import tsx scripts/verify-agent-contract.ts
+```
+
+Extrae el código del commit inmutable a un directorio temporal y ejecuta su trabajador/procesador reales con un runner inyectado sintético. Verificado: acuse perdido recuperado sin repetir inferencia, memoria corregida de dos a cinco minutos, aislamiento A/B y borrado de A sin afectar B. **Cero llamadas reales a Codex**; esta prueba no acredita respuesta real del modelo en Railway.
+
+Prueba de base real: `scripts/verify-multiuser-postgres.ts`, con `SOL_TEST_DATABASE_URL` suministrada privadamente. Verificada en instancia temporal local de **PostgreSQL 17.11**, detenida y eliminada después: 20 transacciones concurrentes en dos conexiones, rollback, OTP de un solo uso, usuarios separados, resultado del agente idempotente y recuperación de identidad/chat/memoria al reconectar. Solo filas sintéticas con prefijo aleatorio, limpiadas al terminar. No se modificó la base del servicio Railway; su acceso es privado y no hay SSH configurado en este equipo.
+
+Entrega completa a Bishara condicionada a #30: Quito confirma/implementa sugerencias y chat v1, se verifica el recorrido con su motor y cuenta BOT reales, y se publica evidencia de aislamiento. PR #36 es candidato de revisión, no anuncia ese hito como completado.

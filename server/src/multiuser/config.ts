@@ -7,14 +7,16 @@ export function loadMultiUserConfig(env: NodeJS.ProcessEnv) {
   const botAccountId = env.UNIPILE_BOT_ACCOUNT_ID;
   const identitySecret = env.SOL_IDENTITY_SECRET ?? '';
   const webhookSecret = env.SOL_MULTIUSER_WEBHOOK_SECRET ?? '';
+  const workerToken = env.SOL_AGENT_DEMO_ENABLED === 'true' ? env.SOL_AGENT_WORKER_TOKEN : undefined;
   const publicUrl = env.PUBLIC_URL ?? '';
   if (!databaseUrl || !apiKey || !botAccountId || !publicUrl || identitySecret.length < 32 || webhookSecret.length < 32) {
     throw new Error('Multiusuario requiere Postgres, Unipile, cuenta BOT, PUBLIC_URL y secretos propios de al menos 32 caracteres.');
   }
-  if ([identitySecret, webhookSecret, env.API_TOKEN, env.UNIPILE_WEBHOOK_SECRET].filter(Boolean).length !== new Set([identitySecret, webhookSecret, env.API_TOKEN, env.UNIPILE_WEBHOOK_SECRET].filter(Boolean)).size) {
+  if (env.SOL_AGENT_DEMO_ENABLED === 'true' && (!workerToken || workerToken.length < 32 || /\s/.test(workerToken))) throw new Error('La prueba del agente requiere SOL_AGENT_WORKER_TOKEN exclusivo.');
+  if ([identitySecret, webhookSecret, workerToken, env.API_TOKEN, env.UNIPILE_WEBHOOK_SECRET].filter(Boolean).length !== new Set([identitySecret, webhookSecret, workerToken, env.API_TOKEN, env.UNIPILE_WEBHOOK_SECRET].filter(Boolean)).size) {
     throw new Error('Los secretos de identidad, webhook multiusuario y piloto deben ser distintos.');
   }
   const url = new URL(publicUrl);
   if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('PUBLIC_URL debe ser un origen HTTPS.');
-  return { databaseUrl, apiKey, botAccountId, identitySecret, webhookSecret, publicUrl: url.origin, dsn: unipileOrigin(env.UNIPILE_DSN ?? '') };
+  return { databaseUrl, apiKey, botAccountId, identitySecret, webhookSecret, workerToken, publicUrl: url.origin, dsn: unipileOrigin(env.UNIPILE_DSN ?? '') };
 }

@@ -34,3 +34,6 @@ Guía, contrato y límites: [WHATSAPP_UNIPILE.md](../docs/equipo/amaru/WHATSAPP_
 2. En Railway: `TWOCHAT_API_KEY`, `TWOCHAT_NUMBER`, `TWOCHAT_WEBHOOK_TOKEN` (`openssl rand -hex 24`), `PUBLIC_URL`, `API_TOKEN`.
 3. `npm run 2chat:subscribe` con esas variables. Registra `whatsapp.message.received`, `whatsapp.group.message.received` y `whatsapp.number.status`.
 4. Crear el grupo de demo con el número del agente y escribir un mensaje inventado. Revisar `raw_events` para confirmar el formato y ajustar `parseTwoChat` si hace falta.
+## Candidato multiusuario
+
+La ampliación de WhatsApp vive en `src/multiuser/`, está desactivada por defecto y se coordina en #30/#36. Guía, contrato HTTP, variables, pruebas y límites: [WhatsApp multiusuario](../docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md). El puente de Quito v0 admite solo escenarios sintéticos; no equivale a tener el chatbot real conectado a WhatsApp.

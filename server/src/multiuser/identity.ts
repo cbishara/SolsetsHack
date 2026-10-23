@@ -176,11 +176,10 @@ export class IdentityService {
   }
 
   private async assertOwnershipAvailable(tx: MultiUserTransaction, userId: string, account: CanonicalAccount) {
-    const [accountOwner, identityOwner, user] = await Promise.all([
-      tx.get<Binding>('identity_account_owners', account.accountId),
-      tx.get<Binding>('identity_whatsapp_owners', account.ownerId),
-      tx.get<User>('identity_users', userId),
-    ]);
+    // A transaction owns one pg client; issue its queries sequentially (pg 9 rejects overlapping queries).
+    const accountOwner = await tx.get<Binding>('identity_account_owners', account.accountId);
+    const identityOwner = await tx.get<Binding>('identity_whatsapp_owners', account.ownerId);
+    const user = await tx.get<User>('identity_users', userId);
     if (!user || (accountOwner && accountOwner.userId !== userId) || (identityOwner && identityOwner.userId !== userId) ||
       (user.binding && (user.binding.accountId !== account.accountId || user.binding.ownerId !== account.ownerId))) {
       throw new IdentityError(409, 'identity_already_linked');

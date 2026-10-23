@@ -35,6 +35,9 @@ Plazo de respuesta:180 segundos. Si ya venció, el inbox o envío pendiente se c
 
 ## Evidencia y pendiente
 
-Pruebas de cola y proveedor cubren aislamiento A/B, permisos revocados, deduplicación, acuse perdido, memoria del dueño, sugerencias sin selección, inbox ocupado/reinicio, borrado, mensajes pendientes visibles y revocación durante la consulta previa al envío. El cotejo con el commit exacto de Quito y la prueba real v1 se registran al completarse; no se sustituyen por fixtures.
+119 pruebas server y TypeScript pasan; 18 son de la cola v1. Las pruebas de cola y proveedor cubren aislamiento A/B, permisos revocados, deduplicación, acuse perdido, memoria del dueño, sugerencias sin selección, inbox ocupado/reinicio, borrado, mensajes pendientes visibles y revocación durante la consulta previa al envío. El cotejo con el commit exacto de Quito y la prueba real v1 se registran al completarse; no se sustituyen por fixtures.
 
 El flujo de emparejamiento en el mismo iPhone está preparado con `SOL_WHATSAPP_PAIRING_ENABLED`, apagado por defecto. La [guía Unipile](https://developer.unipile.com/docs/whatsapp) permite `pairing_phone_number`, pero el [esquema publicado](https://developer.unipile.com/reference/accountscontroller_createaccount) solo especifica `Checkpoint/QRCODE/qrcode`. Se rechaza cualquier variante desconocida, devolviendo `unsupported_checkpoint` y alternativa `hosted_auth`; falta validar el checkpoint real con una cuenta personal. QR/Hosted Auth y OTP de SOL siguen siendo el flujo disponible.
+
+
+Despliegue candidato verificado: commit `844117c`, servicio `sol-multiuser-demo`, deployment `e8d03ec5-85a5-498d-9178-5cb160ecd52e`. Salud200, piloto anterior salud200, memoria A/B conservada; v1 devuelve `agent_v1_not_enabled`, chat real `agent_not_connected` y pairing `pairing_not_enabled`. Gates apagados, sin llamadas nuevas al proveedor. El commit final del trabajador de Quito sigue pendiente de publicación; no se acredita interoperabilidad v1 todavía.

@@ -18,7 +18,7 @@ La primera entrega es texto. Voz y monitoreo/bloqueo de apps siguen después de 
 | P1 paralelo | Amaru, #37 | Login WhatsApp reutiliza usuario verificado en web/iPhone; OTP por propósito, sesiones y revocación. | Backend implementado y probado; integración cliente pendiente. |
 | P1 paralelo | Bishara, #21 | Cliente móvil/web: acceso, conexión, selección, chat, memoria y estados. Export web servido desde el mismo origen de API. | Solicitud enviada; integración pendiente. |
 | P1 | Amaru | Emparejamiento en el mismo teléfono, QR web, OTP SOL y activación de recepción, sin confiar en el teléfono escrito para autorizar. | QR/OTP implementados; emparejamiento móvil preparado, flagoff hasta prueba real del checkpoint. |
-| P1 | Amaru + Quito | Encolar chat real y sugerencias v1, persistir memoria y validar permisos al reservar y aplicar. Outbox durable antes de responder por WhatsApp. | Servidor v1 y pruebas implementados; falta interoperabilidad exacta con trabajador publicado. |
+| P1 | Amaru + Quito | Encolar chat real y sugerencias v1, persistir memoria y validar permisos al reservar y aplicar. Outbox durable antes de responder por WhatsApp. | Servidor v1 y pruebas desplegados con flagoff; falta commit publicado de Quito para interoperabilidad. |
 | P2 | Los tres | Recorrido físico iPhone + web + dos cuentas; publicar evidencia, resolver dependencias de PR y entregar a main. | Pendiente de lo anterior. |
 | Después | Bishara + Amaru + Quito | Voz (#28/#29), recuperación ante pérdida/cambio de número, borrado/retención, monitoreo nativo y bloqueo de apps. | Fuera de la primera prueba textual. |
 
@@ -50,9 +50,9 @@ Integrar bases verificadas #15/#23 antes de #36; Quito resuelve #31 en su carril
 
 ## Siguiente acción por persona
 
-- **Quito:** tomar #30, confirmar tipos v1 y arrancar el trabajador de #24 con origen HTTPS y token desde las variables privadas del candidato.
+- **Quito:** publicar los commits v1 terminados localmente para cotejarlos y arrancar un trabajador v1 con ID/diario propios. El v0 ya está conectado y probado.
 - **Bishara:** confirmar contrato de #7/#37, preparar adaptadores y export web, integrar tras la evidencia del backend.
-- **Amaru/agente:** terminar acceso compartido y despliegue; publicar contrato exacto, pruebas y bloqueos verificables.
+- **Amaru/agente:** código y contratos publicados, 119 pruebas y despliegue comprobados; cotejar v1 cuando Quito lo publique, activar juntos y verificar con cuenta personal.
 - **Amaru/usuario:** cuando llegue el cliente integrado, hacer la prueba con iPhone y una cuenta personal distinta de la cuenta BOT. No hace falta compartir claves en el chat.
 
 

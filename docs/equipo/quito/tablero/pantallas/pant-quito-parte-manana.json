@@ -7,7 +7,7 @@
   "updatedAt": "2026-10-23",
   "moment": "manana",
   "summary": "Al despertar: qué lo despertó, qué lo esperó hasta ahora y qué fue ruido. Cada decisión trae el feedback de un toque, Bien o Debió/No debió despertarme.",
-  "designStatus": "propuesta",
+  "designStatus": "retirada",
   "buildStatus": "por-hacer",
   "featureIds": [
     "feat-quito-descarga",
@@ -43,11 +43,18 @@
   ],
   "design": {
     "image": "docs/equipo/quito/tablero/pantallas/img/parte-manana.png",
-    "label": "Maqueta, dirección Ocaso",
+    "label": "Referencia funcional; estética Ocaso reemplazada",
     "date": "2026-10-23",
     "source": "docs/equipo/quito/diseno/funcionalidades.html"
   },
   "notes": [
+    "Estética Ocaso retirada por docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md. La app usa Mi espacio con modo noche. Esta maqueta se conserva solo como referencia de contenido y flujo; no es el diseño visual vigente.",
     "No es una de las cinco funcionalidades: reúne lo que dejó la descarga de pendientes y el feedback que alimenta las métricas."
+  ],
+  "evidence": [
+    {
+      "label": "Dirección visual vigente: Mi espacio con modo noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md"
+    }
   ]
 }

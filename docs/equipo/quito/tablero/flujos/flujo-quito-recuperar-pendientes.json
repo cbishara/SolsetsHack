@@ -106,7 +106,7 @@
   "questions": [
     "Horario y zona horaria del parte.",
     "Integrar el pendiente con el parte matinal y el backend del equipo.",
-    "Cerrar en #24 el acoplamiento con amaru/whatsapp-multiuser: faltan extremo servidor y recuperación desde Expo contra esa base compartida."
+    "El puente sintético servidor–Codex pasó la prueba de #24; faltan recuperación desde Expo, dispositivo físico y contrato v1 de #30."
   ],
   "verification": [
     {
@@ -126,6 +126,12 @@
       "environment": "Trabajador del Mac, HTTP local sintético y Codex real",
       "result": "17 pruebas nuevas del puente aprobadas: aislamiento, reserva, resultado, caída, reintento y plazos. Una llamada real produjo respuesta, paso de dos minutos y memoria con evidencia en 11.1 s. El receptor es de prueba: no acredita conexión con server/ ni Railway.",
       "evidence": "agent/INTEGRATION.md; agent/src/integration/processor.test.ts; agent/src/integration/worker.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Servicio candidato sintético de Railway, trabajador del Mac y Codex real",
+      "result": "Tres inferencias reales aceptadas en 16,7, 12,4 y 21,3 s: memoria de dos minutos, corrección a cinco y usuario B separado. Repetir UUID recuperó el mismo trabajo sin otra inferencia; sesiones y memoria sobrevivieron al redespliegue del servidor. No acredita Expo, iPhone, OTP ni WhatsApp.",
+      "evidence": "agent/INTEGRATION.md; https://github.com/cbishara/SolsetsHack/issues/24#issuecomment-6377022311"
     }
   ],
   "evidence": [

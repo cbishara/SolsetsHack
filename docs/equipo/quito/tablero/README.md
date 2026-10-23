@@ -1,5 +1,20 @@
 # Tablero del equipo
 
+## Lugar central del diseño de funcionalidades
+
+Quito confirmó como oficial que este tablero es el panel de referencia y el lugar central del equipo para diseñar, consultar y mantener las funcionalidades de Solsets. Aquí se conectan la necesidad de Rodrigo, las acciones de cada funcionalidad, sus pantallas y los flujos completos, con reglas, límites, responsables y preguntas abiertas.
+
+Para diseñar o revisar una capacidad:
+
+1. Buscar su ficha en **Funcionalidades** y reutilizar su ID. Si es nueva, crear la ficha en el carril correspondiente y distinguir lo propuesto de lo acordado.
+2. Revisar sus **Flujos**: qué inicia el recorrido, quién actúa, qué decisiones hay y cómo termina, incluidos errores y falta de respuesta.
+3. Abrir **Mapa de pantallas** para relacionar la capacidad con sus maquetas, capturas construidas y apps de referencia.
+4. Actualizar las fichas afectadas y registrar el antes/después en **Qué cambió**, con lo comprobado y lo que sigue pendiente.
+
+Las fichas JSON versionadas por carril son la fuente del tablero. Las maquetas, capturas e investigaciones se enlazan desde ellas; la explicación vigente de una funcionalidad se mantiene en su ficha. El panel y Excalidraw son vistas generadas, y no se editan a mano.
+
+Las decisiones de alcance siguen en los [ADR](../../adr/README.md). Tener una ficha o una maqueta en el tablero no convierte una propuesta en un acuerdo oficial ni acredita que esté construida o probada. Esta elección está registrada en el [ADR oficial del tablero](../../adr/oficiales/2026-10-23-donde-vive-el-tablero.md).
+
 ## Abrirlo
 
 Desde la raíz del repo:
@@ -18,6 +33,7 @@ También se puede abrir [index.html](./index.html) directamente. Es una copia si
 
 - **Funcionalidades:** agrupadas por momentos de Rodrigo; abrir para leer necesidad, acciones, ejemplo, reglas, límites y evidencia.
 - **Flujos:** recorridos con actores, decisiones, resultados y preguntas abiertas. Cada paso puede enlazar su funcionalidad.
+- **Mapa de pantallas:** pantallas conectadas a funcionalidades y flujos; permite comparar la maqueta con la captura construida y consultar sus apps de referencia.
 - **Qué cambió:** antes/después de cada cambio lógico, autor, motivo y comprobaciones.
 - **Cómo lo mantenemos:** rutina resumida para el equipo y exportación del orden.
 
@@ -121,6 +137,7 @@ No se publicaron páginas ni se configuró una automatización remota o una regl
 
 ## Respaldo técnico de la herramienta
 
+- [panel.html](./herramientas/panel.html) y [mapa.js](./herramientas/mapa.js): apariencia del tablero del equipo, con tipografía del sistema, superficies suaves estilo Notion y colores centralizados en `:root`. Este estilo corresponde a la herramienta del equipo; las propuestas visuales de la app de Rodrigo se consultan en las fichas de pantallas.
 - [model.mjs](./herramientas/model.mjs): recoge y valida las fichas.
 - [build.mjs](./herramientas/build.mjs): genera las dos vistas de manera reproducible.
 - [serve.mjs](./herramientas/serve.mjs): acceso local, consulta de cambios y guardado del orden.

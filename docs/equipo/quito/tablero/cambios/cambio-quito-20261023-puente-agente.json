@@ -6,10 +6,10 @@
   "updatedAt": "2026-10-23",
   "summary": "El agente tiene un trabajador candidato para recibir trabajos, inferir y entregar cambios sin guardar una segunda memoria compartida.",
   "before": "El piloto local podía conversar con Codex, pero el servidor compartido todavía no lo invocaba ni existía nuestro trabajador saliente.",
-  "after": "El cliente candidato recibe reservas, traduce datos del servidor y devuelve clasificación o cambios de chat y memoria. Guarda los resultados pendientes para reenviarlos sin repetir el modelo. Amaru tomó el extremo servidor en amaru/whatsapp-multiuser y usará este v0 como base; el acoplamiento sigue pendiente.",
+  "after": "El trabajador v0 conserva reservas y resultados pendientes, y el extremo servidor de Amaru está acoplado. El Mac se conectó al candidato sintético de Railway y se comprobaron respuestas reales, corrección de memoria, usuarios separados y persistencia. Expo, WhatsApp y sugerencias v1 siguen pendientes.",
   "reason": "Quito autorizó avanzar con la conexión entre agente, servidor y app después de revisar el reparto y los avances del equipo.",
-  "checked": "17 pruebas nuevas y TypeScript pasan; la copia limpia sobre la base del PR #27 suma 64 pruebas aprobadas. Una inferencia real de Codex por HTTP local sintético completó respuesta, plan y preferencia con evidencia en 11.1 s. No prueba Railway, lectura de chats reales ni envío por WhatsApp. Amaru confirmó las rutas y garantías del v0 como base de trabajo en #24.",
-  "availability": "Rama quito/puente-agente, preparada para revisión del equipo. No activada en Railway ni cambios de server/mobile. Guía y contrato en agent/INTEGRATION.md; ampliación multiusuario #30 fuera de este v0.",
+  "checked": "TypeScript y 64 pruebas del agente pasan. Se repitió una llamada real con receptor HTTP local en 11,4 s y el verificador de contrato exacto del servidor con runner de prueba. La prueba conjunta de #24 aceptó tres inferencias reales de Codex contra Railway en 16,7/12,4/21,3 s, corrección de memoria, aislamiento A/B, UUID sin reinferencia y persistencia tras redespliegue. La pérdida de acuse solo se probó localmente; no hubo Expo, OTP, mensajes reales ni envíos WhatsApp. Evidencia: https://github.com/cbishara/SolsetsHack/issues/24#issuecomment-6377022311",
+  "availability": "Componente v0 verificado y activo solo contra el servicio candidato sintético sol-multiuser-demo. Guía en agent/INTEGRATION.md; la integración de Expo y la ampliación multiusuario v1 de #30 siguen pendientes.",
   "featureIds": [
     "feat-quito-descarga"
   ],

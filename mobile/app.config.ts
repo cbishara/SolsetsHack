@@ -10,7 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: "sol-mobile-demo",
     scheme: "sol-demo",
     version: "0.1.0",
-    userInterfaceStyle: "light",
+    userInterfaceStyle: "automatic",
     ios: {
       ...config.ios,
       supportsTablet: false,
@@ -24,6 +24,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     android: { ...config.android, package: bundleIdentifier },
     plugins: [
+      "expo-router",
+      "expo-font",
       "expo-secure-store",
       "expo-status-bar",
       ...(screenTime

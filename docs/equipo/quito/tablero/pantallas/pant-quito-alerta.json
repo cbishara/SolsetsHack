@@ -7,7 +7,7 @@
   "updatedAt": "2026-10-23",
   "moment": "urgencia",
   "summary": "La notificación urgente en la pantalla bloqueada: qué pasó, por qué lo despertó y el botón Lo vi. Si no lo toca en 3 minutos, Sol lo llama.",
-  "designStatus": "propuesta",
+  "designStatus": "retirada",
   "buildStatus": "por-hacer",
   "featureIds": [
     "feat-bishara-alerta-respaldo"
@@ -46,11 +46,18 @@
   ],
   "design": {
     "image": "docs/equipo/quito/tablero/pantallas/img/alerta.png",
-    "label": "Maqueta, dirección Ocaso",
+    "label": "Referencia funcional; estética Ocaso reemplazada",
     "date": "2026-10-23",
     "source": "docs/equipo/quito/diseno/funcionalidades.html"
   },
   "notes": [
+    "Estética Ocaso retirada por docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md. La app usa Mi espacio con modo noche. Esta maqueta se conserva solo como referencia de contenido y flujo; no es el diseño visual vigente.",
     "Es la pantalla bloqueada del iPhone, no una pantalla de la app. No se puede capturar desde la app en el navegador: queda como maqueta hasta probarla en un teléfono real."
+  ],
+  "evidence": [
+    {
+      "label": "Dirección visual vigente: Mi espacio con modo noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md"
+    }
   ]
 }

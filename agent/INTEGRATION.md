@@ -38,13 +38,13 @@ Desde `agent/`, con las variables privadas cargadas por el operador:
 
 ```sh
 # AGENT_WORKER_URL: origen HTTPS del servidor con las rutas acordadas.
-# AGENT_WORKER_TOKEN: Bearer exclusivo, al menos 24 caracteres; nunca en Git/Expo.
+# AGENT_WORKER_TOKEN: Bearer exclusivo, al menos 32 caracteres para el servidor candidato; nunca en Git/Expo.
 # AGENT_WORKER_ID: identificador de este trabajador, por defecto quito-mac-demo.
 # AGENT_WORKER_STATE: ruta privada opcional; por defecto agent/.data/worker.json.
 npm run worker
 ```
 
-No está iniciado contra Railway. El proceso no arranca sin configuración válida. HTTP solo se admite en loopback para pruebas. `CODEX_BIN` y `CODEX_MODEL` son opcionales; el timeout efectivo es el menor entre la reserva pendiente y 60 segundos de chat o 25 de clasificación.
+El 2026-10-23 se inició el trabajador v0 del Mac contra el servicio candidato sintético `sol-multiuser-demo` de Railway, con `AGENT_WORKER_ID=quito-mac-demo`. El token se obtuvo privadamente de las variables del servicio; la sesión de Codex permanece en el Mac. El proceso no arranca sin configuración válida. HTTP solo se admite en loopback para pruebas. `CODEX_BIN` y `CODEX_MODEL` son opcionales; el timeout efectivo es el menor entre la reserva pendiente y 60 segundos de chat o 25 de clasificación.
 
 La bandeja privada se escribe en modo `0600`, sin tokens, y tiene un candado de proceso. Se guarda el UUID antes de reservar y el resultado antes de entregarlo. Si se pierde la confirmación, reiniciar vuelve a entregar el mismo resultado sin otra llamada al motor. Un proceso interrumpido durante la inferencia devuelve `inference_interrupted`: el servidor debe conservar la incertidumbre del chat y no reejecutarlo automáticamente. No se promete una única llamada si el servidor crea otra operación distinta. No cambiar servidor o identidad con trabajo pendiente ni ejecutar varias instancias sobre la misma bandeja.
 
@@ -60,6 +60,23 @@ npm run integration:verify
 
 Se añadieron 17 pruebas específicas del puente: aislamiento, corrección/borrado, traducción, política sobre estado vigente, origen y propietario, plazos, autenticación, entrega perdida, reinicio, reserva reutilizada, resultado tardío y corrupción del diario. La prueba real del 2026-10-23 completó **HTTP local → trabajador → Codex → receptor local en 11.1 segundos**, con un primer paso de dos minutos y una preferencia con evidencia literal. El receptor es un fixture de este módulo; no acredita que `server/` ni Railway ya estén conectados.
 
-Pendiente con Amaru/Bishara: contrastar los tipos con `amaru/whatsapp-multiuser`, implementar/distribuir el extremo del servidor, acceso privado y probar chat sintético → resultado aceptado → recuperación persistida desde Expo. Después comprobar memoria corregida, usuario distinto y Mac desconectado. La vinculación app–WhatsApp y los canales de alerta requieren sus propias pruebas antes de acreditarlos.
+### Prueba conjunta del 2026-10-23
+
+El extremo servidor de `amaru/whatsapp-multiuser` (`e087f29`) implementó los tipos v0 del trabajador `8f939ee`. Se volvió a ejecutar su verificador de contrato exacto: recuperación de un acuse perdido sin otra inferencia, corrección de memoria, aislamiento A/B y borrado selectivo, con runner de prueba. Esta comprobación local no se cuenta como una llamada real a Codex.
+
+Después se conectó el trabajador del Mac a https://sol-multiuser-demo-production.up.railway.app. Amaru ejecutó los escenarios sintéticos contra Railway y comprobó:
+
+| Caso | Resultado |
+| --- | --- |
+| A: `two_minute_steps` | Respuesta Codex aceptada en 16,7 s; memoria de dos minutos. |
+| A: `correct_routine` | Codex aceptado en 12,4 s; misma conversación y memoria corregida a cinco minutos. |
+| B: `two_minute_steps` | Codex aceptado en 21,3 s; conversación distinta, B conserva dos minutos y A cinco. |
+| Mismo `requestId` | Mismo trabajo recuperado sin una segunda inferencia. |
+| Redespliegue del servidor a `67ec1c7` | Sesiones y memoria conservadas. |
+| `new_concern` | Comando determinista, excluido del recuento de inferencias. |
+
+Son **tres inferencias reales**, con datos sintéticos y sin enviar OTP ni mensajes WhatsApp. La pérdida de acuse se verificó en la prueba local, no se atribuye al ensayo de red. [Evidencia conjunta en #24](https://github.com/cbishara/SolsetsHack/issues/24#issuecomment-6377022311).
+
+Pendiente con Amaru/Bishara: conectar Expo al backend compartido, probar dispositivo físico y fallos con el Mac desconectado. La vinculación app–WhatsApp, las sugerencias por catálogo v1 y los canales de alerta requieren sus propias pruebas. El puente v0 sigue limitado a escenarios sintéticos y no acredita que el chat real ni WhatsApp estén integrados.
 
 La ampliación de WhatsApp multiusuario está solicitada en #30. Este v0 solo acepta `chat` y `classify`: las sugerencias de catálogo por nombres/tipos requieren acordar otro tipo/versionado y no habilitan lectura ni monitoreo por sí mismas.

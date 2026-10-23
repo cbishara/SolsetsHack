@@ -14,7 +14,7 @@ Abrir **http://localhost:5173**. No hacen falta claves. En «Probar una noche»,
 ## Implementado
 
 - Panel React adaptable: tareas, descanso, conexiones, permisos, pausa, modo sombra y parte de la mañana.
-- API Node/Express, persistencia local o Supabase, cola persistida de WhatsApp y deduplicación por mensaje.
+- API Node/Express, persistencia PostgreSQL en Railway, Supabase o local, cola persistida de WhatsApp y deduplicación por mensaje.
 - Política en código: nuevo o confianza < 0,7 → escalar; mismo incidente alertado en 30 minutos → no repetir; pausa impide nuevas acciones. Feedback disponible como contexto para Hermes.
 - Adaptadores: Hermes HTTP, webhook firmado y envío Kapso, OAuth Google con PKCE y tokens cifrados, lectura manual de Gmail y borradores, eventos Calendar con recordatorio.
 - Docker/Railway y dos migraciones SQL listas para ejecutar. La tabla vectorial y la función de búsqueda están preparadas; aún no hay ingestión ni recuperación vectorial en el agente.
@@ -22,6 +22,8 @@ Abrir **http://localhost:5173**. No hacen falta claves. En «Probar una noche»,
 ## Activar servicios reales con datos ficticios
 
 Seguir [SETUP.md](./SETUP.md). Ejecutar en orden [001](./supabase/migrations/202610230001_workspace.sql) y [002](./supabase/migrations/202610230002_knowledge_search.sql) en Supabase. Configurar las variables de [.env.example](./.env.example) en Railway. El servidor exige contraseña del panel al activar integraciones reales. Usuario: `solsets`.
+
+Para **PostgreSQL de Railway**, usar `DATABASE_URL=${{Postgres.DATABASE_URL}}` en el servicio backend y dejar vacías las variables Supabase. Al iniciar, el backend aplica la migración idempotente [Railway SQL](./backend/migrations/001_railway.sql) dentro del esquema `solsets`. No se necesita ejecutar los scripts específicos de Supabase. El panel se publica en [Railway](https://backend-production-088f1.up.railway.app); el acceso se obtiene de `DASHBOARD_PASSWORD` en las variables del servicio.
 
 ## Alcance de esta entrega
 

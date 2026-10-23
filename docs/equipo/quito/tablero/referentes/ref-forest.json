@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-forest",
+  "title": "Forest",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "Temporizador de foco; sesiones representadas por árboles; listas de apps permitidas y estadísticas.",
+  "aesthetic": "Verdes, árboles y dioramas; crecimiento que hace visible el tiempo.",
+  "takeaway": "Progreso tangible y amable.",
+  "limit": "Una interrupción urgente no debería castigar al usuario con una pérdida.",
+  "url": "https://forestapp.cc/",
+  "appStore": "https://apps.apple.com/us/app/forest-focus-for-productivity/id866450515?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/forest.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8d/a3/1d/8da31d4a-3338-608e-136f-f50a72e93ff8/en2__U00281_U0029.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

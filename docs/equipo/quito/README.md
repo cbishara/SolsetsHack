@@ -6,11 +6,13 @@ Archivos del carril: `agent/` y sus pruebas. Se parte de cero; `classifier/` y `
 
 Listo cuando (propuesta): cada mensaje de la semana simulada tiene su decisión esperada, `npm test` la corre entera, y sale un número de aciertos que se puede mostrar en el pitch.
 
-## Pregunta abierta
+## Motor del agente
 
-El prototipo clasificaba a través de Hermes, un servicio aparte en Railway que, según `deploy/hermes/README.md`, todavía necesitaba que le configuraran un modelo. Para lo oficial, la alternativa es llamar a Claude directo con la API de Anthropic. Conviene decidirlo temprano, porque cambia qué hay que desplegar.
+Decidido el 2026-10-23: agente propio en `agent/`, sin Hermes. El motor es el Codex CLI con la sesión del plan de Quito (`codex exec --output-schema` o `@openai/codex-sdk`), detrás de un adaptador que después se cambia a API key. Detalle y pruebas en [`adr/oficiales/2026-10-23-agente-propio-con-codex.md`](../adr/oficiales/2026-10-23-agente-propio-con-codex.md).
 
 ## En esta carpeta
+
+Acceso al [tablero de funcionalidades, cambios y flujos](./tablero/README.md): `npm run tablero`. Reúne las fichas de los tres carriles y genera el mapa Excalidraw.
 
 1. `research/sueno/`: tres investigaciones sobre el sueño de Rodrigo (guardia, turnos rotativos, cabeza y teléfono), con sus fuentes.
 2. `research/wellness/`: benchmark de soluciones de bienestar y sueño, mapa en Excalidraw y tablero.

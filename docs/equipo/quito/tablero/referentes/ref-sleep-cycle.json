@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-sleep-cycle",
+  "title": "Sleep Cycle",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Seguimiento del sueño y alarma en una ventana elegida, junto con reportes y recursos para dormir.",
+  "aesthetic": "",
+  "takeaway": "Permite distinguir despertar programado de urgencia de guardia.",
+  "limit": "Aquí se constata su oferta, sin verificar precisión ni beneficios clínicos.",
+  "url": "https://sleepcycle.com/the-app/smart-alarm",
+  "appStore": "https://apps.apple.com/us/app/sleep-cycle-tracker-sounds/id320606217?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/sleep-cycle.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7a/52/74/7a5274fd-df02-cf8f-89fb-d7b33adbb6e8/AppIconSleepCycle-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.jpg",
+  "evidence": [
+    {
+      "label": "Soluciones existentes",
+      "path": "docs/equipo/quito/research/wellness/soluciones.md"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# Carriles del equipo: de quién es cada ruta. Reglas en CLAUDE.md, "Cómo trabajamos los tres".
+set -euo pipefail
+
+ROOT=$(git rev-parse --show-toplevel)
+ALLOW_FILE=$(git rev-parse --git-path carril-permitido)
+ME_CACHE=$(git rev-parse --git-path carril-yo)
+case "$ALLOW_FILE" in /*) ;; *) ALLOW_FILE="$ROOT/$ALLOW_FILE" ;; esac
+case "$ME_CACHE" in /*) ;; *) ME_CACHE="$ROOT/$ME_CACHE" ;; esac
+
+# Dueño de una ruta relativa a la raíz del repo.
+owner_of() {
+  case "$1" in
+    agent/*|docs/equipo/quito/*) echo quito ;;
+    server/*|docs/equipo/bishara/*) echo bishara ;;
+    mobile/*|docs/equipo/amaru/*) echo amaru ;;
+    web/*|backend/*|classifier/*|supabase/*|deploy/*|.railway/*) echo prototipo ;;
+    *) echo libre ;;
+  esac
+}
+
+me() {
+  if [ -s "$ME_CACHE" ]; then cat "$ME_CACHE"; return; fi
+  local login person
+  login=$(gh api user --jq .login 2>/dev/null) || return 1
+  case "$login" in
+    Quitogonzalez) person=quito ;;
+    cbishara) person=bishara ;;
+    amarupaillan) person=amaru ;;
+    *) return 1 ;;
+  esac
+  echo "$person" > "$ME_CACHE"
+  echo "$person"
+}
+
+relative() {
+  local path="$1"
+  case "$path" in
+    "$ROOT"/*) echo "${path#"$ROOT"/}" ;;
+    /*) echo "" ;;
+    *) echo "${path#./}" ;;
+  esac
+}
+
+allowed() {
+  [ -f "$ALLOW_FILE" ] || return 1
+  while IFS= read -r prefix; do
+    [ -n "$prefix" ] || continue
+    case "$1" in "$prefix"*) return 0 ;; esac
+  done < "$ALLOW_FILE"
+  return 1
+}
+
+# Sale con 0 si se puede editar. Con 2 y un aviso si es de otro carril o del prototipo.
+check() {
+  local rel owner person
+  rel=$(relative "$1")
+  [ -n "$rel" ] || return 0
+  owner=$(owner_of "$rel")
+  [ "$owner" = libre ] && return 0
+  person=$(me) || return 0
+  [ "$owner" = "$person" ] && return 0
+  allowed "$rel" && return 0
+  if [ "$owner" = prototipo ]; then
+    echo "Alto: $rel es código del prototipo, que quedó solo como referencia y no se edita. Avísale a tu humano antes de seguir. Si igual quiere editarlo, que lo confirme y corre: tools/carril permitir $rel" >&2
+  else
+    echo "Alto: $rel es del carril de $owner, no de $person. Avísale a tu humano antes de seguir y ofrécele pedírselo a su dueño con: tools/tarea para $owner \"título\" \"detalle\". Si tu humano confirma que igual quiere meterse, corre tools/carril permitir $rel y avísale a $owner con tools/tarea." >&2
+  fi
+  return 2
+}
+
+usage() {
+  cat <<'EOF'
+Uso:
+  tools/carril de <ruta>          de quién es una ruta
+  tools/carril revisar <ruta>     sale con error y avisa si la ruta es de otro carril o del prototipo
+  tools/carril permitir <ruta>    deja editar esa ruta (o carpeta) en esta copia del repo; solo con OK de tu humano
+  tools/carril permisos           lo que se permitió en esta copia
+  tools/carril hook               lo usa Claude Code antes de editar (lee el JSON de la herramienta)
+EOF
+}
+
+case "${1:-ayuda}" in
+  de)
+    [ $# -ge 2 ] || { usage; exit 1; }
+    owner_of "$(relative "$2")"
+    ;;
+  revisar)
+    [ $# -ge 2 ] || { usage; exit 1; }
+    check "$2" && echo "Puedes editar $(relative "$2")."
+    ;;
+  permitir)
+    [ $# -ge 2 ] || { usage; exit 1; }
+    rel=$(relative "$2")
+    echo "$rel" >> "$ALLOW_FILE"
+    echo "Permitido en esta copia: $rel. Avísale a $(owner_of "$rel") con tools/tarea."
+    ;;
+  permisos)
+    [ -f "$ALLOW_FILE" ] && cat "$ALLOW_FILE" || echo "Nada permitido."
+    ;;
+  hook)
+    path=$(node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const i=JSON.parse(s).tool_input||{};process.stdout.write(i.file_path||i.notebook_path||"")}catch{}})')
+    [ -n "$path" ] || exit 0
+    check "$path"
+    ;;
+  ayuda|-h|--help) usage ;;
+  *) usage; exit 1 ;;
+esac

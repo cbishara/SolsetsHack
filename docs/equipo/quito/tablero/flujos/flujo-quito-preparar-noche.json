@@ -1,0 +1,118 @@
+{
+  "type": "flow",
+  "id": "flujo-quito-preparar-noche",
+  "title": "Preparar la noche",
+  "owner": "Quito",
+  "summary": "De la sugerencia de turnos a una confirmación comprensible de guardia.",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "trigger": "Rodrigo prepara su descanso.",
+  "outcome": "Conoce si su guardia está activa y qué condiciones se aplican; los casos sin respuesta siguen por acordar.",
+  "example": "El calendario ficticio sugiere guardia. Rodrigo confirma sí y revisa qué lo despertaría. Si responde no, queda identificado como sin guardia; la excepción ante una caída grave sigue por confirmar.",
+  "featureIds": [
+    "feat-bishara-calendario",
+    "feat-quito-contrato-noche"
+  ],
+  "steps": [
+    {
+      "id": "inicio",
+      "kind": "start",
+      "actor": "Rodrigo",
+      "title": "Preparar el descanso",
+      "detail": "Comienza el recorrido antes de dormir.",
+      "x": 0,
+      "y": 80
+    },
+    {
+      "id": "turno",
+      "kind": "action",
+      "actor": "Solsets",
+      "title": "Sugerir según el turno",
+      "detail": "El calendario conectado aporta una sugerencia, si se puede interpretar.",
+      "featureId": "feat-bishara-calendario",
+      "x": 430,
+      "y": 80
+    },
+    {
+      "id": "confirma",
+      "kind": "decision",
+      "actor": "Rodrigo",
+      "title": "¿Esta noche hay guardia?",
+      "detail": "La respuesta de Rodrigo confirma cómo se tratará esa noche.",
+      "featureId": "feat-quito-contrato-noche",
+      "x": 860,
+      "y": 80
+    },
+    {
+      "id": "si",
+      "kind": "end",
+      "actor": "Solsets",
+      "title": "Explicar qué lo despertaría",
+      "detail": "Mostrar condiciones y canales acordados para la guardia.",
+      "x": 1320,
+      "y": 0
+    },
+    {
+      "id": "no",
+      "kind": "end",
+      "actor": "Solsets",
+      "title": "Noche sin guardia",
+      "detail": "La intención es que no tenga que vigilar esa noche; la excepción ante una caída grave sigue por confirmar.",
+      "x": 1320,
+      "y": 250
+    },
+    {
+      "id": "duda",
+      "kind": "pending",
+      "actor": "Equipo",
+      "title": "Criterio pendiente",
+      "detail": "Definir qué hacer si falta respuesta o el calendario es ambiguo.",
+      "x": 860,
+      "y": 430
+    }
+  ],
+  "connections": [
+    {
+      "from": "inicio",
+      "to": "turno",
+      "label": "Antes de dormir"
+    },
+    {
+      "from": "turno",
+      "to": "confirma",
+      "label": "Revisar sugerencia"
+    },
+    {
+      "from": "confirma",
+      "to": "si",
+      "label": "Sí"
+    },
+    {
+      "from": "confirma",
+      "to": "no",
+      "label": "No"
+    },
+    {
+      "from": "confirma",
+      "to": "duda",
+      "label": "Sin respuesta"
+    }
+  ],
+  "questions": [
+    "Fallback cuando el turno no se puede leer.",
+    "Vencimiento y modificación de la confirmación."
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdos 1 y 3",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    },
+    {
+      "label": "Excepción pendiente: caída grave sin guardia",
+      "path": "docs/equipo/adr/por-confirmar/2026-10-23-caida-grave-sin-guardia.md"
+    }
+  ]
+}

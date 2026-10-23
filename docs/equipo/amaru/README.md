@@ -2,7 +2,7 @@
 
 Funcionalidad: que Rodrigo entienda qué hizo el agente y confíe en él.
 
-Archivos del carril: `mobile/` (la app Expo) y el guion de la demo. `web/` es su prototipo personal y queda como referencia. El tono de lo que el agente le escribe a Rodrigo lo define Amaru; el archivo del prompt lo edita Bishara.
+Archivos del carril: `mobile/` (la app Expo) y el guion de la demo. `web/` es su prototipo personal y queda como referencia. El tono de lo que el agente le escribe a Rodrigo lo define Amaru; el archivo del prompt vive en `agent/` y lo edita Quito.
 
 Listo cuando (propuesta): alguien mira el panel 10 segundos y entiende qué habría hecho el agente anoche en modo sombra, y puede marcar "Bien", "Debió despertarme" o "No debió despertarme" con un toque.
 

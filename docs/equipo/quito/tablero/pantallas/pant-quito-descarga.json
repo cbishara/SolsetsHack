@@ -1,0 +1,48 @@
+{
+  "type": "screen",
+  "id": "pant-quito-descarga",
+  "title": "Descarga de pendientes",
+  "owner": "Amaru",
+  "designer": "Quito",
+  "updatedAt": "2026-10-23",
+  "moment": "preparar",
+  "summary": "En el chat con Sol, Rodrigo anota en menos de un minuto lo que le da vueltas antes de dormir. Sol confirma cada pendiente y lo guarda para el parte de la mañana.",
+  "designStatus": "propuesta",
+  "buildStatus": "por-hacer",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowSteps": [
+    {
+      "flowId": "flujo-quito-recuperar-pendientes",
+      "stepId": "preocupacion"
+    },
+    {
+      "flowId": "flujo-quito-recuperar-pendientes",
+      "stepId": "chat"
+    },
+    {
+      "flowId": "flujo-quito-recuperar-pendientes",
+      "stepId": "guardar"
+    }
+  ],
+  "inspiredBy": [
+    {
+      "refId": "ref-stoic",
+      "why": "Ampliación, descarga mental: preparación y reflexión en momentos definidos."
+    },
+    {
+      "refId": "ref-headspace",
+      "why": "Hipótesis 2: algo breve antes de dormir, que se pueda omitir."
+    }
+  ],
+  "design": {
+    "image": "docs/equipo/quito/tablero/pantallas/img/descarga.png",
+    "label": "Maqueta, dirección Ocaso",
+    "date": "2026-10-23",
+    "source": "docs/equipo/quito/diseno/funcionalidades.html"
+  },
+  "notes": [
+    "El ADR pide que tome menos de un minuto, porque usar el celular en la cama es parte del problema."
+  ]
+}

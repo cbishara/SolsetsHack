@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-ios-focus",
+  "title": "iOS Focus",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "controles-nativos",
+  "summary": "Filtros por personas y apps, excepciones y llamadas repetidas. La documentación también describe priorización de interrupciones con Apple Intelligence en equipos compatibles.",
+  "aesthetic": "",
+  "takeaway": "Conviene conocer y probar esas funciones antes de construir otra capa de filtrado.",
+  "limit": "No atribuir a una web la capacidad de controlar el silencio del iPhone; WhatsApp, contactos, idioma y reloj requieren validación concreta.",
+  "url": "https://support.apple.com/guide/iphone/allow-or-silence-notifications-for-a-focus-iph21d43af5b/ios",
+  "appStore": null,
+  "image": null,
+  "imageSource": null,
+  "evidence": [
+    {
+      "label": "Soluciones existentes",
+      "path": "docs/equipo/quito/research/wellness/soluciones.md"
+    }
+  ]
+}

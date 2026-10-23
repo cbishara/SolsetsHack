@@ -1,5 +1,15 @@
 # Solsets Sistem
 
+## Tablero del equipo
+
+```sh
+npm run tablero
+```
+
+Abre en el navegador el **mapa de funcionalidades, flujos y cambios**, con fichas detalladas y tarjetas que puedes ordenar. Solo necesita Node 22 o superior, sin instalar dependencias. Acceso habitual: **http://127.0.0.1:4175** mientras el comando esté corriendo.
+
+[Guía para personas y agentes](./docs/equipo/quito/tablero/README.md) · [Panel sin servidor](./docs/equipo/quito/tablero/index.html) (descargar/abrir localmente) · [Mapa Excalidraw](./docs/equipo/quito/tablero/tablero.excalidraw). Cada copia muestra las ramas que tenga integradas; no sincroniza otros computadores en tiempo real.
+
 Rodrigo trabaja en soporte TI con turnos rotativos y lleva catorce meses durmiendo cinco o seis horas. El teléfono mezcla guardia, pendientes y vida personal. Solsets reúne las tareas, propone respuestas y escala los incidentes críticos, nuevos o inciertos para proteger una ventana de descanso. La meta es una hora más de sueño; **la demo no mide ni demuestra esa mejora todavía**.
 
 ## Mostrar el avance

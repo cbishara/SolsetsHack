@@ -41,6 +41,6 @@ npm run build
 npm start
 ```
 
-En producción el panel y la API se sirven juntos en el puerto `PORT` (3001 por defecto). La configuración Docker de Hermes necesita validarse en una máquina con Docker; este entorno no lo tiene instalado. Pruebas de integración externas y SQL pendientes de credenciales. Ver [guion de demo](./docs/DEMO.md).
+En producción el panel y la API se sirven juntos en el puerto `PORT` (3001 por defecto). La configuración Docker de Hermes necesita validarse en una máquina con Docker; este entorno no lo tiene instalado. Pruebas de integración externas y SQL pendientes de credenciales. Ver [guion de demo](./docs/equipo/amaru/DEMO.md).
 
-La estrategia y las diferencias entre la demostración y el alcance futuro están en [PRODUCTO_SOL.md](./docs/PRODUCTO_SOL.md).
+La estrategia y las diferencias entre la demostración y el alcance futuro están en [PRODUCTO_SOL.md](./docs/equipo/amaru/PRODUCTO_SOL.md).

@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Tareas entre el equipo sobre GitHub Issues. Protocolo en docs/equipo/tareas.md.
+set -euo pipefail
+
+REPO="cbishara/SolsetsHack"
+# El repo es público: solo cuentan los issues que abrió alguien del equipo.
+TEAM_FILTER='select(.author.login == "Quitogonzalez" or .author.login == "cbishara" or .author.login == "amarupaillan")'
+
+login_of() {
+  case "$1" in
+    quito) echo Quitogonzalez ;;
+    bishara) echo cbishara ;;
+    amaru) echo amarupaillan ;;
+    *) return 1 ;;
+  esac
+}
+
+person_of() {
+  case "$1" in
+    Quitogonzalez) echo quito ;;
+    cbishara) echo bishara ;;
+    amarupaillan) echo amaru ;;
+    *) return 1 ;;
+  esac
+}
+
+me() {
+  local login
+  login=$(gh api user --jq .login 2>/dev/null) || { echo "gh no está autenticado. Corre: gh auth login" >&2; exit 1; }
+  person_of "$login" || { echo "El usuario de GitHub $login no es del equipo." >&2; exit 1; }
+}
+
+list_open() {
+  gh issue list -R "$REPO" --state open --label "$1" --limit 50 --json number,title,author,labels \
+    --jq ".[] | $TEAM_FILTER | \"#\(.number) \(.title) (pide \(.author.login))\" + (if any(.labels[]; .name == \"en-curso\") then \" [en curso]\" else \"\" end)"
+}
+
+usage() {
+  cat <<'EOF'
+Uso:
+  tools/tarea para <quito|bishara|amaru> "título" "detalle"   pide una tarea (detalle "-" lo lee de la entrada estándar)
+  tools/tarea mias                       tus tareas abiertas
+  tools/tarea ver <n>                    una tarea con sus comentarios
+  tools/tarea tomar <n>                  avisa que la empezaste
+  tools/tarea comentar <n> "texto"       responde o pregunta sobre la tarea
+  tools/tarea hecha <n> "qué se hizo"    la cierra
+  tools/tarea pedidas                    las que pediste tú y siguen abiertas
+  tools/tarea aviso                      resumen corto para el inicio de sesión; nunca falla
+EOF
+}
+
+case "${1:-ayuda}" in
+  para)
+    [ $# -ge 4 ] || { usage; exit 1; }
+    login=$(login_of "$2") || { echo "Destino inválido: $2. Usa quito, bishara o amaru. Si te dijeron \"Cristóbal\", pregunta si es Quito o Bishara." >&2; exit 1; }
+    detail="$4"
+    [ "$detail" = "-" ] && detail=$(cat)
+    sender=$(me)
+    body=$(printf '%s\n\n---\nPedida por %s a través de su agente. Protocolo: docs/equipo/tareas.md' "$detail" "$sender")
+    gh issue create -R "$REPO" --title "$3" --body "$body" --label tarea --label "para:$2" --assignee "$login"
+    ;;
+  mias)
+    person=$(me)
+    tasks=$(list_open "para:$person")
+    [ -n "$tasks" ] && echo "$tasks" || echo "No tienes tareas abiertas."
+    ;;
+  ver)
+    [ $# -ge 2 ] || { usage; exit 1; }
+    gh issue view -R "$REPO" "$2" --comments
+    ;;
+  tomar)
+    [ $# -ge 2 ] || { usage; exit 1; }
+    person=$(me)
+    gh issue edit -R "$REPO" "$2" --add-label en-curso >/dev/null
+    gh issue comment -R "$REPO" "$2" --body "La tomó $person."
+    ;;
+  comentar)
+    [ $# -ge 3 ] || { usage; exit 1; }
+    person=$(me)
+    gh issue comment -R "$REPO" "$2" --body "$3"$'\n\n'"($person, a través de su agente)"
+    ;;
+  hecha)
+    [ $# -ge 3 ] || { usage; exit 1; }
+    person=$(me)
+    gh issue close -R "$REPO" "$2" --comment "Hecha por $person: $3"
+    ;;
+  pedidas)
+    person=$(me)
+    tasks=$(gh issue list -R "$REPO" --state open --label tarea --author "$(login_of "$person")" --limit 50 --json number,title,labels \
+      --jq '.[] | "#\(.number) \(.title) (para \([.labels[].name | select(startswith("para:")) | ltrimstr("para:")] | join(", ")))"')
+    [ -n "$tasks" ] && echo "$tasks" || echo "No tienes pedidos abiertos."
+    ;;
+  aviso)
+    person=$( (me) 2>/dev/null ) || exit 0
+    tasks=$(list_open "para:$person" 2>/dev/null) || exit 0
+    if [ -n "$tasks" ]; then
+      echo "Tareas que te pidió el equipo (tools/tarea ver <n> para el detalle). Muéstraselas a tu humano antes de tomar alguna:"
+      echo "$tasks"
+    fi
+    exit 0
+    ;;
+  ayuda|-h|--help) usage ;;
+  *) usage; exit 1 ;;
+esac

@@ -1,0 +1,675 @@
+{
+  "consulted": "2026-10-23",
+  "apps": [
+    {
+      "app": "Opal",
+      "publisherSource": "https://www.opal.so/",
+      "appStore": "https://apps.apple.com/us/app/opal-screen-time-control/id1497465230?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4a/09/57/4a0957f1-c3d9-1b39-c1ac-8699c13c0780/AppstoreArtboard_1.jpg/600x1200bb.jpg",
+          "size": [
+            554,
+            1200
+          ],
+          "boardElementId": "opal-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/da/49/b4/da49b4eb-d471-85d9-7075-5f3338eaece0/AppstoreArtboard_3.jpg/600x1200bb.jpg",
+          "size": [
+            554,
+            1200
+          ],
+          "boardElementId": "opal-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "unrespiro",
+      "publisherSource": "https://apps.apple.com/es/app/unrespiro-bloqueo-apps-y-foco/id6742792786",
+      "appStore": "https://apps.apple.com/us/app/unrespiro-bloqueo-apps-y-foco/id6742792786?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f2/2d/05/f22d0569-d430-3fc4-ccd4-8f40e1a6936b/6.9__Display.png/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "unrespiro-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/fb/3d/7e/fb3d7e91-d56a-158f-8cb1-e80be490ace2/6.9__Display__U00282_U0029.png/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "unrespiro-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Calm",
+      "publisherSource": "https://www.calm.com/",
+      "appStore": "https://apps.apple.com/us/app/calm/id571800810?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/0a/f0/92/0af09220-f75a-0039-30fb-8547a2985c71/App_Store_iOS_Day_-_1__U005b5.5in_U005d.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "calm-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/89/56/d4/8956d4aa-3379-75de-5389-038475b05951/App_Store_iOS_Day_-_3__U005b5.5in_U005d.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "calm-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Endel",
+      "publisherSource": "https://endel.io/",
+      "appStore": "https://apps.apple.com/us/app/endel-focus-sleep-sounds/id1346247457?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/af/a1/3e/afa13eee-02e9-6b27-5fd5-0d392b2b25e4/EN-Store-Screenshot-852_Hz-02.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "endel-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d2/28/4b/d2284b29-1643-2557-554f-9971917ae38c/EN-Store-Screenshot-852_Hz-03.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "endel-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Alarmy",
+      "publisherSource": "https://alar.my/en",
+      "appStore": "https://apps.apple.com/us/app/alarmy-loud-alarm-clock/id1163786766?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/a6/aa/29/a6aa29f4-3c85-8b23-5884-758da5f1ede7/26Q2S6_EN_ios-2.jpg/600x1200bb.jpg",
+          "size": [
+            555,
+            1200
+          ],
+          "boardElementId": "alarmy-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/74/00/cb/7400cb27-750c-4dfd-2cd8-92e152b817d1/26Q2S6_EN_ios-3.jpg/600x1200bb.jpg",
+          "size": [
+            555,
+            1200
+          ],
+          "boardElementId": "alarmy-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "RISE",
+      "publisherSource": "https://www.risescience.com/",
+      "appStore": "https://apps.apple.com/us/app/rise-sleep-tracker/id1453884781?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d2/f2/d3/d2f2d366-e031-0f54-7ae9-308f94d76f49/6c0d466d-dd53-4e7e-a3e7-fe3bdb1f5f29_5.5_SS2.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "rise-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/aa/66/1b/aa661bed-d23c-2f8b-3473-cbd790fc2582/0177d225-7314-4684-a2e1-6d1c340666be_5.5_SS3.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "rise-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Headspace",
+      "publisherSource": "https://www.headspace.com/",
+      "appStore": "https://apps.apple.com/us/app/headspace-sleep-meditation/id493145008?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/17/aa/29/17aa2961-e804-11d8-d196-58c486554ffe/7cfe3748-bd48-4629-8716-8735363c19b2_1242x2208bb__U002833_U0029.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "headspace-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/32/c2/9d/32c29ddf-48c3-99a3-1f38-e05fa2a739f5/4e362280-094d-45b5-9b86-4c93af24d424_1242x2208bb__U002834_U0029.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "headspace-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Finch",
+      "publisherSource": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748",
+      "appStore": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/6f/a9/fe/6fa9feb6-41c9-7c26-0f5c-296558c9f0f1/iPhone_social_large_01.jpg/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "finch-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e8/ca/ee/e8caee25-4118-702c-c751-02a9ce6b8c66/iPhone_social_large_02.jpg/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "finch-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Forest",
+      "publisherSource": "https://forestapp.cc/",
+      "appStore": "https://apps.apple.com/us/app/forest-focus-for-productivity/id866450515?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8d/a3/1d/8da31d4a-3338-608e-136f-f50a72e93ff8/en2__U00281_U0029.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "forest-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/5c/60/8f/5c608fb1-d2b4-d355-589b-115bec9f39fc/en3__U00281_U0029.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "forest-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Freedom",
+      "publisherSource": "https://freedom.to/",
+      "appStore": "https://apps.apple.com/us/app/freedom-screen-time-control/id1269788228?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/85/b0/0b/85b00b5d-67b9-e389-2852-eb90bf1000f4/EN_-_iOS_-_1.png/600x1200bb.jpg",
+          "size": [
+            554,
+            1200
+          ],
+          "boardElementId": "freedom-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/df/da/01/dfda0179-21e6-1523-467c-ee3896198c77/EN_-_iOS_-_2.png/600x1200bb.jpg",
+          "size": [
+            554,
+            1200
+          ],
+          "boardElementId": "freedom-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "ScreenZen",
+      "publisherSource": "https://screenzen.co/",
+      "appStore": "https://apps.apple.com/us/app/screenzen-screen-time-control/id1541027222?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4f/19/b3/4f19b35c-1cd9-06d0-e570-94d187600cff/iPhone-EN-02-B.jpg/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "screenzen-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/cb/58/94/cb5894b7-d47d-2442-c5b3-b51cf6a55d5f/iPhone-EN-09.jpg/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "screenzen-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Brick",
+      "publisherSource": "https://getbrick.com/",
+      "appStore": "https://apps.apple.com/us/app/brick-ditch-distractions/id6448794069?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/1b/ac/59/1bac590a-a6c6-5577-ee8f-809f125f5864/0_APP_IPHONE_69_0.png/600x1200bb.jpg",
+          "size": [
+            552,
+            1200
+          ],
+          "boardElementId": "brick-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/ab/51/08/ab510823-52d8-da66-e58a-d394f35bc27a/2_APP_IPHONE_69_2.png/600x1200bb.jpg",
+          "size": [
+            552,
+            1200
+          ],
+          "boardElementId": "brick-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "BetterSleep",
+      "publisherSource": "https://www.bettersleep.com/",
+      "appStore": "https://apps.apple.com/us/app/bettersleep-relax-and-sleep/id314498713?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ec/a6/ee/eca6ee39-90f9-b045-e3c0-c5c5bb9b4e2e/51945210-14ff-4587-ace1-9baa6b0f8449_BetterSleep__Brown.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "bettersleep-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e2/c7/55/e2c7552c-96c5-5820-f6d3-d9602ecf0ae8/cc93758c-3422-4338-9ff2-0a5a87d539d7_BetterSleep__Color.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "bettersleep-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Balance",
+      "publisherSource": "https://themindcompany.com/apps/balance",
+      "appStore": "https://apps.apple.com/us/app/balance-meditation-sleep/id1361356590?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/78/70/39/78703952-8d09-2164-01b0-fd3e793c868a/2.jpg/600x1200bb.jpg",
+          "size": [
+            552,
+            1200
+          ],
+          "boardElementId": "balance-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/df/2b/69/df2b69ab-aeb1-5d2e-9484-5028737827f4/3.jpg/600x1200bb.jpg",
+          "size": [
+            552,
+            1200
+          ],
+          "boardElementId": "balance-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Breathwrk",
+      "publisherSource": "https://www.breathwrk.com/",
+      "appStore": "https://apps.apple.com/us/app/breathwrk-breathing-exercises/id1481804500?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/ff/aa/23/ffaa236a-0ce8-58c0-502a-45faaa646469/appstore_screenshot_27.png/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "breathwrk-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/37/a0/34/37a034ac-f686-0d8c-6f88-ea6b0a1d1eb4/appstore_screenshot_28.png/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "breathwrk-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "TIDE",
+      "publisherSource": "https://tide.fm/en_US/",
+      "appStore": "https://apps.apple.com/us/app/tide-sleep-focus-meditation/id1077776989?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/bd/d8/48/bdd848ba-0c5e-b4a8-45ef-1e94e4a9ba1d/01.png/600x1200bb.jpg",
+          "size": [
+            555,
+            1200
+          ],
+          "boardElementId": "tide-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/dc/46/63/dc46637e-f9db-2c03-c889-244f8000c681/04.png/600x1200bb.jpg",
+          "size": [
+            555,
+            1200
+          ],
+          "boardElementId": "tide-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "stoic.",
+      "publisherSource": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037",
+      "appStore": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/0b/13/2b/0b132b89-b75e-bd86-17c9-590c0f51c213/2-iphone-small-en.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "stoic-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/24/f5/ac/24f5ac8b-582a-68e6-a74a-19378bc259e2/3-iphone-small-en.jpg/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "stoic-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Daylio",
+      "publisherSource": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242",
+      "appStore": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ea/10/7b/ea107b12-7d01-323f-2d69-6119dde628b4/en_ios_65_02.jpg/600x1200bb.jpg",
+          "size": [
+            554,
+            1200
+          ],
+          "boardElementId": "daylio-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d6/9b/2a/d69b2a4e-4fba-5abe-848b-2e948d51bc05/en_ios_65_03.jpg/600x1200bb.jpg",
+          "size": [
+            554,
+            1200
+          ],
+          "boardElementId": "daylio-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Fabulous",
+      "publisherSource": "https://www.thefabulous.co/",
+      "appStore": "https://apps.apple.com/us/app/fabulous-daily-habit-tracker/id1203637303?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/92/8e/fa/928efa04-16e1-9aa4-c053-0c82980665ff/0x0ss.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "fabulous-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/68/bc/81/68bc81ea-e95c-23f7-655f-bd5c9aff374d/0x0ss-1.png/600x1200bb.jpg",
+          "size": [
+            600,
+            1067
+          ],
+          "boardElementId": "fabulous-screen-1"
+        }
+      ]
+    },
+    {
+      "app": "Structured",
+      "publisherSource": "https://structured.app/",
+      "appStore": "https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946?uo=4",
+      "consulted": "2026-10-23",
+      "imageKind": "Material promocional oficial de App Store, con fragmentos de interfaz. No es una prueba de uso.",
+      "images": [
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3d/18/90/3d1890b0-748a-63d8-8c30-cafc21ffe0ae/6.9__baseline_2.jpg/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "structured-screen-0"
+        },
+        {
+          "image": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/22/88/28/228828b7-723d-3672-6148-28f2798119c7/6.9__baseline_3.jpg/600x1200bb.jpg",
+          "size": [
+            553,
+            1200
+          ],
+          "boardElementId": "structured-screen-1"
+        }
+      ]
+    }
+  ],
+  "logos": [
+    {
+      "id": "opal",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7b/f6/d3/7bf6d3bc-1cbd-66f0-fe4d-63433ba4bf08/AppIcon-0-0-1x_U007ephone-0-0-0-1-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/opal-screen-time-control/id1497465230?uo=4"
+    },
+    {
+      "id": "unrespiro",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2b/ee/02/2bee0249-192e-68bf-c0a2-38aa310cb547/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/unrespiro-bloqueo-apps-y-foco/id6742792786?uo=4"
+    },
+    {
+      "id": "alarmy",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f8/dc/04/f8dc0452-633e-9d98-b10d-6e8c0a7fbde4/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/alarmy-loud-alarm-clock/id1163786766?uo=4"
+    },
+    {
+      "id": "rise",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/61/cc/c4/61ccc42e-38b2-adab-fc43-f3403bd6c1b7/App-Icon-Glass-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/rise-sleep-tracker/id1453884781?uo=4"
+    },
+    {
+      "id": "headspace",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/47/69/b2/4769b27b-0ca9-879c-7348-37afa93a9525/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/headspace-sleep-meditation/id493145008?uo=4"
+    },
+    {
+      "id": "calm",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/84/9f/5f/849f5ff1-ceb7-d05d-00f8-7877b02544b8/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/calm/id571800810?uo=4"
+    },
+    {
+      "id": "endel",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e0/aa/08/e0aa087c-dc19-3952-47de-708f2d2bd7ca/AppIcon-Original-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/endel-focus-sleep-sounds/id1346247457?uo=4"
+    },
+    {
+      "id": "finch",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a6/e3/8a/a6e38a4c-e408-2ad1-00b4-32563370d070/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748?uo=4"
+    },
+    {
+      "id": "sleepcycle",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7a/52/74/7a5274fd-df02-cf8f-89fb-d7b33adbb6e8/AppIconSleepCycle-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/sleep-cycle-tracker-sounds/id320606217?uo=4"
+    },
+    {
+      "id": "onesec",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/eb/18/dc/eb18dc5c-61cc-0114-b594-817ffd9c1784/one_sec_Default_App_Icon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/one-sec-screen-time-focus/id1532875441?uo=4"
+    },
+    {
+      "id": "focus",
+      "url": "https://support.apple.com/favicon.ico",
+      "kind": "Icono oficial del sitio del proveedor",
+      "appStore": null
+    },
+    {
+      "id": "android",
+      "url": "https://www.android.com/static/img/favicon.ico",
+      "kind": "Icono oficial del sitio del proveedor",
+      "appStore": null
+    },
+    {
+      "id": "pagerduty",
+      "url": "https://docs.pagerduty.com/favicon.ico",
+      "kind": "Icono oficial del sitio del proveedor",
+      "appStore": null
+    },
+    {
+      "id": "incidentio",
+      "url": "https://docs.incident.io/mintlify-assets/_mintlify/favicons/incidentio-18bb4170/YazI2mNDinjO9EIY/_generated/favicon/android-chrome-192x192.png",
+      "kind": "Icono oficial del sitio del proveedor",
+      "appStore": null
+    },
+    {
+      "id": "forest",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3f/6c/84/3f6c8447-67b8-10aa-3a7f-986d1c69b602/AppIcon-0-0-1x_U007epad-0-1-0-0-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/forest-focus-for-productivity/id866450515?uo=4"
+    },
+    {
+      "id": "freedom",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c1/07/88/c10788b0-21fc-72de-bc40-b26c0b1fc763/Freedom_X_iOS_Icon-0-0-1x_U007epad-0-1-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/freedom-screen-time-control/id1269788228?uo=4"
+    },
+    {
+      "id": "screenzen",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/89/c8/de/89c8deef-2a7e-5abf-c5ec-ac3ffa343494/AppIcon-0-0-1x_U007emarketing-0-11-0-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/screenzen-screen-time-control/id1541027222?uo=4"
+    },
+    {
+      "id": "brick",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2b/12/ef/2b12ef0f-4249-0ce4-7286-15d744be88c0/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/brick-ditch-distractions/id6448794069?uo=4"
+    },
+    {
+      "id": "bettersleep",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/02/07/f4/0207f416-b8f4-f23f-c3f4-cc8367b4ae72/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/bettersleep-relax-and-sleep/id314498713?uo=4"
+    },
+    {
+      "id": "balance",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/38/04/62/38046234-884c-ee58-836b-7fc3da661131/AppIconUpdated-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/balance-meditation-sleep/id1361356590?uo=4"
+    },
+    {
+      "id": "breathwrk",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4e/5b/dc/4e5bdc3a-2f01-23d6-5d28-6c74cbba5fa3/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/breathwrk-breathing-exercises/id1481804500?uo=4"
+    },
+    {
+      "id": "tide",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/fc/ff/b9/fcffb9fc-c49b-a01b-d5db-5da274e2838c/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/tide-sleep-focus-meditation/id1077776989?uo=4"
+    },
+    {
+      "id": "stoic",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c4/9c/ca/c49cca1f-84fa-23d7-84cc-91b6389ac7d4/app-icon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037?uo=4"
+    },
+    {
+      "id": "daylio",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d0/6a/f0/d06af012-9e66-c056-a03a-91b848e0ad85/AppIcon-green-new-0-0-1x_U007epad-0-1-0-0-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242?uo=4"
+    },
+    {
+      "id": "fabulous",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d0/9f/75/d09f75f4-c04d-c0bb-f21f-3c402658301e/AppIconFabulous-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/fabulous-daily-habit-tracker/id1203637303?uo=4"
+    },
+    {
+      "id": "structured",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/79/5a/4e/795a4e8b-1629-1441-2bb9-db135a059115/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg",
+      "kind": "Icono oficial de App Store",
+      "appStore": "https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946?uo=4"
+    }
+  ],
+  "additionalImages": [
+    {
+      "id": "pagerduty",
+      "url": "https://docs.pagerduty.com/images/kb/9f320fe657553a50d46238d58ab4722b965faba511236a6d3abf2ef256a19f91-primary-schedule.webp",
+      "source": "https://docs.pagerduty.com/incident-management/schedules/escalation-policies-and-schedules"
+    },
+    {
+      "id": "onesec",
+      "url": "https://one-sec.app/assets/blocking-demo-BGT2XTe2.webp",
+      "source": "https://one-sec.app/"
+    }
+  ]
+}

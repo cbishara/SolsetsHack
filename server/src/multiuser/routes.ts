@@ -6,6 +6,7 @@ import { CatalogService, CatalogError, type CatalogProvider, type NormalizedMess
 import { scopedKey, type MultiUserStore } from './store.ts';
 import { WhatsAppError } from '../unipile/client.ts';
 import { clientAuth } from './request-auth.ts';
+import { UnsupportedPairingCheckpoint } from './provider.ts';
 
 export interface LinkingProvider extends CatalogProvider {
   botAccountId: string;
@@ -14,6 +15,8 @@ export interface LinkingProvider extends CatalogProvider {
   sendCode(recipientId: string, code: string, purpose?: 'link' | 'login'): Promise<{ chatId: string; messageId: string }>;
   subscribe(accountId: string, publicUrl: string, secret: string): Promise<void>;
   message(accountId: string, messageId: string): Promise<NormalizedMessage | null>;
+  pairing?(phone: string): Promise<{ accountId: string; pairingCode: string }>;
+  pairingOwner?(accountId: string): Promise<{ accountId: string; ownerId: string; recipientId: string } | null>;
 }
 type Delivery = { connectionId: string; accountId: string; recipientId: string; chatId: string; messageId: string };
 type BotRoute = { userId: string; accountId: string; recipientId: string; bindingVersion: number; chatId: string; verifiedAt: string };
@@ -25,7 +28,8 @@ const equal = (a: string, b: string) => Buffer.byteLength(a) === Buffer.byteLeng
 /** Independent authentication boundary. Never mount behind the shared legacy owner token. */
 export function multiUserRouter(options: {
   store: MultiUserStore; identity: IdentityService; catalog: CatalogService; provider: LinkingProvider;
-  publicUrl: string; webhookSecret: string; rateSecret: string;
+  publicUrl: string; webhookSecret: string; rateSecret: string; pairingEnabled?: boolean; botQueueEnabled?: boolean;
+  agentReadiness?: () => Promise<{ connected: boolean }>;
 }) {
   const { store, identity, catalog, provider, publicUrl, webhookSecret, rateSecret } = options;
   const origin = new URL(publicUrl);
@@ -36,6 +40,7 @@ export function multiUserRouter(options: {
   const sessionTransport = z.enum(['native', 'web']).optional();
   router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
   const principal = (res: Response) => res.locals.principal as Principal;
+  const agentStatus = async () => (await options.agentReadiness?.())?.connected ? 'connected' : 'not_connected';
   const limited = async (key: string, limit: number, duration: number) => {
     const hash = createHmac('sha256', rateSecret).update(key).digest('hex');
     const now = Date.now();
@@ -78,7 +83,8 @@ export function multiUserRouter(options: {
         bindingVersion: binding.version, chatId: delivery.chatId, verifiedAt: binding.verifiedAt,
       });
     });
-    return { status: 'verified', monitoringReady: true, agent: 'not_connected', autoReply: false };
+    const agent = await agentStatus();
+    return { status: 'verified', monitoringReady: true, agent, autoReply: !!options.botQueueEnabled && agent === 'connected' };
   }
 
   router.post('/sessions', async (req, res) => {
@@ -157,11 +163,18 @@ export function multiUserRouter(options: {
       const key = scopedKey(route.userId, provider.botAccountId, message.chatId, message.id);
       if (await tx.get('bot_message_ids', key)) return false;
       const reversedTime = String(8_640_000_000_000_000 - Date.parse(message.sentAt)).padStart(16, '0');
-      await tx.put('bot_inbox', scopedKey(route.userId, reversedTime, message.id), { ...message, userId: route.userId, origin: 'webhook', agentStatus: 'not_connected' });
+      const inboxKey = scopedKey(route.userId, reversedTime, message.id);
+      await tx.put('bot_inbox', inboxKey, { ...message, userId: route.userId, origin: 'webhook', agentStatus: options.botQueueEnabled ? 'queued' : 'not_connected' });
+      // Atomic inbox + pending index survives a restart or a busy conversation. Only messages
+      // received after explicit v1 activation enter this index; enabling it cannot replay old DMs.
+      if (options.botQueueEnabled) await tx.put('bot_pending', scopedKey(provider.botAccountId, message.sentAt, message.id), {
+        inboxKey, botAccountId: provider.botAccountId, userId: route.userId, messageId: message.id,
+        chatId: message.chatId, bindingVersion: route.bindingVersion, receivedAt: new Date().toISOString(),
+      });
       await tx.put('bot_message_ids', key, { stored: true });
       return true;
     });
-    return res.json({ accepted, agent: 'not_connected', autoReply: false });
+    return res.json({ accepted, agent: options.botQueueEnabled ? 'queued' : 'not_connected', autoReply: false });
   });
 
   router.use(async (req, res, next) => {
@@ -178,7 +191,7 @@ export function multiUserRouter(options: {
     const p = principal(res);
     let status = 'not_verified';
     try { status = (await identity.binding(p)).status; } catch (e) { if (!(e instanceof IdentityError) || e.code !== 'whatsapp_not_verified') throw e; }
-    res.json({ userId: p.userId, expiresAt: p.expiresAt, whatsapp: status, agent: 'not_connected' });
+    res.json({ userId: p.userId, expiresAt: p.expiresAt, whatsapp: status, agent: await agentStatus() });
   });
   router.post('/whatsapp/connections', async (req, res) => {
     emptyBody.parse(req.body ?? {});
@@ -192,6 +205,40 @@ export function multiUserRouter(options: {
     res.status(201).json({ connectionId: connection.connectionId, expiresAt: connection.expiresAt, url });
   });
   router.get('/whatsapp/connections/:id', async (req, res) => res.json(await identity.connection(principal(res), String(req.params.id))));
+  router.post('/whatsapp/connections/pairing', async (req, res) => {
+    if (!options.pairingEnabled || !provider.pairing || !provider.pairingOwner) return res.status(503).json({ error: 'pairing_not_enabled', fallback: 'hosted_auth' });
+    const { phone } = z.object({ phone: z.string().regex(/^\+?[1-9][0-9]{6,14}$/) }).strict().parse(req.body);
+    const p = principal(res);
+    await limited(`connections:${p.userId}`, 5, 3_600_000);
+    const connection = await identity.beginConnection(p, { pairingPhone: phone.replace(/^\+/, '') });
+    try {
+      const pending = await provider.pairing(phone.replace(/^\+/, ''));
+      await identity.setPairingAccount(p, connection.connectionId, pending.accountId);
+      res.status(201).json({ connectionId: connection.connectionId, pairingCode: pending.pairingCode, expiresAt: connection.expiresAt, status: 'connecting' });
+    } catch (error) {
+      await identity.cancelConnection(p, connection.connectionId).catch(() => {});
+      throw error;
+    }
+  });
+  router.post('/whatsapp/connections/:id/check', async (req, res) => {
+    if (!options.pairingEnabled || !provider.pairingOwner) return res.status(503).json({ error: 'pairing_not_enabled', fallback: 'hosted_auth' });
+    emptyBody.parse(req.body ?? {});
+    const p = principal(res), id = String(req.params.id);
+    const accountId = await identity.checkPairing(p, id);
+    if (accountId) {
+      const account = await provider.pairingOwner(accountId);
+      if (account) {
+        const code = await identity.completePairing(p, id, account);
+        if (code) await deliver(code);
+      }
+    }
+    res.json(await identity.connection(p, id));
+  });
+  router.delete('/whatsapp/connections/:id', async (req, res) => {
+    emptyBody.parse(req.body ?? {});
+    await identity.cancelConnection(principal(res), String(req.params.id));
+    res.json({ status: 'disconnected' });
+  });
   router.post('/whatsapp/connections/:id/code', async (req, res) => {
     emptyBody.parse(req.body ?? {});
     const p = principal(res), id = String(req.params.id);
@@ -230,12 +277,13 @@ export function multiUserRouter(options: {
       return tx.list<NormalizedMessage>('bot_inbox', scopedKey(p.userId), 200);
     });
     items.sort((a, b) => a.sentAt.localeCompare(b.sentAt) || a.id.localeCompare(b.id));
-    res.json({ items, agent: 'not_connected' });
+    res.json({ items, agent: await agentStatus() });
   });
   router.post('/whatsapp/recommendations', (_req, res) => res.status(503).json({ error: 'agent_not_connected', selectionAvailable: true }));
   router.post('/chat', (_req, res) => res.status(503).json({ error: 'agent_not_connected' }));
   router.use((_req, res) => res.status(404).json({ error: 'not_found' }));
   router.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    if (error instanceof UnsupportedPairingCheckpoint) return res.status(502).json({ error: 'unsupported_checkpoint', fallback: 'hosted_auth' });
     if (error instanceof IdentityError) return res.status(error.status).json({ error: error.code });
     if (error instanceof CatalogError) return res.status(error.status).json({ error: error.code });
     if (error instanceof WhatsAppError) return res.status(error.status).json({ error: 'whatsapp_unavailable' });

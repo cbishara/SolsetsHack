@@ -13,12 +13,12 @@ La primera entrega es texto. Voz y monitoreo/bloqueo de apps siguen después de 
 | Prioridad | Dueño | Entrega y condición de cierre | Estado |
 | --- | --- | --- | --- |
 | P0 | Amaru | Servidor candidato separado, base persistente, token exclusivo y rutas v0 exactas de Quito. | Desplegado cba8980; salud y límites HTTP comprobados. |
-| P0 | Quito + Amaru, #24 | Trabajador del Mac con la sesión Codex de Quito → Railway → resultado persistido; corregir memoria y repetir entrega sin nueva inferencia. | Interoperabilidad con runner sintético comprobada; ejecución conjunta real pendiente. |
-| P0 | Quito, #30 | Confirmar e implementar contrato v1 `suggest_chats` y `chat` con evidencia autorizada; pruebas y commit del trabajador. | Solicitado. No enviar contenido real a v0. |
+| P0 | Quito + Amaru, #24 | Trabajador del Mac con la sesión Codex de Quito → Railway → resultado persistido; corregir memoria y repetir entrega sin nueva inferencia. | Tres inferencias reales A/B comprobadas en Railway; evidencia en PRUEBA_AGENTE_RAILWAY.md. |
+| P0 | Quito, #30 | Confirmar e implementar contrato v1 `suggest_chats` y `chat` con evidencia autorizada; pruebas y commit del trabajador. | Contrato v1 y autorización confirmados por Quito; commit final pendiente. |
 | P1 paralelo | Amaru, #37 | Login WhatsApp reutiliza usuario verificado en web/iPhone; OTP por propósito, sesiones y revocación. | Backend implementado y probado; integración cliente pendiente. |
 | P1 paralelo | Bishara, #21 | Cliente móvil/web: acceso, conexión, selección, chat, memoria y estados. Export web servido desde el mismo origen de API. | Solicitud enviada; integración pendiente. |
-| P1 | Amaru | Emparejamiento en el mismo teléfono, QR web, OTP SOL y activación de recepción, sin confiar en el teléfono escrito para autorizar. | QR/OTP implementados; emparejamiento móvil pendiente. |
-| P1 | Amaru + Quito | Encolar chat real y sugerencias v1, persistir memoria y validar permisos al reservar y aplicar. Outbox durable antes de responder por WhatsApp. | Espera contrato v1. |
+| P1 | Amaru | Emparejamiento en el mismo teléfono, QR web, OTP SOL y activación de recepción, sin confiar en el teléfono escrito para autorizar. | QR/OTP implementados; emparejamiento móvil preparado, flagoff hasta prueba real del checkpoint. |
+| P1 | Amaru + Quito | Encolar chat real y sugerencias v1, persistir memoria y validar permisos al reservar y aplicar. Outbox durable antes de responder por WhatsApp. | Servidor v1 y pruebas implementados; falta interoperabilidad exacta con trabajador publicado. |
 | P2 | Los tres | Recorrido físico iPhone + web + dos cuentas; publicar evidencia, resolver dependencias de PR y entregar a main. | Pendiente de lo anterior. |
 | Después | Bishara + Amaru + Quito | Voz (#28/#29), recuperación ante pérdida/cambio de número, borrado/retención, monitoreo nativo y bloqueo de apps. | Fuera de la primera prueba textual. |
 
@@ -54,3 +54,18 @@ Integrar bases verificadas #15/#23 antes de #36; Quito resuelve #31 en su carril
 - **Bishara:** confirmar contrato de #7/#37, preparar adaptadores y export web, integrar tras la evidencia del backend.
 - **Amaru/agente:** terminar acceso compartido y despliegue; publicar contrato exacto, pruebas y bloqueos verificables.
 - **Amaru/usuario:** cuando llegue el cliente integrado, hacer la prueba con iPhone y una cuenta personal distinta de la cuenta BOT. No hace falta compartir claves en el chat.
+
+
+## Checklist de entrega, sin pasos técnicos para Amaru
+
+- [x] Servidor nuevo en Railway, separado del piloto.
+- [x] Quito conecta su Codex y comprobamos dos usuarios con memoria separada.
+- [x] Backend permite abrir la misma cuenta desde web e iPhone con código de WhatsApp.
+- [x] Pedidos enviados a Quito y Bishara con contratos y pruebas.
+- [ ] Quito publica el trabajador v1; comprobamos compatibilidad y lo activamos juntos.
+- [ ] Bishara conecta las pantallas y entrega la web en el mismo origen del servidor.
+- [ ] Amaru abre la app, conecta su WhatsApp **personal distinto del bot**, introduce el código y elige los chats permitidos.
+- [ ] Dos personas prueban chat, corrección de memoria, cambio de dispositivo y revocación.
+- [ ] Cerramos la entrega con evidencia de iPhone/web/WhatsApp reales.
+
+No pegar claves ni códigos de acceso en GitHub o en el chat. El bot ya está definido; no hay que volver a configurarlo como cuenta personal.

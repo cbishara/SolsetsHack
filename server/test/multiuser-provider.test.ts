@@ -1,11 +1,44 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { UnipileMultiUserProvider } from '../src/multiuser/provider.ts';
+import { UnipileMultiUserProvider, UnsupportedPairingCheckpoint } from '../src/multiuser/provider.ts';
 import { loadMultiUserConfig } from '../src/multiuser/config.ts';
 
 const json = (body: unknown) => new Response(JSON.stringify(body));
 const account = { id: 'personal', type: 'WHATSAPP', sources: [{ status: 'OK' }], connection_params: { im: { phone_number: '+56900000001' } } };
 const message = { id: 'message', account_id: 'personal', chat_id: 'group', sender_id: 'someone', text: 'Mensaje inventado', timestamp: '2026-10-23T20:00:00Z', is_sender: false };
+
+test('pairing adapter uses documented request, accepts only a short documented checkpoint and rejects guessed variants', async () => {
+  let result: unknown = { object: 'Checkpoint', account_id: 'personal', checkpoint: { type: 'QRCODE', qrcode: 'A1B2-C3D4' } };
+  const provider = new UnipileMultiUserProvider('https://api-test.unipile.com', 'secret', 'bot', (async (input, init) => {
+    assert.ok(String(input).endsWith('/api/v1/accounts'));
+    assert.equal(init?.method, 'POST');
+    assert.deepEqual(JSON.parse(String(init?.body)), { provider: 'WHATSAPP', pairing_phone_number: '56900000001' });
+    return json(result);
+  }) as typeof fetch);
+  assert.deepEqual(await provider.pairing('56900000001'), { accountId: 'personal', pairingCode: 'A1B2-C3D4' });
+  for (const bad of [
+    { object: 'Checkpoint', account_id: 'personal', checkpoint: { type: 'PAIRING_CODE', code: 'A1B2C3D4' } },
+    { object: 'Checkpoint', account_id: 'personal', checkpoint: { type: 'QRCODE', qrcode: '1@long-qr-payload,public-key,secret-key' } },
+    { object: 'Checkpoint', account_id: 'bot', checkpoint: { type: 'QRCODE', qrcode: 'A1B2C3D4' } },
+    { object: 'AccountCreated', account_id: 'personal' },
+  ]) { result = bad; await assert.rejects(provider.pairing('56900000001'), error => error instanceof UnsupportedPairingCheckpoint); }
+});
+
+test('pairing status uses only the stored account ID and requires connected canonical owner details', async () => {
+  let result: unknown = null;
+  const provider = new UnipileMultiUserProvider('https://api-test.unipile.com', 'secret', 'bot', (async input => {
+    assert.ok(String(input).endsWith('/accounts/personal'));
+    return result === null ? new Response('', { status: 404 }) : json(result);
+  }) as typeof fetch);
+  assert.equal(await provider.pairingOwner('personal'), null);
+  result = { id: 'personal', type: 'WHATSAPP', sources: [{ status: 'CONNECTING' }] };
+  assert.equal(await provider.pairingOwner('personal'), null);
+  result = account;
+  assert.deepEqual(await provider.pairingOwner('personal'), { accountId: 'personal', ownerId: 'whatsapp:56900000001', recipientId: '56900000001@s.whatsapp.net' });
+  result = { ...account, id: 'different' };
+  await assert.rejects(provider.pairingOwner('personal'));
+  await assert.rejects(provider.pairingOwner('bot'));
+});
 
 test('owner identity comes only from canonical connected WhatsApp account; bot cannot be personal', async () => {
   let result: unknown = account;

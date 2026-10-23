@@ -2,7 +2,7 @@
 
 ## Pedido y decisiones de Amaru, 2026-10-23
 
-Este documento presenta a Quito el plan de backend y fija lo que debe recibir Bishara al integrarlo en móvil. El acuerdo se coordina en [#30](https://github.com/cbishara/SolsetsHack/issues/30); el puente en [#24](https://github.com/cbishara/SolsetsHack/issues/24). Continúa el transporte de PR #23. La implementación candidata y sus pruebas se describen abajo; no está desplegada ni completa la integración del modelo.
+Este documento presenta a Quito el plan de backend y fija lo que debe recibir Bishara al integrarlo en móvil. El acuerdo se coordina en [#30](https://github.com/cbishara/SolsetsHack/issues/30); el puente en [#24](https://github.com/cbishara/SolsetsHack/issues/24). Continúa el transporte de PR #23. La implementación candidata y sus pruebas se describen abajo; tiene un candidato separado desplegado; la integración completa del modelo y cliente sigue en curso. Plan maestro: [PLAN_MAESTRO.md](PLAN_MAESTRO.md).
 
 Amaru pidió expresamente: el agente sugiere chats/grupos relevantes, el usuario confirma cuáles monitorear y puede elegir cualquiera del catálogo aunque no se haya sugerido; un número de SOL atiende a varios usuarios; QR y un código enviado por el bot que se introduce en el panel vinculan la identidad sin mezclar contexto. La app móvil es el destino principal, la web es alternativa.
 
@@ -19,7 +19,7 @@ Amaru pidió expresamente: el agente sugiere chats/grupos relevantes, el usuario
 7. Solo mensajes de chats seleccionados entran a contexto. Cada lectura, webhook, trabajo del agente, memoria y respuesta vuelve a comprobar usuario, cuenta y permisos vigentes. El historial no dispara respuestas; el texto de terceros no escribe preferencias personales ni da instrucciones al sistema.
 8. Mensajes directos al bot se resuelven por remitente verificado y cuenta BOT. App y WhatsApp usan la misma conversación/memoria del usuario. Los grupos seleccionados aportan contexto, pero no se responde en grupos automáticamente. El bot responde al usuario cuando este le escribe; recordatorios proactivos quedan para después.
 
-El escaneo vincula la cuenta personal; el número BOT tiene credenciales/cuenta Unipile distintas y es el remitente de SOL. No convertir una cuenta personal en bot por inferencia. Si faltan esa cuenta o el puente real, estado explícito de no disponible, sin respuestas simuladas.
+Amaru confirmó explícitamente que la cuenta ya conectada y con marca SOL es el bot definitivo. El escaneo vincula otra cuenta personal; el número BOT es el remitente de SOL. No publicar sus identificadores ni secretos. Si faltan esa cuenta o el puente real, estado explícito de no disponible, sin respuestas simuladas.
 
 ## Reparto propuesto a Quito
 
@@ -74,7 +74,7 @@ La verificación se consume antes de configurar suscripciones. Si ese segundo pa
 
 ### Contrato HTTP candidato para revisar con Quito/Bishara
 
-Todos los endpoints bajo `/api/v1`, salvo crear sesión y callbacks/webhook, requieren el Bearer individual de sesión. Ni el Bearer global del piloto ni el futuro token del trabajador sirven aquí. El código del OTP nunca se devuelve en una respuesta HTTP. Las rutas no aceptan `userId`, `accountId` o teléfono del cliente para autorizar operaciones.
+Todos los endpoints bajo `/api/v1`, salvo crear sesión, solicitar/verificar login y callbacks/webhook, requieren sesión individual: Bearer nativo o cookie privada web con comprobación de origen. Ni el Bearer global del piloto ni el futuro token del trabajador sirven aquí. El código del OTP nunca se devuelve en una respuesta HTTP. Las rutas no aceptan `userId`, `accountId` o teléfono del cliente para autorizar operaciones.
 
 | Método / ruta | Cuerpo / resultado |
 | --- | --- |
@@ -101,9 +101,9 @@ Callbacks privados: `POST /api/v1/webhooks/connected/:connectionId/:capability`,
 
 Opt-in `SOL_MULTIUSER_ENABLED=true`, Postgres obligatorio, `UNIPILE_BOT_ACCOUNT_ID`, `SOL_IDENTITY_SECRET` y `SOL_MULTIUSER_WEBHOOK_SECRET` distintos de los secretos legados. Credenciales Unipile y `PUBLIC_URL` se mantienen privadas. Al habilitarlo se desactiva el transporte legado de propietario único; no reutilizar el Bearer legado en Expo. Por defecto está desactivado y se conserva el piloto existente.
 
-El candidato todavía no es un sistema completo de login/recuperación: crea identidad por instalación con sesión de 30 días. No sincroniza otra instalación ni recupera una sesión perdida; rechaza reasignar una cuenta ya vinculada. Hay que cerrar login/recuperación antes de distribuirlo a usuarios finales. El límite de creación usa IP del socket sin confiar en cabeceras del cliente; ajustar el edge verificado antes de escalar tras proxy.
+El login compartido de #37 ya crea una nueva sesión de la identidad canónica verificada en otro dispositivo. Contrato exacto, cookies, OTP de login, logout y pruebas: [LOGIN_COMPARTIDO.md](LOGIN_COMPARTIDO.md). La recuperación ante pérdida o cambio de número y el cliente integrado siguen pendientes. El límite de creación usa IP del socket sin confiar en cabeceras del cliente; ajustar el edge verificado antes de escalar tras proxy.
 
-No se han enviado OTP reales ni activado este candidato en Railway. La integración real del trabajador, las sugerencias del modelo, respuestas salientes del agente, borrado/retención y frontend siguen pendientes. Quito publicó v0 sintético en PR #31; el extremo de servidor y la interoperabilidad ya están verificados abajo. La ampliación v1 para sugerencias y evidencia de chats se propuso en #30; no enviar esos trabajos a v0.
+No se han enviado OTP reales. El candidato separado `sol-multiuser-demo` está desplegado en Railway con almacén propio y API global del piloto bloqueada. La integración real del trabajador, las sugerencias del modelo, respuestas salientes del agente, borrado/retención y frontend siguen pendientes. Quito publicó v0 sintético en PR #31; el extremo de servidor y la interoperabilidad ya están verificados abajo. La ampliación v1 para sugerencias y evidencia de chats se propuso en #30; no enviar esos trabajos a v0.
 
 Evidencia actual: 75 pruebas server aprobadas (54 nuevas de identidad, catálogo, proveedor, HTTP y cola); TypeScript pasa. Las pruebas HTTP ejercitan dos usuarios, callback/OTP/activación, selección manual, revocación durante REST, bot compartido, mensajes propios/antiguos ignorados y reintento tras falla de suscripción. Son fixtures sintéticos del proveedor, no una prueba real de Unipile ni del modelo.
 

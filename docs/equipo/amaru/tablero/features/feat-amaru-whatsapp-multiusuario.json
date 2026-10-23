@@ -31,9 +31,9 @@
     "Una cuenta vinculada no se reasigna a otro usuario."
   ],
   "limits": [
-    "Candidato v0 desplegado; trabajador real de Quito y OTP real pendientes.",
+    "V0 y login desplegados; v1 implementado y apagado hasta cotejo exacto con Quito. OTP real e integración física pendientes.",
     "Login compartido implementado; cliente web/iPhone y recuperación ante cambio de número pendientes.",
-    "Sugerencias y respuestas reales dependen del contrato y trabajador v1 de Quito #30.",
+    "Servidor de sugerencias/chat/outbox construido; trabajador v1 final y cliente Bishara pendientes de acoplamiento.",
     "Desmarcar no borra datos antiguos; borrado y retención pendientes."
   ],
   "acceptance": [
@@ -43,7 +43,7 @@
     "Revocar durante una descarga impide persistirla."
   ],
   "questions": [
-    "Cerrar v1 de sugerencias y evidencia autorizada con Quito antes de entregar frontend."
+    "Cotejar v1 exacto de Quito y verificar recorrido personal antes de entregar la integración completa."
   ],
   "flowIds": [
     "flujo-amaru-whatsapp-multiusuario"
@@ -69,6 +69,12 @@
       "environment": "HTTP local / Railway candidato",
       "result": "89 pruebas server con login compartido. Candidato cba8980: salud200, sesiones A/B y estado200, sin worker503, API global bloqueada503, worker sin token401.",
       "evidence": "docs/equipo/amaru/LOGIN_COMPARTIDO.md"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Railway y Codex real del Mac de Quito, entradas ficticias",
+      "result": "Tres inferencias reales: 16,7s,12,4s,21,3s. Memoria A corregida a5min, B permanece2min; UUID idempotente y persistencia tras despliegue.",
+      "evidence": "docs/equipo/amaru/PRUEBA_AGENTE_RAILWAY.md"
     }
   ],
   "evidence": [

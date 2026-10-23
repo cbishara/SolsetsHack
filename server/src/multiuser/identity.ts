@@ -31,6 +31,7 @@ type Connection = {
   id: string; userId: string; sessionId: string; callbackHash: string; callbackExpiresAt: string; epoch: number;
   status: 'connecting' | 'awaiting_code' | 'verified' | 'disconnected';
   account?: CanonicalAccount; challengeId?: string; callbackCodeIssued?: boolean;
+  pairing?: { expectedOwnerHash: string; accountId?: string; lastCheckedAt?: number };
 };
 type CodeStatus = 'prepared' | 'sent' | 'failed' | 'uncertain' | 'consumed' | 'invalidated';
 type Challenge = {
@@ -195,13 +196,15 @@ export class IdentityService {
     return result;
   }
 
-  async beginConnection(principal: Principal) {
+  async beginConnection(principal: Principal, options: { pairingPhone?: string } = {}) {
+    if (options.pairingPhone && !/^[1-9][0-9]{6,14}$/.test(options.pairingPhone)) throw new IdentityError(400, 'invalid_phone');
     const connectionId = randomUUID();
     const callbackToken = randomBytes(32).toString('base64url');
     const expiresAt = iso(this.clock() + CONNECTION_TTL);
     const reconnectAccountId = await this.store.transaction(async (tx) => {
       await this.assertPrincipal(tx, principal);
       const user = (await tx.get<User>('identity_users', principal.userId))!;
+      if (options.pairingPhone && user.binding) throw new IdentityError(409, 'pairing_reconnect_requires_hosted');
       const key = principal.sessionId;
       const previousId = await tx.get<{ connectionId: string }>('identity_pending_connections', key);
       const previous = previousId ? await tx.get<Connection>('identity_connections', previousId.connectionId) : undefined;
@@ -211,6 +214,7 @@ export class IdentityService {
       await tx.put<Connection>('identity_connections', connectionId, {
         id: connectionId, userId: principal.userId, sessionId: principal.sessionId,
         callbackHash: hash(callbackToken), callbackExpiresAt: expiresAt, epoch: user.connectionEpoch, status: 'connecting',
+        ...(options.pairingPhone ? { pairing: { expectedOwnerHash: hash(`whatsapp:${options.pairingPhone}`) } } : {}),
       });
       await tx.put('identity_pending_connections', key, { connectionId });
       return user.binding?.accountId;
@@ -266,14 +270,63 @@ export class IdentityService {
     for (const value of Object.values(account)) if (typeof value !== 'string' || !value || value.length > 512) throw new IdentityError(400, 'invalid_provider_identity');
     return this.store.transaction(async (tx) => {
       const connection = await this.trustedCallback(tx, connectionId, callbackToken);
-      if (connection.account && (connection.account.accountId !== account.accountId || connection.account.ownerId !== account.ownerId ||
-          connection.account.recipientId !== account.recipientId)) throw new IdentityError(409, 'connection_account_changed');
-      await this.assertOwnershipAvailable(tx, connection.userId, account);
-      if (connection.status === 'disconnected') throw new IdentityError(409, 'connection_disconnected');
-      connection.account = { ...account };
-      if (connection.status === 'connecting') connection.status = 'awaiting_code';
-      await tx.put('identity_connections', connection.id, connection);
+      if (connection.pairing) throw new IdentityError(409, 'pairing_requires_status_check');
+      await this.attachInTransaction(tx, connection, account);
       return this.publicConnection(tx, connection);
+    });
+  }
+
+  private async attachInTransaction(tx: MultiUserTransaction, connection: Connection, account: CanonicalAccount) {
+    if (connection.account && (connection.account.accountId !== account.accountId || connection.account.ownerId !== account.ownerId ||
+        connection.account.recipientId !== account.recipientId)) throw new IdentityError(409, 'connection_account_changed');
+    await this.assertOwnershipAvailable(tx, connection.userId, account);
+    if (connection.status === 'disconnected') throw new IdentityError(409, 'connection_disconnected');
+    connection.account = { ...account };
+    if (connection.status === 'connecting') connection.status = 'awaiting_code';
+    await tx.put('identity_connections', connection.id, connection);
+  }
+
+  private async ownedPairing(tx: MultiUserTransaction, principal: Principal, connectionId: string) {
+    const connection = await this.ownedConnection(tx, principal, connectionId);
+    if (!connection.pairing) throw new IdentityError(409, 'not_a_pairing_connection');
+    if (connection.status === 'disconnected') throw new IdentityError(409, 'connection_disconnected');
+    if (connection.status !== 'verified' && Date.parse(connection.callbackExpiresAt) <= this.clock()) throw new IdentityError(410, 'connection_expired');
+    return connection as Connection & { pairing: NonNullable<Connection['pairing']> };
+  }
+
+  /** Account ID comes only from our provider create request, never from a client body. */
+  async setPairingAccount(principal: Principal, connectionId: string, accountId: string) {
+    if (!accountId || accountId.length > 512) throw new IdentityError(400, 'invalid_provider_identity');
+    await this.store.transaction(async tx => {
+      const connection = await this.ownedPairing(tx, principal, connectionId);
+      if (connection.status !== 'connecting' || (connection.pairing.accountId && connection.pairing.accountId !== accountId)) throw new IdentityError(409, 'connection_account_changed');
+      connection.pairing.accountId = accountId;
+      await tx.put('identity_connections', connection.id, connection);
+    });
+  }
+
+  /** At most one provider poll per two seconds; caller may only poll its own pending connection. */
+  async checkPairing(principal: Principal, connectionId: string) {
+    return this.store.transaction(async tx => {
+      const connection = await this.ownedPairing(tx, principal, connectionId);
+      if (!connection.pairing.accountId) throw new IdentityError(409, 'connection_not_ready');
+      if (connection.status !== 'connecting' || (connection.pairing.lastCheckedAt !== undefined && connection.pairing.lastCheckedAt + 2000 > this.clock())) return undefined;
+      connection.pairing.lastCheckedAt = this.clock();
+      await tx.put('identity_connections', connection.id, connection);
+      return connection.pairing.accountId;
+    });
+  }
+
+  /** Only canonical connected provider identity can advance pairing to a SOL verification code. */
+  async completePairing(principal: Principal, connectionId: string, account: CanonicalAccount) {
+    for (const value of Object.values(account)) if (typeof value !== 'string' || !value || value.length > 512) throw new IdentityError(400, 'invalid_provider_identity');
+    return this.store.transaction(async tx => {
+      const connection = await this.ownedPairing(tx, principal, connectionId);
+      if (account.accountId !== connection.pairing.accountId || !matches(hash(account.ownerId), connection.pairing.expectedOwnerHash)) throw new IdentityError(409, 'pairing_identity_mismatch');
+      await this.attachInTransaction(tx, connection, account);
+      if (connection.callbackCodeIssued || connection.status === 'verified') return null;
+      connection.callbackCodeIssued = true;
+      return this.prepare(tx, connection);
     });
   }
 

@@ -1,20 +1,109 @@
 {
-  "type":"flow", "id":"flujo-amaru-whatsapp-multiusuario", "title":"Conectar, verificar y elegir qué conoce SOL", "owner":"Amaru", "updatedAt":"2026-10-23",
-  "productStatus":"acordada", "buildStatus":"en-curso", "availability":"rama",
-  "summary":"El catálogo sugiere; el usuario autoriza; el servidor mantiene cada identidad separada.",
-  "trigger":"El usuario inicia Conectar WhatsApp desde su sesión individual.",
-  "outcome":"Solo los chats confirmados alimentan contexto; la conexión con el agente y el frontend siguen en desarrollo.",
-  "example":"Ana escanea, recibe un código de SOL y selecciona Trabajo aunque no aparezca entre los sugeridos.",
-  "featureIds":["feat-amaru-whatsapp-multiusuario"],
-  "steps":[
-    {"id":"conectar","kind":"start","actor":"Usuario","title":"Conectar cuenta","detail":"Enlace de Unipile ligado a la sesión individual.","x":0,"y":80},
-    {"id":"verificar","kind":"action","actor":"Usuario y servidor","title":"Introducir código de SOL","detail":"Entrega al propietario canónico, consumo único y vínculo exclusivo.","x":430,"y":80},
-    {"id":"elegir","kind":"action","actor":"Usuario","title":"Elegir conversaciones","detail":"Sugerencias por nombres/tipos, catálogo completo y selección manual; sin contenido previo.","x":860,"y":80},
-    {"id":"contexto","kind":"action","actor":"Servidor","title":"Guardar contexto autorizado","detail":"Cuenta, usuario y selección se revisan otra vez al persistir.","x":1290,"y":80},
-    {"id":"agente","kind":"pending","actor":"Quito y Bishara","title":"Conectar inteligencia y app","detail":"Pendiente contrato v1, recorrido real y entrega verificada al frontend.","x":1720,"y":80}
+  "type": "flow",
+  "id": "flujo-amaru-whatsapp-multiusuario",
+  "title": "Conectar, verificar y elegir qué conoce SOL",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "productStatus": "acordada",
+  "buildStatus": "en-curso",
+  "availability": "rama",
+  "summary": "El catálogo sugiere; el usuario autoriza; el servidor mantiene cada identidad separada.",
+  "trigger": "El usuario inicia Conectar WhatsApp desde su sesión individual.",
+  "outcome": "Solo los chats confirmados alimentan contexto; la conexión con el agente y el frontend siguen en desarrollo.",
+  "example": "Ana escanea, recibe un código de SOL y selecciona Trabajo aunque no aparezca entre los sugeridos.",
+  "featureIds": [
+    "feat-amaru-whatsapp-multiusuario"
   ],
-  "connections":[{"from":"conectar","to":"verificar","label":"WhatsApp vinculado"},{"from":"verificar","to":"elegir","label":"Identidad comprobada"},{"from":"elegir","to":"contexto","label":"Selección explícita"},{"from":"contexto","to":"agente","label":"Contrato y pruebas pendientes"}],
-  "questions":["Cerrar sugerencias del agente y continuidad app/bot sin presentar v0 sintético como soporte real."],
-  "verification":[{"date":"2026-10-23","environment":"Pruebas HTTP con dos usuarios sintéticos","result":"Conexión, código, catálogo, selección, revocación y bandejas separadas pasan; el motor no está conectado.","evidence":"server/test/multiuser-http.test.ts"}],
-  "evidence":[{"label":"Guía y estado actual","path":"docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md"}]
+  "steps": [
+    {
+      "id": "conectar",
+      "kind": "start",
+      "actor": "Usuario",
+      "title": "Conectar cuenta",
+      "detail": "Enlace de Unipile ligado a la sesión individual.",
+      "x": 0,
+      "y": 80
+    },
+    {
+      "id": "verificar",
+      "kind": "action",
+      "actor": "Usuario y servidor",
+      "title": "Introducir código de SOL",
+      "detail": "Entrega al propietario canónico, consumo único y vínculo exclusivo.",
+      "x": 430,
+      "y": 80
+    },
+    {
+      "id": "elegir",
+      "kind": "action",
+      "actor": "Usuario",
+      "title": "Elegir conversaciones",
+      "detail": "Sugerencias por nombres/tipos, catálogo completo y selección manual; sin contenido previo.",
+      "x": 860,
+      "y": 80
+    },
+    {
+      "id": "contexto",
+      "kind": "action",
+      "actor": "Servidor",
+      "title": "Guardar contexto autorizado",
+      "detail": "Cuenta, usuario y selección se revisan otra vez al persistir.",
+      "x": 1290,
+      "y": 80
+    },
+    {
+      "id": "agente",
+      "kind": "pending",
+      "actor": "Quito y Bishara",
+      "title": "Conectar inteligencia y app",
+      "detail": "V0 real comprobado; servidor v1 construido, falta cotejo exacto y cliente integrado. Login compartido disponible.",
+      "x": 1720,
+      "y": 80
+    }
+  ],
+  "connections": [
+    {
+      "from": "conectar",
+      "to": "verificar",
+      "label": "WhatsApp vinculado"
+    },
+    {
+      "from": "verificar",
+      "to": "elegir",
+      "label": "Identidad comprobada"
+    },
+    {
+      "from": "elegir",
+      "to": "contexto",
+      "label": "Selección explícita"
+    },
+    {
+      "from": "contexto",
+      "to": "agente",
+      "label": "Contrato y pruebas pendientes"
+    }
+  ],
+  "questions": [
+    "Validar el checkpoint real de emparejamiento móvil y probar la app con cuenta personal."
+  ],
+  "verification": [
+    {
+      "date": "2026-10-23",
+      "environment": "Pruebas HTTP con dos usuarios sintéticos",
+      "result": "Conexión, código, catálogo, selección, revocación y bandejas separadas pasan; el motor no está conectado.",
+      "evidence": "server/test/multiuser-http.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Railway candidato y Mac de Quito",
+      "result": "V0 real A/B y memoria corregida pasan. Login web, protección de origen y revocación comprobados. V1 y app física pendientes.",
+      "evidence": "docs/equipo/amaru/PRUEBA_AGENTE_RAILWAY.md"
+    }
+  ],
+  "evidence": [
+    {
+      "label": "Guía y estado actual",
+      "path": "docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md"
+    }
+  ]
 }

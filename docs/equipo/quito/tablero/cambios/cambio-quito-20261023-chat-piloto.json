@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-chat-piloto",
+  "title": "Probar SOL con Codex desde la interfaz móvil",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "La interfaz de Amaru puede conversar con el agente local y mostrar su pendiente y memoria.",
+  "before": "La clasificación tenía consola propia; el cerebro del chat y sus rutas temporales quedaron escritos a medias y sin verificar.",
+  "after": "El piloto móvil conversa con Codex usando las rutas existentes. Guarda conversación, primer paso y preferencias con evidencia; permite reintentos sin duplicar.",
+  "reason": "Quito pidió probar cómo funciona el agente desde la visual de Amaru.",
+  "checked": "TypeScript y 47 pruebas pasan. Desde la vista web se envió un caso ficticio a Codex: respondió y guardó una preferencia de dos minutos. Los datos se recuperaron iguales al reiniciar y reconectar. La evaluación con reglas coincide con los 2 casos confirmados y 22 de 39 propuestos; no mide precisión de Codex.",
+  "availability": "Rama quito/agente-base para revisión; entorno local, sin deploy. La integración con el servidor compartido y el dispositivo físico sigue pendiente.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

@@ -1,6 +1,6 @@
 # SolsetsHack: caso Rodrigo (Hackatón Señales, Makana)
 
-Hackatón presencial, 23 y 24 de octubre de 2026. Equipo: Amaru Paillan (panel, chatbot y pitch), Cristóbal Gonzalez "Quito" (agente, inteligencia y pruebas; lidera lo técnico), Cristóbal Bishara (backend e integraciones).
+Hackatón presencial, 23 y 24 de octubre de 2026. Equipo: Amaru Paillan (backend e integraciones), Cristóbal Gonzalez "Quito" (agente, inteligencia y pruebas; lidera lo técnico), Cristóbal Bishara (app, diseño UX/UI y chat). Quién lleva el guion de la demo y el pitch está por confirmar.
 Entrega el sábado 24: solución funcionando + este repo con README de una página (problema, elección, qué se excluyó) + pitch de 5 min. Confirmar hora (13:00 o 15:00); se planifica para las 13:00.
 
 ## Reglas que no se rompen
@@ -29,8 +29,9 @@ Una app de celular que hace la guardia de noche por Rodrigo (soporte TI, turnos 
 ## Cómo trabajamos los tres
 Reparto por funcionalidad en `docs/equipo/README.md`. Antes de tocar un archivo, revisa de qué carril es.
 - Quito: `agent/` (clasificación, política, onboarding del agente, cerebro del chat, semana simulada) y sus pruebas.
-- Bishara: `server/` (API, base, conexiones, push, llamada, calendario de turnos) y el deploy.
-- Amaru: `mobile/` (la app Expo) y el guion de la demo. `web/` es su prototipo de referencia.
+- Amaru: `server/` (API, base, conexiones, push, llamada, calendario de turnos) y el deploy. `web/` y `backend/` son su prototipo de referencia.
+- Bishara: `mobile/` (la app Expo): diseño UX/UI, pantallas y chat.
+- Bishara y Amaru intercambiaron carriles el 2026-10-23 (`docs/equipo/adr/oficiales/2026-10-23-trueque-bishara-amaru.md`). Si un documento anterior dice otra cosa, manda ese ADR.
 - Los nombres `agent/`, `server/` y `mobile/` son la propuesta para lo oficial. El código del prototipo no se edita: se lee como referencia.
 - Toca solo los archivos de tu carril. Si necesitas cambiar uno ajeno, avisa a su dueño antes. No muevas, renombres ni reformatees archivos de otro carril.
 - Vale igual para los tres, Quito incluido: si lo que pide tu humano cae en otro carril o en el prototipo, avísale antes de empezar, no a mitad de camino, y ofrécele pedírselo al dueño con `tools/tarea`. Solo si tu humano confirma que igual quiere meterse, corre `tools/carril permitir <ruta>` y avísale al dueño. `tools/carril de <ruta>` dice de quién es cada ruta.

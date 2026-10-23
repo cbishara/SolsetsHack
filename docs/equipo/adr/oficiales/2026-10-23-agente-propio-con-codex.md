@@ -2,7 +2,7 @@
 
 Estado: oficial
 Fecha: 2026-10-23
-Decidió: Quito, el 2026-10-23, eligiendo la opción 2 de abajo. Afecta el deploy de Bishara: hay que avisarle.
+Decidió: Quito, el 2026-10-23, eligiendo la opción 2 de abajo. Afecta el deploy de Amaru (antes Bishara, ver el trueque de carriles): hay que avisarle.
 Carril: quito
 
 ## Decisión
@@ -51,3 +51,4 @@ En las dos, si el motor falla o pasa de unos 15 segundos, el agente cae a reglas
 2026-10-23: antes la pregunta era "Claude directo o Hermes". Quito eligió Hermes y después pidió compararlo con alternativas.
 2026-10-23: se agregó lo verificado por tres investigaciones y una prueba con el Codex de Quito.
 2026-10-23: Quito eligió la opción 2 y pasó a oficial. Se corrigió "Clasificación con Claude" en `CLAUDE.md`, sección "Núcleo técnico".
+2026-10-23: el deploy pasa de Bishara a Amaru por el trueque (`2026-10-23-trueque-bishara-amaru.md`).

@@ -1,0 +1,122 @@
+[
+  {
+    "directory": "expo-native-ui",
+    "path": "~/.codex/skills/expo-native-ui/SKILL.md",
+    "repo": "expo/skills",
+    "commit": "d5caf7fdf8b4854351f05841a7e315ac87ad7d24",
+    "source_path": "plugins/expo/skills/expo-native-ui",
+    "source": "https://github.com/expo/skills/tree/d5caf7fdf8b4854351f05841a7e315ac87ad7d24/plugins/expo/skills/expo-native-ui",
+    "skill_md_sha256": "b767395c5043a3cbefaa992a7909921393aa34159c2e3b4bc9456851262e6d70",
+    "file_count": 9,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "expo-native-ui"
+  },
+  {
+    "directory": "expo-ui",
+    "path": "~/.codex/skills/expo-ui/SKILL.md",
+    "repo": "expo/skills",
+    "commit": "d5caf7fdf8b4854351f05841a7e315ac87ad7d24",
+    "source_path": "plugins/expo/skills/expo-ui",
+    "source": "https://github.com/expo/skills/tree/d5caf7fdf8b4854351f05841a7e315ac87ad7d24/plugins/expo/skills/expo-ui",
+    "skill_md_sha256": "1ad63b23fef57fb23d60dde75fa22bcc0ebefc19c03c351930998c5246976805",
+    "file_count": 7,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "expo-ui"
+  },
+  {
+    "directory": "expo-router",
+    "path": "~/.codex/skills/expo-router/SKILL.md",
+    "repo": "expo/skills",
+    "commit": "d5caf7fdf8b4854351f05841a7e315ac87ad7d24",
+    "source_path": "plugins/expo/skills/expo-router",
+    "source": "https://github.com/expo/skills/tree/d5caf7fdf8b4854351f05841a7e315ac87ad7d24/plugins/expo/skills/expo-router",
+    "skill_md_sha256": "bc24528189efa1cbd50d7bb1480f145b1b90c7652b3332ea01b12c046bf5a6ed",
+    "file_count": 8,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "expo-router"
+  },
+  {
+    "directory": "expo-animation",
+    "path": "~/.codex/skills/expo-animation/SKILL.md",
+    "repo": "expo/skills",
+    "commit": "d5caf7fdf8b4854351f05841a7e315ac87ad7d24",
+    "source_path": "plugins/expo/skills/expo-animation",
+    "source": "https://github.com/expo/skills/tree/d5caf7fdf8b4854351f05841a7e315ac87ad7d24/plugins/expo/skills/expo-animation",
+    "skill_md_sha256": "6dff46215f667f2470334c238779893fce71f6c08b60a89e626d46535e4a187b",
+    "file_count": 4,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "expo-animation"
+  },
+  {
+    "directory": "expo-design-system",
+    "path": "~/.codex/skills/expo-design-system/SKILL.md",
+    "repo": "expo/skills",
+    "commit": "d5caf7fdf8b4854351f05841a7e315ac87ad7d24",
+    "source_path": "plugins/expo/skills/expo-design-system",
+    "source": "https://github.com/expo/skills/tree/d5caf7fdf8b4854351f05841a7e315ac87ad7d24/plugins/expo/skills/expo-design-system",
+    "skill_md_sha256": "71b3c9e7136e1af174ce59094376abcc0667e02b5c0bda31e52cc548333a9988",
+    "file_count": 4,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "expo-design-system"
+  },
+  {
+    "directory": "expo-data-fetching",
+    "path": "~/.codex/skills/expo-data-fetching/SKILL.md",
+    "repo": "expo/skills",
+    "commit": "d5caf7fdf8b4854351f05841a7e315ac87ad7d24",
+    "source_path": "plugins/expo/skills/expo-data-fetching",
+    "source": "https://github.com/expo/skills/tree/d5caf7fdf8b4854351f05841a7e315ac87ad7d24/plugins/expo/skills/expo-data-fetching",
+    "skill_md_sha256": "d6521c2cd9c759599bce36ba5bf5bb4856b5563134a05afcc6f0622f14fc2ae1",
+    "file_count": 4,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "expo-data-fetching"
+  },
+  {
+    "directory": "react-native-skills",
+    "path": "~/.codex/skills/react-native-skills/SKILL.md",
+    "repo": "vercel-labs/agent-skills",
+    "commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+    "source_path": "skills/react-native-skills",
+    "source": "https://github.com/vercel-labs/agent-skills/tree/063bee94c3f4df8453406c830b0a7df0f2860278/skills/react-native-skills",
+    "skill_md_sha256": "4012750a5ccbe064ca04af3835d5d1b011979d2d09d9b6df1c8128fac58e0a66",
+    "file_count": 42,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "vercel-react-native-skills"
+  },
+  {
+    "directory": "mobile-ios-design",
+    "path": "~/.codex/skills/mobile-ios-design/SKILL.md",
+    "repo": "wshobson/agents",
+    "commit": "0874a27b17a22e2b7c2e2bcd725768e0803cad06",
+    "source_path": "plugins/ui-design/skills/mobile-ios-design",
+    "source": "https://github.com/wshobson/agents/tree/0874a27b17a22e2b7c2e2bcd725768e0803cad06/plugins/ui-design/skills/mobile-ios-design",
+    "skill_md_sha256": "2b3b2405aee645a345d137ce93bd86bac65d33da4ad40c4b6f007bf4a51b6c96",
+    "file_count": 4,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "mobile-ios-design"
+  },
+  {
+    "directory": "typography",
+    "path": "~/.codex/skills/typography/SKILL.md",
+    "repo": "rshankras/claude-code-apple-skills",
+    "commit": "9ffb83138209057875698dd11c1720c657c47a92",
+    "source_path": "skills/design/typography",
+    "source": "https://github.com/rshankras/claude-code-apple-skills/tree/9ffb83138209057875698dd11c1720c657c47a92/skills/design/typography",
+    "skill_md_sha256": "2405f22fbb2dd55c831d94cd1d67e2c1cbe43b285ad46d8486b0eb46cadf0c55",
+    "file_count": 1,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "typography"
+  },
+  {
+    "directory": "accessibility",
+    "path": "~/.codex/skills/accessibility/SKILL.md",
+    "repo": "AccessibilityTools/iOSAccessibilitySkill",
+    "commit": "388bfb67061cdb67ee108829109ea68d5115c230",
+    "source_path": "plugins/ios-accessibility/skills/accessibility",
+    "source": "https://github.com/AccessibilityTools/iOSAccessibilitySkill/tree/388bfb67061cdb67ee108829109ea68d5115c230/plugins/ios-accessibility/skills/accessibility",
+    "skill_md_sha256": "a41c1645057d612206d1250d766377026db4e30f6e6e25b6d716d2e0814920ab",
+    "file_count": 1,
+    "review": "SKILL.md read; no downloaded scripts executed; no feedback sent",
+    "skill_name": "accessibility"
+  }
+]

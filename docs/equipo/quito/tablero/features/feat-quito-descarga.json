@@ -44,7 +44,8 @@
   ],
   "questions": [
     "¿Qué horario y zona horaria definen el parte de la mañana?",
-    "Falta acordar e integrar identidad y almacenamiento con el backend del equipo."
+    "Falta acordar e integrar identidad y almacenamiento con el backend del equipo.",
+    "Cerrar en #24 el acoplamiento con amaru/whatsapp-multiuser: faltan extremo servidor y recuperación desde Expo contra esa base compartida."
   ],
   "flowIds": [
     "flujo-quito-recuperar-pendientes"
@@ -62,6 +63,12 @@
       "environment": "HTTP local, Codex real, dos procesos de servidor sucesivos y archivo temporal aislado",
       "result": "Seis comprobaciones aprobadas con tres inferencias: horario declarado y memoria con cita, corrección a las 19:00, reintento sin otra inferencia, recuperación idéntica en otro proceso, respuesta que recuerda horario y dos minutos, y memoria vacía para otro usuario. No verifica autorización multiusuario, teléfono ni backend compartido.",
       "evidence": "agent/VERIFY-CHAT.md; agent/scripts/verify-chat.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Trabajador del Mac, HTTP local sintético y Codex real",
+      "result": "17 pruebas nuevas del puente aprobadas: aislamiento, reserva, resultado, caída, reintento y plazos. Una llamada real produjo respuesta, paso de dos minutos y memoria con evidencia en 11.1 s. El receptor es de prueba: no acredita conexión con server/ ni Railway.",
+      "evidence": "agent/INTEGRATION.md; agent/src/integration/processor.test.ts; agent/src/integration/worker.test.ts"
     }
   ],
   "evidence": [
@@ -84,6 +91,10 @@
     {
       "label": "Repetir aceptación del chat con Codex real y reinicio de proceso",
       "path": "agent/VERIFY-CHAT.md"
+    },
+    {
+      "label": "Puente candidato con el servidor y límites de la verificación",
+      "path": "agent/INTEGRATION.md"
     }
   ]
 }

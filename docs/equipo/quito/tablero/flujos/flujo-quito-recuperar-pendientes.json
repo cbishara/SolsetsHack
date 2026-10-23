@@ -105,7 +105,8 @@
   ],
   "questions": [
     "Horario y zona horaria del parte.",
-    "Integrar el pendiente con el parte matinal y el backend del equipo."
+    "Integrar el pendiente con el parte matinal y el backend del equipo.",
+    "Cerrar en #24 el acoplamiento con amaru/whatsapp-multiuser: faltan extremo servidor y recuperación desde Expo contra esa base compartida."
   ],
   "verification": [
     {
@@ -119,6 +120,12 @@
       "environment": "API del piloto con Codex real y dos procesos aislados en Node 24",
       "result": "El horario ficticio cambia de 18:00 a 19:00 y Codex recupera la corrección tras reiniciar el servicio. Repetir el mismo envío no crea otra inferencia. La comprobación no usa la interfaz ni acredita un parte matinal automático.",
       "evidence": "agent/VERIFY-CHAT.md; agent/scripts/verify-chat.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Trabajador del Mac, HTTP local sintético y Codex real",
+      "result": "17 pruebas nuevas del puente aprobadas: aislamiento, reserva, resultado, caída, reintento y plazos. Una llamada real produjo respuesta, paso de dos minutos y memoria con evidencia en 11.1 s. El receptor es de prueba: no acredita conexión con server/ ni Railway.",
+      "evidence": "agent/INTEGRATION.md; agent/src/integration/processor.test.ts; agent/src/integration/worker.test.ts"
     }
   ],
   "evidence": [
@@ -137,6 +144,10 @@
     {
       "label": "Recuperación y corrección con el motor real entre dos procesos",
       "path": "agent/VERIFY-CHAT.md"
+    },
+    {
+      "label": "Puente candidato con el servidor y límites de la verificación",
+      "path": "agent/INTEGRATION.md"
     }
   ]
 }

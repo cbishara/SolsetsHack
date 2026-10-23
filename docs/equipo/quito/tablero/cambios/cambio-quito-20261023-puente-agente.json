@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-puente-agente",
+  "title": "Preparar el puente del servidor al Codex del Mac",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "El agente tiene un trabajador candidato para recibir trabajos, inferir y entregar cambios sin guardar una segunda memoria compartida.",
+  "before": "El piloto local podía conversar con Codex, pero el servidor compartido todavía no lo invocaba ni existía nuestro trabajador saliente.",
+  "after": "El cliente candidato recibe reservas, traduce datos del servidor y devuelve clasificación o cambios de chat y memoria. Guarda los resultados pendientes para reenviarlos sin repetir el modelo. Amaru tomó el extremo servidor en amaru/whatsapp-multiuser y usará este v0 como base; el acoplamiento sigue pendiente.",
+  "reason": "Quito autorizó avanzar con la conexión entre agente, servidor y app después de revisar el reparto y los avances del equipo.",
+  "checked": "17 pruebas nuevas y TypeScript pasan; la copia limpia sobre la base del PR #27 suma 64 pruebas aprobadas. Una inferencia real de Codex por HTTP local sintético completó respuesta, plan y preferencia con evidencia en 11.1 s. No prueba Railway, lectura de chats reales ni envío por WhatsApp. Amaru confirmó las rutas y garantías del v0 como base de trabajo en #24.",
+  "availability": "Rama quito/puente-agente, preparada para revisión del equipo. No activada en Railway ni cambios de server/mobile. Guía y contrato en agent/INTEGRATION.md; ampliación multiusuario #30 fuera de este v0.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

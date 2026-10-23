@@ -1,0 +1,147 @@
+{
+  "type": "flow",
+  "id": "flujo-quito-atender-alerta",
+  "title": "Atender una alerta de guardia",
+  "owner": "Bishara",
+  "summary": "Distinguir guardia, envío, confirmación y respaldo cuando Rodrigo no responde.",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "trigger": "Un incidente requiere la intervención de Rodrigo.",
+  "outcome": "La alerta se reconoce o sigue un respaldo; los límites del respaldo todavía deben decidirse.",
+  "example": "Rodrigo está de guardia. Un incidente ficticio requiere intervención; el push no se reconoce durante tres minutos y el recorrido acordado pasa a llamada. La recepción real no está verificada.",
+  "featureIds": [
+    "feat-quito-contrato-noche",
+    "feat-bishara-alerta-respaldo"
+  ],
+  "steps": [
+    {
+      "id": "incidente",
+      "kind": "start",
+      "actor": "Solsets",
+      "title": "Incidente que requiere ayuda",
+      "detail": "El criterio de escalamiento corresponde al trabajo de Quito.",
+      "x": 0,
+      "y": 80
+    },
+    {
+      "id": "guardia",
+      "kind": "decision",
+      "actor": "Solsets",
+      "title": "¿Guardia confirmada?",
+      "detail": "Consultar el contrato de esa noche.",
+      "featureId": "feat-quito-contrato-noche",
+      "x": 420,
+      "y": 80
+    },
+    {
+      "id": "silencio",
+      "kind": "pending",
+      "actor": "Solsets",
+      "title": "Caso sin guardia por acordar",
+      "detail": "La excepción ante una caída grave sin guardia está abierta. Esta salida no decide si despertarlo o no.",
+      "x": 420,
+      "y": 440
+    },
+    {
+      "id": "push",
+      "kind": "action",
+      "actor": "Solsets / proveedor",
+      "title": "Avisar con botón Lo vi",
+      "detail": "La notificación debe ofrecer una forma de reconocer el incidente.",
+      "featureId": "feat-bishara-alerta-respaldo",
+      "x": 850,
+      "y": 80
+    },
+    {
+      "id": "ack",
+      "kind": "decision",
+      "actor": "Rodrigo",
+      "title": "¿Lo reconoció en 3 min?",
+      "detail": "El plazo está acordado; el mecanismo y su comprobación deben acreditarse.",
+      "x": 1280,
+      "y": 80
+    },
+    {
+      "id": "visto",
+      "kind": "end",
+      "actor": "Rodrigo / Solsets",
+      "title": "Alerta reconocida",
+      "detail": "Reconocer no equivale a resolver el incidente. Cómo detener respaldos debe definirse y probarse.",
+      "x": 1740,
+      "y": 0
+    },
+    {
+      "id": "llamada",
+      "kind": "action",
+      "actor": "Solsets / telefonía",
+      "title": "Llamar y contemplar repetición",
+      "detail": "Respaldo acordado ante falta de confirmación; no garantiza atravesar concentración.",
+      "x": 1740,
+      "y": 300
+    },
+    {
+      "id": "limites",
+      "kind": "pending",
+      "actor": "Equipo",
+      "title": "Cerrar los límites del respaldo",
+      "detail": "Faltan intervalo, máximo de llamadas, confirmación por voz y conducta ante fallos.",
+      "x": 1740,
+      "y": 620
+    }
+  ],
+  "connections": [
+    {
+      "from": "incidente",
+      "to": "guardia",
+      "label": "Evaluar noche"
+    },
+    {
+      "from": "guardia",
+      "to": "silencio",
+      "label": "No"
+    },
+    {
+      "from": "guardia",
+      "to": "push",
+      "label": "Sí"
+    },
+    {
+      "from": "push",
+      "to": "ack",
+      "label": "Esperar respuesta"
+    },
+    {
+      "from": "ack",
+      "to": "visto",
+      "label": "Sí"
+    },
+    {
+      "from": "ack",
+      "to": "llamada",
+      "label": "No / 3 minutos"
+    },
+    {
+      "from": "llamada",
+      "to": "limites",
+      "label": "Definir cuándo termina"
+    }
+  ],
+  "questions": [
+    "¿Qué pasa con una guardia sin confirmar?",
+    "¿Cómo falla o se detiene la repetición de llamadas?",
+    "¿Cómo se prueba el recorrido en cada dispositivo?"
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdos 1 y 2",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    },
+    {
+      "label": "Excepción sin confirmar: caída grave sin guardia",
+      "path": "docs/equipo/adr/por-confirmar/2026-10-23-caida-grave-sin-guardia.md"
+    }
+  ]
+}

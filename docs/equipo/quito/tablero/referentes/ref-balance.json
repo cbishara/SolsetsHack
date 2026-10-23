@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-balance",
+  "title": "Balance",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Preguntas sobre experiencia y objetivos para adaptar meditaciones; planes y prácticas breves.",
+  "aesthetic": "Blanco/turquesa, ilustración de línea y tarjetas amplias.",
+  "takeaway": "Personalización con pocas preguntas.",
+  "limit": "Evitar cuestionarios que aumenten la carga antes de dormir.",
+  "url": "https://themindcompany.com/apps/balance",
+  "appStore": "https://apps.apple.com/us/app/balance-meditation-sleep/id1361356590?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/balance.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/78/70/39/78703952-8d09-2164-01b0-fd3e793c868a/2.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "type": "feature",
+  "id": "feat-bishara-calendario",
+  "title": "Sugerir la guardia a partir de los turnos",
+  "owner": "Bishara",
+  "collaborators": [
+    "Bishara: conexión al calendario",
+    "Quito: interpretación de turnos",
+    "Amaru: confirmación en la app"
+  ],
+  "moment": "preparar",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "summary": "El calendario ayuda a sugerir si esa noche le toca guardia; Rodrigo confirma la respuesta.",
+  "need": "No volver a introducir información que ya existe en sus turnos, conservando una confirmación comprensible.",
+  "userActions": [
+    "Revisa la sugerencia que acompaña a la pregunta de guardia.",
+    "Confirma si la sugerencia corresponde a su noche."
+  ],
+  "systemActions": [
+    "Consulta el calendario de turnos conectado.",
+    "Interpreta el turno para sugerir una respuesta a la pregunta de guardia."
+  ],
+  "example": "Ejemplo acordado: el calendario sintético contiene un turno nocturno de Rodrigo. La pregunta de guardia llega con una sugerencia y él la confirma. No se da por acreditada una conexión o interpretación real con este ejemplo.",
+  "rules": [
+    "El calendario sugiere; la funcionalidad de contrato conserva la confirmación de Rodrigo."
+  ],
+  "limits": [
+    "La conexión y la interpretación pertenecen a carriles distintos.",
+    "No inventar fechas, zona horaria o responsables de un turno ambiguo."
+  ],
+  "acceptance": [
+    "El equipo puede relacionar la sugerencia con un turno concreto del calendario de prueba.",
+    "Rodrigo entiende que está confirmando una sugerencia."
+  ],
+  "questions": [
+    "¿Cuál es el calendario autorizado y qué formato tienen sus turnos?",
+    "¿Qué se muestra si faltan datos, hay conflicto o falla la conexión?"
+  ],
+  "flowIds": [
+    "flujo-quito-preparar-noche"
+  ],
+  "relatedFeatureIds": [
+    "feat-quito-contrato-noche"
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo de producto: calendario de turnos",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    }
+  ]
+}

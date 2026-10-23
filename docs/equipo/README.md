@@ -10,6 +10,8 @@ Lo decidido (producto, stack de la app y funcionalidades con su dueño) está en
 
 ## Lo que nos une
 
+El [tablero humano de funcionalidades y flujos](./quito/tablero/README.md) se abre con `npm run tablero`. Cada agente mantiene las fichas y cambios de su carril; las vistas visuales se generan juntas. El orden de las tarjetas se guarda desde el panel.
+
 El JSON que devuelve el agente y las respuestas de la API que usa la app. Se definen entre los tres antes de construir. Quien necesite cambiarlos avisa a los otros dos antes.
 
 ## Reglas de trabajo

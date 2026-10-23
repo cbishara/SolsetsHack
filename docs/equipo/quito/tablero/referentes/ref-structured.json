@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-structured",
+  "title": "Structured",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "reflexion-planificacion",
+  "summary": "Línea de tiempo, bandeja de pendientes, subtareas, foco y funciones Pro para calendarios/recurrencias.",
+  "aesthetic": "Rosa suave, eje temporal vertical e iconos por actividad.",
+  "takeaway": "Ordenar tareas, guardia y descanso en una secuencia.",
+  "limit": "Es planificación adyacente, no un sistema de clasificación de incidentes.",
+  "url": "https://structured.app/",
+  "appStore": "https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/structured.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3d/18/90/3d1890b0-748a-63d8-8c30-cafc21ffe0ae/6.9__baseline_2.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

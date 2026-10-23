@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-breathwrk",
+  "title": "Breathwrk",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Respiración guiada con imagen, sonido y vibración; clases, recordatorios y seguimiento.",
+  "aesthetic": "Anillos concéntricos e instrucción central; interfaz oscura y contenido de Peloton.",
+  "takeaway": "Una pausa opcional con principio y fin claros.",
+  "limit": "Su sitio limita disponibilidad a regiones específicas; no se validó acceso desde Chile.",
+  "url": "https://www.breathwrk.com/",
+  "appStore": "https://apps.apple.com/us/app/breathwrk-breathing-exercises/id1481804500?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/breathwrk.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/ff/aa/23/ffaa236a-0ce8-58c0-502a-45faaa646469/appstore_screenshot_27.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

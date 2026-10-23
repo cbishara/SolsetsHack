@@ -1,0 +1,26 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-tablero-humano",
+  "title": "Documentar los acuerdos en un tablero humano",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Registrar funcionalidades y recorridos con ejemplos, responsables, límites y preguntas abiertas.",
+  "before": "Los cinco acuerdos estaban en el ADR oficial y no tenían fichas conectadas con recorridos visuales.",
+  "after": "Las cinco funcionalidades y cuatro flujos tienen fichas legibles, fuentes y estados de implementación/verificación explícitos. El panel y el mapa se generan desde ellas.",
+  "reason": "Quito pidió que los agentes de cada persona mantengan una explicación humana de cada cambio, feature y flujo, y eligió repo con panel visual y Excalidraw.",
+  "checked": "2026-10-23: tablero:build y tablero:check correctos; seis pruebas automatizadas del modelo y la generación aprobadas. En Chromium se comprobó lectura de fichas, movimiento y persistencia de tarjetas y flujos, rechazo de guardado sobre una revisión antigua, aparición automática de una ficha nueva, vista móvil de 390 px y HTML sin servidor, sin errores JavaScript. El Excalidraw se renderizó y revisó visualmente. Esto verifica la herramienta documental; no acredita la implementación de las capacidades del producto.",
+  "availability": "Rama de trabajo; documentación del equipo. No es una funcionalidad del producto desplegado.",
+  "featureIds": [
+    "feat-quito-contrato-noche",
+    "feat-bishara-alerta-respaldo",
+    "feat-bishara-calendario",
+    "feat-amaru-confianza",
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-preparar-noche",
+    "flujo-quito-atender-alerta",
+    "flujo-quito-recuperar-pendientes",
+    "flujo-quito-revisar-confianza"
+  ]
+}

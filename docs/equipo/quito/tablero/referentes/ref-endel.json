@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-endel",
+  "title": "Endel",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Sonido adaptativo, selección automática y experiencia en varios dispositivos.",
+  "aesthetic": "Player negro y geometría de líneas; las piezas promocionales son más saturadas.",
+  "takeaway": "Una acción principal y acompañamiento con poca interacción.",
+  "limit": "El sonido debe ser opcional y conservar la percepción de alertas.",
+  "url": "https://endel.io/",
+  "appStore": "https://apps.apple.com/us/app/endel-focus-sleep-sounds/id1346247457?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/endel.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d2/28/4b/d2284b29-1643-2557-554f-9971917ae38c/EN-Store-Screenshot-852_Hz-03.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

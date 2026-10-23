@@ -1,0 +1,49 @@
+{
+  "type": "screen",
+  "id": "pant-quito-inicio-noche",
+  "title": "Inicio de noche",
+  "owner": "Amaru",
+  "designer": "Quito",
+  "updatedAt": "2026-10-23",
+  "moment": "descansar",
+  "summary": "Lo que ve Rodrigo si mira el teléfono de madrugada: cuánto falta para la alarma, si Sol está de guardia y si pasó algo. El sol que asoma desde la barra es el botón de la guardia.",
+  "designStatus": "propuesta",
+  "buildStatus": "por-hacer",
+  "featureIds": [
+    "feat-quito-contrato-noche",
+    "feat-amaru-confianza"
+  ],
+  "flowSteps": [
+    {
+      "flowId": "flujo-quito-preparar-noche",
+      "stepId": "si"
+    },
+    {
+      "flowId": "flujo-quito-atender-alerta",
+      "stepId": "guardia"
+    }
+  ],
+  "inspiredBy": [
+    {
+      "refId": "ref-opal",
+      "why": "Hipótesis 1: un estado principal que muestra si la guardia está activa o si algo requiere revisión."
+    },
+    {
+      "refId": "ref-calm",
+      "why": "Hipótesis 1: un estado principal tranquilo. Calm aporta la sensación de refugio."
+    },
+    {
+      "refId": "ref-endel",
+      "why": "Hipótesis 1: una acción principal y acompañamiento con poca interacción."
+    }
+  ],
+  "design": {
+    "image": "docs/equipo/quito/tablero/pantallas/img/inicio-noche.png",
+    "label": "Maqueta, dirección Ocaso",
+    "date": "2026-10-23",
+    "source": "docs/equipo/quito/diseno/funcionalidades.html"
+  },
+  "notes": [
+    "Ninguna de las cinco funcionalidades oficiales cubre esta pantalla por sí sola: muestra el estado que deja el contrato de la noche y si el modo sombra está activo."
+  ]
+}

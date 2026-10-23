@@ -1,0 +1,61 @@
+{
+  "type": "screen",
+  "id": "pant-quito-contrato-noche",
+  "title": "Contrato de la noche",
+  "owner": "Amaru",
+  "designer": "Quito",
+  "updatedAt": "2026-10-23",
+  "moment": "preparar",
+  "summary": "Antes de dormir, la app pregunta si esa noche le toca guardia, con la respuesta sugerida por el calendario de turnos. Si dice que sí, muestra qué lo va a despertar y por qué canal.",
+  "designStatus": "propuesta",
+  "buildStatus": "por-hacer",
+  "featureIds": [
+    "feat-quito-contrato-noche",
+    "feat-bishara-calendario"
+  ],
+  "flowSteps": [
+    {
+      "flowId": "flujo-quito-preparar-noche",
+      "stepId": "turno"
+    },
+    {
+      "flowId": "flujo-quito-preparar-noche",
+      "stepId": "confirma"
+    },
+    {
+      "flowId": "flujo-quito-preparar-noche",
+      "stepId": "si"
+    },
+    {
+      "flowId": "flujo-quito-preparar-noche",
+      "stepId": "no"
+    }
+  ],
+  "inspiredBy": [
+    {
+      "refId": "ref-unrespiro",
+      "why": "Hipótesis 2 del benchmark: un cierre del día corto que confirma horario y excepciones antes de soltar el teléfono."
+    },
+    {
+      "refId": "ref-balance",
+      "why": "Ampliación, personalización acotada: preguntar solo lo que cambia la recomendación. Acá queda una sola pregunta."
+    },
+    {
+      "refId": "ref-brick",
+      "why": "Ampliación, compromiso físico: una frontera clara entre usar el teléfono y desconectarse."
+    },
+    {
+      "refId": "ref-structured",
+      "why": "Ampliación, claridad temporal: mostrar descanso, guardia y tareas con su duración. Acá, la semana de turnos."
+    }
+  ],
+  "design": {
+    "image": "docs/equipo/quito/tablero/pantallas/img/contrato-noche.png",
+    "label": "Maqueta, dirección Ocaso",
+    "date": "2026-10-23",
+    "source": "docs/equipo/quito/diseno/funcionalidades.html"
+  },
+  "notes": [
+    "La respuesta sugerida depende de que el calendario de turnos esté conectado. Sin calendario, la pregunta llega sin sugerencia."
+  ]
+}

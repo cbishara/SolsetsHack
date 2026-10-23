@@ -1,0 +1,57 @@
+{
+  "type": "feature",
+  "id": "feat-bishara-alerta-respaldo",
+  "title": "Confirmar una alerta y llamar si no hay respuesta",
+  "owner": "Bishara",
+  "collaborators": [
+    "Bishara: push, temporizador y llamada",
+    "Amaru: botón Lo vi",
+    "Quito: cuándo escalar"
+  ],
+  "moment": "urgencia",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "summary": "Una alerta pide confirmación; si Rodrigo no la reconoce en tres minutos, el acuerdo contempla una llamada de respaldo.",
+  "need": "Que un incidente que requiere a Rodrigo no dependa de que mire voluntariamente la pantalla.",
+  "userActions": [
+    "Ve el aviso y toca «Lo vi» cuando reconoce la alerta.",
+    "Si no lo reconoce, puede recibir una llamada de respaldo según el recorrido acordado."
+  ],
+  "systemActions": [
+    "Envía el push con el botón de confirmación.",
+    "Espera tres minutos; si no hay confirmación, inicia la llamada de respaldo y contempla repetirla."
+  ],
+  "example": "Recorrido acordado, todavía sin verificación: una caída de producción requiere a Rodrigo mientras tiene guardia. No toca «Lo vi» durante tres minutos; el sistema debería iniciar la llamada de respaldo. El resultado en teléfono y reloj debe comprobarse por separado.",
+  "rules": [
+    "El plazo de tres minutos para reconocer el push está acordado en el ADR oficial de las cinco funcionalidades.",
+    "La confirmación y la política de repetición necesitan distinguir envíos de respuestas reales."
+  ],
+  "limits": [
+    "No hay evidencia en esta ficha de entrega, recepción ni despertar real.",
+    "Pasar el modo concentración de un teléfono depende del dispositivo, permisos y recorrido; no se garantiza por el texto de una tarjeta."
+  ],
+  "acceptance": [
+    "Se puede identificar qué alerta fue reconocida y cuándo.",
+    "Un ensayo controlado muestra qué pasa si Rodrigo confirma y qué pasa si no confirma."
+  ],
+  "questions": [
+    "¿Cuántas llamadas se permiten y con qué intervalo?",
+    "¿Cómo se confirma o detiene el respaldo al responder por llamada?",
+    "¿Qué ocurre si falla el proveedor de push o de telefonía?"
+  ],
+  "flowIds": [
+    "flujo-quito-atender-alerta"
+  ],
+  "relatedFeatureIds": [
+    "feat-quito-contrato-noche"
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo de producto: alerta y respaldo",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    }
+  ]
+}

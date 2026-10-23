@@ -16,7 +16,8 @@ El servicio de prueba es independiente del `backend` del prototipo y de Hermes. 
 - Cuenta real verificada en estado `OK`. Grupo de prueba encontrado y seleccionado explícitamente por Amaru; no se publican identificadores personales.
 - Ambos webhooks creados y verificados como habilitados, con filtro de cuenta y cabecera secreta.
 - En el servidor público: API privada sin Bearer → 401; webhook sin secreto → 401; evento sintético de cuenta ajena → 200 ignorado; agente todavía no conectado → 503.
-- La primera importación del grupo devolvió cero mensajes y cursor nulo. La recepción de un nuevo mensaje por WhatsApp y su persistencia quedan pendientes de la prueba del participante; no se acredita esa prueba solo por tener el webhook registrado.
+- La primera importación del grupo devolvió cero mensajes y cursor nulo. Después del envío del participante, Unipile recibió un mensaje entrante; una importación explícita lo guardó en Postgres y la API devolvió una sola copia. Esto verifica el recorrido de recuperación por historial, no todavía la captura automática.
+- Los logs HTTP confirmaron que la notificación de ese mensaje llegó al webhook con HTTP 200, pero el validador la descartó por su formato. Se añadió recuperación canónica por ID para notificaciones de cuenta/chat autorizados cuyos campos opcionales difieran del ejemplo. Se registran solo rutas de campos incompatibles, nunca su contenido. Hace falta un mensaje nuevo para verificar la corrección en la entrega del proveedor.
 
 ## Tutorial para Amaru
 
@@ -69,7 +70,7 @@ npm run unipile -- status
 
 El registro crea dos webhooks filtrados por la cuenta: mensajes y estado. Usa `Content-Type: application/json` y `X-Sol-Webhook-Secret`. Revisa todas las páginas de suscripciones para evitar duplicados. Si ya existe una suscripción con el mismo nombre/destino, no la reemplaza: revisar manualmente su activación y secreto si hubo una rotación. No hay reintentos automáticos de creación tras una respuesta incierta.
 
-El webhook es `POST /api/webhooks/unipile`. Secreto ausente/incorrecto → 401; Unipile sin configurar → 503. Cuenta/chat fuera de selección o evento no compatible → 200 ignorado **sin guardar el cuerpo crudo**. Evento compatible → persistir y después 200. Fallo de base → 500 para que el proveedor reintente. No existe una cola de inferencia parcialmente implementada: el mensaje queda disponible y el agente pendiente es explícito.
+El webhook es `POST /api/webhooks/unipile`. Secreto ausente/incorrecto → 401; Unipile sin configurar → 503. Cuenta/chat fuera de selección o evento no compatible → 200 ignorado **sin guardar el cuerpo crudo**. Si la notificación identifica un mensaje nuevo del chat autorizado pero los campos opcionales no encajan, se consulta `GET /api/v1/messages/:id` y se verifica cuenta, chat e ID antes de normalizar. Fallo del proveedor o identidad contradictoria → 502 para reintentar. Evento compatible → persistir y después 200. Fallo de base → 500 para que el proveedor reintente. No existe una cola de inferencia parcialmente implementada: el mensaje queda disponible y el agente pendiente es explícito.
 
 ## Contrato incremental para la app y Quito
 

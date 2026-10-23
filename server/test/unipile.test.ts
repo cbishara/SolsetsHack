@@ -99,6 +99,38 @@ test('history skips foreign, hidden, deleted, event and malformed messages; dese
   assert.deepEqual(await f.service.receive(event()), { ignored: 'chat_not_selected' });
 });
 
+test('webhook optional-field variants resolve canonical REST data only for selected chats', async () => {
+  let lookups = 0;
+  const f = fixture(new MemoryStore(), (async (url) => {
+    if (String(url).includes('/messages/')) { lookups++; return json(historyMessage()); }
+    return json({ id: chatId, account_id: accountId });
+  }) as typeof fetch);
+  const variant = event({ account_info: { type: 'WHATSAPP', user_id: null }, sender: null, timestamp: null });
+  assert.deepEqual(await f.service.receive(variant), { ignored: 'chat_not_selected' });
+  assert.equal(lookups, 0);
+  await f.service.select(chatId, true);
+  await f.service.receive(variant);
+  const saved = (await f.service.messages(chatId)).items;
+  assert.equal(saved.length, 1); assert.equal(saved[0].origin, 'webhook'); assert.equal(saved[0].direction, 'incoming');
+  await f.service.receive(variant); assert.equal(lookups, 1);
+  assert.deepEqual(await f.service.receive({ ...variant, account_id: 'other' }), { ignored: 'account' });
+  assert.equal(lookups, 1);
+});
+
+test('canonical fallback rejects mismatched identity and retries provider failures without saving', async () => {
+  let mismatch = true;
+  const f = fixture(new MemoryStore(), (async (url) => {
+    if (String(url).includes('/messages/')) return mismatch ? json(historyMessage({ chat_id: 'foreign' })) : new Response('provider private error', { status: 503 });
+    return json({ id: chatId, account_id: accountId });
+  }) as typeof fetch);
+  await f.service.select(chatId, true);
+  const variant = event({ sender: null });
+  await assert.rejects(f.service.receive(variant), /identidad/);
+  mismatch = false;
+  await assert.rejects(f.service.receive(variant), /HTTP 503/);
+  assert.equal((await f.service.messages(chatId)).items.length, 0);
+});
+
 test('store scopes before applying a limit, including IDs containing delimiters', async () => {
   const store = new MemoryStore();
   for (let i = 0; i < 205; i++) await store.put('whatsapp_messages', `other:${i}`, { wrong: true });

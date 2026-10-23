@@ -16,6 +16,7 @@ const webhookSchema = z.object({
   sender: z.object({ attendee_provider_id: id }),
   account_info: z.object({ user_id: id }).optional(), is_sender: bool.optional(), is_event: bool.optional(),
 });
+const webhookEnvelopeSchema = webhookSchema.pick({ event: true, account_id: true, account_type: true, chat_id: true, message_id: true });
 
 export type WhatsAppMessage = {
   id: string; accountId: string; chatId: string; text: string; senderId: string;
@@ -23,6 +24,7 @@ export type WhatsAppMessage = {
   origin: 'history' | 'webhook'; agentStatus: 'not_connected';
 };
 type Selection = { chatId: string; selected: boolean; selectedAt: string };
+type WebhookResult = { ignored: string } | { accepted: true; duplicate?: boolean; agent?: 'not_connected' };
 const scope = (...parts: string[]) => parts.map(encodeURIComponent).join(':') + ':';
 
 export class WhatsAppService {
@@ -99,7 +101,7 @@ export class WhatsAppService {
     return { items, limit: 200, agent: 'not_connected' };
   }
 
-  async receive(body: unknown) {
+  async receive(body: unknown): Promise<WebhookResult> {
     const status = z.object({ AccountStatus: z.object({ account_id: id, account_type: z.literal('WHATSAPP'), message: z.string().max(100) }) }).safeParse(body);
     if (status.success) {
       if (status.data.AccountStatus.account_id !== this.client.accountId) return { ignored: 'account' };
@@ -108,7 +110,29 @@ export class WhatsAppService {
     }
     // No raw payload is persisted: out-of-scope chats never enter the database.
     const parsed = webhookSchema.safeParse(body);
-    if (!parsed.success) return { ignored: 'unsupported_or_invalid_event' };
+    if (!parsed.success) {
+      // Provider-specific optional fields can differ from the documented example.
+      // Resolve a valid, authorized notification against the canonical REST message.
+      const envelope = webhookEnvelopeSchema.safeParse(body);
+      if (!envelope.success) {
+        console.warn('[unipile] unsupported webhook envelope', envelope.error.issues.map((issue) => ({ field: issue.path.join('.'), code: issue.code })));
+        return { ignored: 'unsupported_or_invalid_event' };
+      }
+      const e = envelope.data;
+      if (e.account_id !== this.client.accountId) return { ignored: 'account' };
+      if (!await this.selected(e.chat_id)) return { ignored: 'chat_not_selected' };
+      if (await this.store.get('whatsapp_messages', scope(e.account_id, e.chat_id, e.message_id))) return { accepted: true, duplicate: true, agent: 'not_connected' };
+      console.warn('[unipile] resolving webhook from REST', parsed.error.issues.map((issue) => ({ field: issue.path.join('.'), code: issue.code })));
+      const canonical = messageSchema.safeParse(await this.client.message(e.message_id));
+      if (!canonical.success) throw new WhatsAppError(502, 'Unipile devolvió un mensaje incompatible; se requiere reintento.');
+      const m = canonical.data;
+      if (m.id !== e.message_id || m.account_id !== e.account_id || m.chat_id !== e.chat_id) throw new WhatsAppError(502, 'La identidad del mensaje no coincide con la notificación.');
+      if (m.hidden || m.deleted || m.is_event) return { ignored: 'non_text' };
+      return this.receive({
+        ...e, message: m.text, timestamp: m.timestamp, sender: { attendee_provider_id: m.sender_id },
+        is_sender: m.is_sender, is_event: m.is_event,
+      });
+    }
     const m = parsed.data;
     if (m.account_id !== this.client.accountId) return { ignored: 'account' };
     if (!await this.selected(m.chat_id)) return { ignored: 'chat_not_selected' };

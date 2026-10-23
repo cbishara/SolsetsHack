@@ -49,6 +49,7 @@ export class UnipileClient {
     return pageSchema.parse(await this.request('chats', { account_id: this.accountId, account_type: 'WHATSAPP', limit: '100', cursor }));
   }
   async chat(chatId: string) { return record.parse(await this.request(`chats/${encodeURIComponent(chatId)}`)); }
+  async message(messageId: string) { return record.parse(await this.request(`messages/${encodeURIComponent(messageId)}`)); }
   async messages(chatId: string, cursor?: string): Promise<ProviderPage> {
     return pageSchema.parse(await this.request(`chats/${encodeURIComponent(chatId)}/messages`, { limit: '50', cursor }));
   }

@@ -41,6 +41,15 @@ app.post('/api/webhooks/kapso', express.raw({ type: 'application/json', limit: '
  res.json({ accepted: true });
 });
 
+// The landing and its compiled assets are public; application data and account
+// operations continue through the authentication middleware below.
+const distDirectory = resolve('dist');
+if (existsSync(resolve(distDirectory, 'index.html'))) {
+ app.get(['/', '/demo'], (req, res) => res.sendFile(resolve(distDirectory, 'index.html')));
+ app.get('/favicon.svg', (req, res) => res.sendFile(resolve(distDirectory, 'favicon.svg')));
+ app.use('/assets', express.static(resolve(distDirectory, 'assets'), { index: false, redirect: false, dotfiles: 'deny' }));
+}
+
 app.use((req, res, next) => {
  if (!process.env.DASHBOARD_PASSWORD) return next();
  const [scheme, token] = (req.get('authorization') || '').split(' ');
@@ -89,7 +98,7 @@ app.get('/auth/google/callback', async (req, res) => {
  const cookie = req.headers.cookie?.split(';').map(v => v.trim()).find(v => v.startsWith('oauth_state='))?.slice(12);
  if (!saved || saved.expires < Date.now() || !equal(cookie, state) || typeof req.query.code !== 'string') return res.status(400).send('Autorización vencida o inválida. Conecta Google nuevamente.');
  const { tokens } = await googleClient().getToken({ code: req.query.code, codeVerifier: saved.codeVerifier }); await saveGoogleTokens(tokens);
- res.clearCookie('oauth_state', { path: '/auth' }); res.redirect('/?connected=google');
+ res.clearCookie('oauth_state', { path: '/auth' }); res.redirect('/app?connected=google');
 });
 app.post('/api/google/sync', async (req, res) => {
  const response = await googleFetch('gmail/v1/users/me/messages?maxResults=10&q=' + encodeURIComponent('is:unread subject:[SOLSETS-DEMO]'));

@@ -9,11 +9,15 @@ npm ci
 npm run dev
 ```
 
-Abrir **http://localhost:5173**. No hacen falta claves. En «Probar una noche», recorrer VPN → compras → turno → caída crítica. Revisar motivos, aprobar una tarea simulada, dar feedback y cambiar permisos en «Mi agente». El modo sombra viene activado. Todas las situaciones son ficticias y las simulaciones nunca llaman a servicios externos. El estado se guarda en `.data/`.
+Abrir **http://localhost:5173** para la landing. «Empieza con SOL» lleva a `/demo`: una primera ayuda sin cuenta ni conexiones, con ejemplos de Rodrigo, profesor, coach y vida personal. Los borradores y preferencias de esta demostración se conservan por contexto en el navegador. Son plantillas guiadas, no un agente conversacional general.
+
+En **http://localhost:5173/app**, el espacio de Rodrigo conserva la API existente: «Mis pendientes» → «Una guardia con SOL» permite recorrer VPN, compras, turno y caída crítica; «Tus reglas» gestiona modo sombra, pausa y permisos. Las simulaciones no llaman a servicios externos. El estado operativo se guarda en `.data/` o en la base configurada. Con `DASHBOARD_PASSWORD`, `/app`, API y OAuth quedan protegidos; la landing y `/demo` permanecen públicos.
 
 ## Implementado
 
-- Panel React adaptable: tareas, descanso, conexiones, permisos, pausa, modo sombra y parte de la mañana.
+- Landing y dashboard React con identidad compartida: degradados azules, flechas reactivas, amarillo ácido y diseño adaptable.
+- SOL guiado: borrador editable, pregunta contextual, copia, pausa y reentrada; preferencias corregibles y aislamiento por caso. Recuperación en memoria si falla el almacenamiento local.
+- Panel operativo: pendientes por estado, horario, conexiones, permisos, pausa, modo sombra y resumen. Una acción simulada no se cuenta como obligación resuelta.
 - API Node/Express, persistencia PostgreSQL en Railway, Supabase o local, cola persistida de WhatsApp y deduplicación por mensaje.
 - Política en código: nuevo o confianza < 0,7 → escalar; mismo incidente alertado en 30 minutos → no repetir; pausa impide nuevas acciones. Feedback disponible como contexto para Hermes.
 - Adaptadores: Hermes HTTP, webhook firmado y envío Kapso, OAuth Google con PKCE y tokens cifrados, lectura manual de Gmail y borradores, eventos Calendar con recordatorio.
@@ -38,3 +42,5 @@ npm start
 ```
 
 En producción el panel y la API se sirven juntos en el puerto `PORT` (3001 por defecto). La configuración Docker de Hermes necesita validarse en una máquina con Docker; este entorno no lo tiene instalado. Pruebas de integración externas y SQL pendientes de credenciales. Ver [guion de demo](./docs/DEMO.md).
+
+La estrategia y las diferencias entre la demostración y el alcance futuro están en [PRODUCTO_SOL.md](./docs/PRODUCTO_SOL.md).

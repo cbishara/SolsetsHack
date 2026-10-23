@@ -18,3 +18,8 @@ dist/
 .DS_Store
 .vscode/
 .idea/
+
+# Runtime state and credentials
+.data/
+coverage/
+*.log

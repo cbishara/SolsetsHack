@@ -1,0 +1,24 @@
+{
+  "type": "flow",
+  "id": "flujo-amaru-whatsapp-context",
+  "title": "De un grupo de prueba a contexto disponible para SOL",
+  "owner": "Amaru",
+  "summary": "Conectar, elegir, recibir y consultar sin mezclar chats ni fingir que el agente ya responde.",
+  "productStatus": "propuesta",
+  "buildStatus": "implementada",
+  "availability": "rama",
+  "updatedAt": "2026-10-23",
+  "trigger": "El propietario conecta WhatsApp y elige explícitamente SOL Demo.",
+  "outcome": "El texto queda persistido y disponible por conversación; la propuesta del agente y la UI siguen pendientes.",
+  "example": "Un participante escribe una caída inventada; SOL guarda ese mensaje una vez y lo muestra al consultar la bandeja autorizada.",
+  "featureIds": ["feat-amaru-whatsapp-context"],
+  "steps": [
+    {"id":"elegir","kind":"start","actor":"Propietario","title":"Elegir el chat","detail":"Conectar la cuenta y seleccionar el grupo de prueba.","x":0,"y":80},
+    {"id":"recibir","kind":"action","actor":"Servidor","title":"Recibir texto autorizado","detail":"Verificar secreto, cuenta y selección; persistir y deduplicar antes de confirmar.","x":430,"y":80},
+    {"id":"contexto","kind":"end","actor":"App y agente","title":"Consultar contexto separado","detail":"La API expone mensajes del chat. La integración móvil y del agente real todavía requiere a sus responsables.","x":860,"y":80}
+  ],
+  "connections": [{"from":"elegir","to":"recibir","label":"Historial explícito o nuevo mensaje"},{"from":"recibir","to":"contexto","label":"Consulta autenticada"}],
+  "questions": ["Conectar el agente de Quito y la pantalla de Bishara sin compartir memoria entre personas."],
+  "verification": [{"date":"2026-10-23","environment":"Pruebas HTTP y almacenamiento local","result":"Autenticación, aislamiento, historial, deduplicación y recuperación verificados. No hay inferencia ni respuesta automática.","evidence":"server/test/unipile.test.ts"}],
+  "evidence": [{"label":"Contrato y recorrido técnico","path":"docs/equipo/amaru/WHATSAPP_UNIPILE.md"}]
+}

@@ -50,10 +50,11 @@ export class PostgresStore implements Store {
     return r.rows[0]?.data as T | undefined;
   }
 
-  async list<T>(collection: Collection, limit = 200) {
+  async list<T>(collection: Collection, limit = 200, idPrefix = '', orderBy?: 'sentAt') {
     const r = await this.pool.query(
-      `select data from ${SCHEMA}.documents where collection = $1 order by seq desc limit $2`,
-      [collection, limit],
+      `select data from ${SCHEMA}.documents where collection = $1 and starts_with(id, $3)
+       order by case when $4 = 'sentAt' then data->>'sentAt' end desc nulls last, seq desc limit $2`,
+      [collection, limit, idPrefix, orderBy ?? null],
     );
     return r.rows.map((row) => row.data as T);
   }

@@ -22,6 +22,12 @@ npm test
 
 Variables en `server/.env.example`.
 
+## WhatsApp por Unipile (rama de Amaru)
+
+Implementado el transporte de contexto por chat: selección explícita, historial paginado, webhook autenticado, deduplicación y persistencia. No invoca el agente provisional ni responde automáticamente. El agente real y la pantalla móvil son dependencias de Quito y Bishara.
+
+Guía, contrato y límites: [WHATSAPP_UNIPILE.md](../docs/equipo/amaru/WHATSAPP_UNIPILE.md). La configuración local se lee de `.env.local` y no se publica. `npm run unipile:check` valida la cuenta; `npm run unipile:subscribe` registra webhooks cuando `PUBLIC_URL` esté desplegada. Usar un servicio Railway separado del prototipo, con esta carpeta como raíz y Postgres.
+
 ## Conectar 2Chat (una vez)
 
 1. Cuenta de prueba en 2Chat y conectar el número de demo con el QR.

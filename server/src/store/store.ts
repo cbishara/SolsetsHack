@@ -11,6 +11,9 @@ export type Collection =
   | 'settings'
   | 'sources'
   | 'devices'
+  | 'whatsapp_messages'
+  | 'whatsapp_selections'
+  | 'whatsapp_status'
   | 'raw_events';
 
 export interface Store {
@@ -19,7 +22,7 @@ export interface Store {
   put<T>(collection: Collection, id: string, data: T): Promise<void>;
   get<T>(collection: Collection, id: string): Promise<T | undefined>;
   /** Newest first. */
-  list<T>(collection: Collection, limit?: number): Promise<T[]>;
+  list<T>(collection: Collection, limit?: number, idPrefix?: string, orderBy?: 'sentAt'): Promise<T[]>;
   close(): Promise<void>;
 }
 
@@ -53,9 +56,10 @@ export class MemoryStore implements Store {
     return row ? (structuredClone(row.data) as T) : undefined;
   }
 
-  async list<T>(collection: Collection, limit = 200) {
-    return [...this.col(collection).values()]
-      .sort((a, b) => b.seq - a.seq)
+  async list<T>(collection: Collection, limit = 200, idPrefix = '', orderBy?: 'sentAt') {
+    return [...this.col(collection).entries()]
+      .filter(([id]) => id.startsWith(idPrefix)).map(([, row]) => row)
+      .sort((a, b) => (orderBy ? String((b.data as Record<string, unknown>)[orderBy] ?? '').localeCompare(String((a.data as Record<string, unknown>)[orderBy] ?? '')) : 0) || b.seq - a.seq)
       .slice(0, limit)
       .map((r) => structuredClone(r.data) as T);
   }

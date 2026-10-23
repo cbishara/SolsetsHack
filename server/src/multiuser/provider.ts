@@ -62,12 +62,14 @@ export class UnipileMultiUserProvider implements CatalogProvider {
     return { accountId, ownerId: `whatsapp:${phone}`, recipientId: `${phone}@s.whatsapp.net` };
   }
 
-  async sendCode(recipientId: string, code: string): Promise<{ chatId: string; messageId: string }> {
+  async sendCode(recipientId: string, code: string, purpose: 'link' | 'login' = 'link'): Promise<{ chatId: string; messageId: string }> {
     if (!/^[1-9][0-9]{6,14}@s\.whatsapp\.net$/.test(recipientId) || !/^\d{6}$/.test(code)) throw new Error('Invalid verification delivery.');
     const body = new FormData();
     body.set('account_id', this.botAccountId);
     body.set('attendees_ids', recipientId);
-    body.set('text', `Tu código de vinculación de SOL es ${code}. Caduca en 5 minutos. Introdúcelo solo en la app donde conectaste WhatsApp. No lo compartas.`);
+    body.set('text', purpose === 'login'
+      ? `Tu código para iniciar sesión en SOL es ${code}. Caduca en 5 minutos. Introdúcelo solo donde pediste acceder a SOL. No lo compartas. Si no lo solicitaste, ignóralo.`
+      : `Tu código de vinculación de SOL es ${code}. Caduca en 5 minutos. Introdúcelo solo en la app donde conectaste WhatsApp. No lo compartas.`);
     const result = z.object({ chat_id: id, message_id: id }).parse(await this.request('chats', {}, body));
     const chat = await this.chat(this.botAccountId, result.chat_id);
     if (chat.type !== 0) throw new WhatsAppError(502, 'No se pudo verificar el chat individual de SOL.');

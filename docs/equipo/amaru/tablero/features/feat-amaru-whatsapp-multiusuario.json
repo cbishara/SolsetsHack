@@ -14,7 +14,8 @@
     "Conectar WhatsApp desde la app.",
     "Introducir el código recibido desde SOL.",
     "Elegir chats sugeridos o cualquier otro del catálogo.",
-    "Desmarcar un chat para detener su uso."
+    "Desmarcar un chat para detener su uso.",
+    "Acceder desde otro dispositivo con código de WhatsApp, conservando su identidad."
   ],
   "systemActions": [
     "Resolver identidad con sesión individual y propietario canónico.",
@@ -30,9 +31,9 @@
     "Una cuenta vinculada no se reasigna a otro usuario."
   ],
   "limits": [
-    "Candidato no desplegado; prueba del proveedor real pendiente.",
-    "Sesión por instalación: falta login y recuperación entre dispositivos.",
-    "Sugerencias y respuestas reales dependen de Quito #30/#31.",
+    "Candidato v0 desplegado; trabajador real de Quito y OTP real pendientes.",
+    "Login compartido implementado; cliente web/iPhone y recuperación ante cambio de número pendientes.",
+    "Sugerencias y respuestas reales dependen del contrato y trabajador v1 de Quito #30.",
     "Desmarcar no borra datos antiguos; borrado y retención pendientes."
   ],
   "acceptance": [
@@ -62,6 +63,12 @@
       "environment": "PostgreSQL 17.11 temporal local y contrato Quito 8f939ee",
       "result": "Concurrencia, rollback, OTP único, identidad/chat/memoria tras reinicio, acuse perdido recuperado sin inferir de nuevo y borrado aislado A/B.",
       "evidence": "docs/equipo/amaru/WHATSAPP_MULTIUSUARIO.md"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "HTTP local / Railway candidato",
+      "result": "89 pruebas server con login compartido. Candidato cba8980: salud200, sesiones A/B y estado200, sin worker503, API global bloqueada503, worker sin token401.",
+      "evidence": "docs/equipo/amaru/LOGIN_COMPARTIDO.md"
     }
   ],
   "evidence": [

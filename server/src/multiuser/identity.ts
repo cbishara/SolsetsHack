@@ -18,8 +18,8 @@ export class IdentityError extends Error {
 
 /** Created by authenticate(), never populated from a client-supplied userId. */
 export type Principal = Readonly<{ userId: string; sessionId: string; expiresAt: string }>;
-type Session = { id: string; userId: string; tokenHash: string; expiresAt: string; revoked?: boolean };
-type User = { id: string; createdAt: string; binding?: Binding; connectionEpoch: number };
+type Session = { id: string; userId: string; tokenHash: string; expiresAt: string; revoked?: boolean; epoch?: number };
+type User = { id: string; createdAt: string; binding?: Binding; connectionEpoch: number; sessionEpoch?: number };
 export type Binding = {
   userId: string; sessionId: string; connectionId: string; accountId: string; ownerId: string; recipientId: string;
   verifiedAt: string; version: number; status: 'verified' | 'disconnected';
@@ -38,6 +38,11 @@ type Challenge = {
   ownerId: string; codeHash: string; expiresAt: string; createdAt: string; attempts: number; status: CodeStatus;
 };
 type SendQuota = { windowStart: number; lastSentAt: number; count: number };
+type LoginChallenge = {
+  id: string; tokenHash: string; codeHash: string; expiresAt: string; attempts: number; status: CodeStatus;
+  userId?: string; accountId?: string; ownerId?: string; bindingVersion?: number; sessionEpoch?: number;
+};
+export type LoginDelivery = { challengeId: string; recipientId: string; code: string };
 export type CodeDelivery = {
   challengeId: string; connectionId: string; accountId: string; recipientId: string; code: string; expiresAt: string;
 };
@@ -73,16 +78,19 @@ export class IdentityService {
     return this.store.transaction(async (tx) => {
       const index = await tx.get<{ sessionId: string }>('identity_session_tokens', hash(token));
       const session = index ? await tx.get<Session>('identity_sessions', index.sessionId) : undefined;
-      if (!session || session.revoked || Date.parse(session.expiresAt) <= this.clock() || !matches(session.tokenHash, hash(token))) {
+      if (!session || !matches(session.tokenHash, hash(token))) {
         throw new IdentityError(401, 'invalid_session');
       }
+      await this.assertPrincipal(tx, { userId: session.userId, sessionId: session.id, expiresAt: session.expiresAt });
       return { userId: session.userId, sessionId: session.id, expiresAt: session.expiresAt };
     });
   }
 
   private async assertPrincipal(tx: MultiUserTransaction, principal: Principal) {
     const session = await tx.get<Session>('identity_sessions', principal.sessionId);
-    if (!session || session.userId !== principal.userId || session.revoked || Date.parse(session.expiresAt) <= this.clock()) {
+    const user = session ? await tx.get<User>('identity_users', session.userId) : undefined;
+    if (!session || !user || session.userId !== principal.userId || session.revoked || Date.parse(session.expiresAt) <= this.clock() ||
+        (session.epoch ?? 0) !== (user.sessionEpoch ?? 0)) {
       throw new IdentityError(401, 'invalid_session');
     }
     return session;
@@ -91,6 +99,100 @@ export class IdentityService {
   /** Recheck an authenticated application principal inside the caller's atomic write/read. */
   async assertPrincipalInTransaction(tx: MultiUserTransaction, principal: Principal): Promise<void> {
     await this.assertPrincipal(tx, principal);
+  }
+
+  /** Revoke only this device, or every session without a bounded scan of session records. */
+  async logout(principal: Principal, allDevices = false) {
+    await this.store.transaction(async tx => {
+      const session = await this.assertPrincipal(tx, principal);
+      await tx.put('identity_sessions', session.id, { ...session, revoked: true });
+      if (allDevices) {
+        const user = (await tx.get<User>('identity_users', principal.userId))!;
+        await tx.put('identity_users', user.id, { ...user, sessionEpoch: (user.sessionEpoch ?? 0) + 1 });
+      }
+    });
+  }
+
+  private loginHash(challenge: LoginChallenge, code: string) {
+    return createHmac('sha256', this.secret).update(JSON.stringify([
+      'sol-whatsapp-login-v1', challenge.id, challenge.tokenHash, challenge.userId, challenge.accountId,
+      challenge.ownerId, challenge.bindingVersion, challenge.sessionEpoch, code,
+    ])).digest('hex');
+  }
+
+  /** Phone is a lookup only. Only a previously verified canonical recipient can receive a code. */
+  async prepareLogin(phone: string) {
+    const canonical = phone.replace(/^\+/, '');
+    if (!/^[1-9][0-9]{6,14}$/.test(canonical)) throw new IdentityError(400, 'invalid_phone');
+    const loginToken = randomBytes(32).toString('base64url');
+    const challengeId = randomUUID();
+    const expiresAt = iso(this.clock() + CODE_TTL);
+    const delivery = await this.store.transaction(async tx => {
+      const indexed = await tx.get<Binding>('identity_whatsapp_owners', `whatsapp:${canonical}`);
+      const binding = await this.currentIndexedBinding(tx, indexed);
+      const challenge: LoginChallenge = { id: challengeId, tokenHash: hash(loginToken), codeHash: '', expiresAt, attempts: 0, status: 'invalidated' };
+      let send: LoginDelivery | undefined;
+      if (binding) {
+        const now = this.clock(), quotaKey = hash(binding.ownerId);
+        const previousQuota = await tx.get<SendQuota>('identity_send_quotas', quotaKey);
+        const quota = !previousQuota || previousQuota.windowStart + SEND_WINDOW <= now ? { windowStart: now, lastSentAt: now - RESEND_COOLDOWN, count: 0 } : previousQuota;
+        // Quotas have the same public outcome as an unknown identity; no account enumeration.
+        if (quota.lastSentAt + RESEND_COOLDOWN <= now && quota.count < MAX_SENDS) {
+          const previous = await tx.get<{ id: string }>('identity_pending_logins', quotaKey);
+          const old = previous ? await tx.get<LoginChallenge>('identity_login_challenges', previous.id) : undefined;
+          if (old && old.status !== 'consumed') await tx.put('identity_login_challenges', old.id, { ...old, status: 'invalidated' });
+          const user = (await tx.get<User>('identity_users', binding.userId))!;
+          Object.assign(challenge, { userId: binding.userId, accountId: binding.accountId, ownerId: binding.ownerId,
+            bindingVersion: binding.version, sessionEpoch: user.sessionEpoch ?? 0, status: 'prepared' });
+          const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
+          challenge.codeHash = this.loginHash(challenge, code);
+          send = { challengeId, recipientId: binding.recipientId, code };
+          await tx.put('identity_send_quotas', quotaKey, { ...quota, lastSentAt: now, count: quota.count + 1 });
+          await tx.put('identity_pending_logins', quotaKey, { id: challengeId });
+        }
+      }
+      await tx.put('identity_login_challenges', challengeId, challenge);
+      return send;
+    });
+    // delivery is server-only. The route returns the same envelope for every accepted request.
+    return { challengeId, loginToken, expiresAt, delivery };
+  }
+
+  async markLoginDelivery(challengeId: string, status: 'sent' | 'uncertain') {
+    await this.store.transaction(async tx => {
+      const challenge = await tx.get<LoginChallenge>('identity_login_challenges', challengeId);
+      if (!challenge) throw new IdentityError(404, 'challenge_not_found');
+      if (challenge.status === status) return;
+      if (challenge.status !== 'prepared') throw new IdentityError(409, 'delivery_already_resolved');
+      await tx.put('identity_login_challenges', challenge.id, { ...challenge, status });
+    });
+  }
+
+  /** A login grants a new session for the same user; never merges or reassigns an installation. */
+  async verifyLogin(challengeId: string, loginToken: string, code: string) {
+    const result = await this.store.transaction(async tx => {
+      const challenge = await tx.get<LoginChallenge>('identity_login_challenges', challengeId);
+      const fail = { error: new IdentityError(400, 'invalid_or_expired_code') };
+      if (!challenge || !/^[A-Za-z0-9_-]{43}$/.test(loginToken) || !matches(challenge.tokenHash, hash(loginToken)) ||
+          challenge.status !== 'sent' || Date.parse(challenge.expiresAt) <= this.clock() || challenge.attempts >= MAX_ATTEMPTS) return fail;
+      // Do not let a different initiating client burn this challenge's attempts.
+      if (!/^\d{6}$/.test(code) || !matches(challenge.codeHash, this.loginHash(challenge, code))) {
+        await tx.put('identity_login_challenges', challenge.id, { ...challenge, attempts: challenge.attempts + 1 });
+        return fail;
+      }
+      const user = challenge.userId ? await tx.get<User>('identity_users', challenge.userId) : undefined;
+      const binding = user?.binding;
+      if (!user || !binding || binding.status !== 'verified' || binding.accountId !== challenge.accountId || binding.ownerId !== challenge.ownerId ||
+          binding.version !== challenge.bindingVersion || (user.sessionEpoch ?? 0) !== challenge.sessionEpoch) return fail;
+      const token = randomBytes(32).toString('base64url');
+      const session: Session = { id: randomUUID(), userId: user.id, tokenHash: hash(token), expiresAt: iso(this.clock() + SESSION_TTL), epoch: user.sessionEpoch ?? 0 };
+      await tx.put('identity_sessions', session.id, session);
+      await tx.put('identity_session_tokens', session.tokenHash, { sessionId: session.id });
+      await tx.put('identity_login_challenges', challenge.id, { ...challenge, status: 'consumed' });
+      return { token, userId: session.userId, sessionId: session.id, expiresAt: session.expiresAt };
+    });
+    if ('error' in result) throw result.error;
+    return result;
   }
 
   async beginConnection(principal: Principal) {

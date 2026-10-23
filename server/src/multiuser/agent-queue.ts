@@ -3,6 +3,7 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import { z } from 'zod';
 import { IdentityError, IdentityService, type Principal } from './identity.ts';
 import { scopedKey, type MultiUserStore, type MultiUserTransaction } from './store.ts';
+import { clientAuth } from './request-auth.ts';
 
 // Transport DTOs match Quito PR #31, commit 8f939ee, agent/src/integration/contract.ts.
 // This queue admits synthetic CHAT fixtures only, in separate storage from real WhatsApp.
@@ -217,7 +218,12 @@ export class SyntheticAgentQueue {
   async state(principal: Principal) {
     return this.store.transaction(async tx => {
       await this.identity.assertPrincipalInTransaction(tx, principal);
-      const state = await tx.get<State>('agent_demo_state', scopedKey(principal.userId)) ?? initialState();
+      const key = scopedKey(principal.userId);
+      let state = await tx.get<State>('agent_demo_state', key);
+      if (!state) {
+        state = initialState();
+        await tx.put('agent_demo_state', key, state);
+      }
       const indexes = await tx.list<{ jobId: string }>('agent_demo_user_jobs', scopedKey(principal.userId), 200);
       const operations = [];
       for (const index of indexes) {
@@ -263,13 +269,12 @@ export const CHAT_SCENARIOS = {
 } as const;
 
 /** Mount only when an operator explicitly enables the synthetic demo, e.g. /api/v1/demo. */
-export function fixtureRouter(queue: SyntheticAgentQueue, identity: IdentityService) {
+export function fixtureRouter(queue: SyntheticAgentQueue, identity: IdentityService, publicUrl?: string) {
   const router = Router();
+  const auth = clientAuth(identity, publicUrl);
   router.use(async (req, res, next) => {
     res.set('Cache-Control', 'no-store');
-    const header = req.get('Authorization') ?? '';
-    if (!header.startsWith('Bearer ')) throw new IdentityError(401, 'invalid_session');
-    res.locals.principal = await identity.authenticate(header.slice(7)); next();
+    res.locals.principal = await auth.authenticate(req); next();
   });
   router.post('/chat', async (req, res) => {
     const body = z.object({ requestId: uuid, scenario: z.enum(['two_minute_steps', 'correct_routine', 'new_concern', 'forget_chat']) }).strict().parse(req.body);

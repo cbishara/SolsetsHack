@@ -5,12 +5,13 @@ import { IdentityError, IdentityService, type Principal, type CodeDelivery } fro
 import { CatalogService, CatalogError, type CatalogProvider, type NormalizedMessage } from './catalog.ts';
 import { scopedKey, type MultiUserStore } from './store.ts';
 import { WhatsAppError } from '../unipile/client.ts';
+import { clientAuth } from './request-auth.ts';
 
 export interface LinkingProvider extends CatalogProvider {
   botAccountId: string;
   link(connectionId: string, callbackUrl: string, expiresAt: string, reconnectAccountId?: string): Promise<string>;
   owner(accountId: string): Promise<{ accountId: string; ownerId: string; recipientId: string }>;
-  sendCode(recipientId: string, code: string): Promise<{ chatId: string; messageId: string }>;
+  sendCode(recipientId: string, code: string, purpose?: 'link' | 'login'): Promise<{ chatId: string; messageId: string }>;
   subscribe(accountId: string, publicUrl: string, secret: string): Promise<void>;
   message(accountId: string, messageId: string): Promise<NormalizedMessage | null>;
 }
@@ -31,6 +32,8 @@ export function multiUserRouter(options: {
   if (origin.protocol !== 'https:' || origin.username || origin.password || origin.search || origin.hash || origin.pathname !== '/') throw new Error('Multiuser public URL must be an HTTPS origin.');
   if (webhookSecret.length < 32 || rateSecret.length < 32 || webhookSecret === rateSecret) throw new Error('Separate multiuser secrets are required.');
   const router = Router();
+  const auth = clientAuth(identity, origin.origin);
+  const sessionTransport = z.enum(['native', 'web']).optional();
   router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
   const principal = (res: Response) => res.locals.principal as Principal;
   const limited = async (key: string, limit: number, duration: number) => {
@@ -79,10 +82,36 @@ export function multiUserRouter(options: {
   }
 
   router.post('/sessions', async (req, res) => {
-    emptyBody.parse(req.body ?? {});
+    const body = z.object({ transport: sessionTransport }).strict().parse(req.body ?? {});
+    const mode = auth.transport(req, body.transport);
     // Do not trust X-Forwarded-For supplied by the caller. Configure a verified edge upstream when scaling.
     await limited(`sessions:${req.socket.remoteAddress ?? 'unknown'}`, 20, 3_600_000);
-    res.status(201).json(await identity.createSession());
+    res.status(201).json(auth.session(res, mode, await identity.createSession()));
+  });
+  router.post('/auth/whatsapp/request', async (req, res) => {
+    const body = z.object({ phone: z.string().regex(/^\+?[1-9][0-9]{6,14}$/), transport: sessionTransport }).strict().parse(req.body);
+    const mode = auth.transport(req, body.transport);
+    await limited(`login:${req.socket.remoteAddress ?? 'unknown'}`, 20, 3_600_000);
+    const { delivery, ...login } = await identity.prepareLogin(body.phone);
+    // Return independently of provider latency so known accounts do not have a distinct HTTP outcome.
+    // A persisted prepared/uncertain challenge never triggers an automatic resend after restart.
+    res.status(202).json(auth.login(res, mode, login));
+    if (delivery) void (async () => {
+      try {
+        await provider.sendCode(delivery.recipientId, delivery.code, 'login');
+        await identity.markLoginDelivery(delivery.challengeId, 'sent');
+      } catch {
+        await identity.markLoginDelivery(delivery.challengeId, 'uncertain').catch(() => {});
+      }
+    })();
+  });
+  router.post('/auth/whatsapp/verify', async (req, res) => {
+    const body = z.object({ challengeId: z.uuid(), code: z.string().max(32), loginToken: z.string().max(100).optional(), transport: sessionTransport }).strict().parse(req.body);
+    const mode = auth.transport(req, body.transport);
+    await limited(`login-verify:${req.socket.remoteAddress ?? 'unknown'}`, 100, 3_600_000);
+    const session = await identity.verifyLogin(body.challengeId, auth.loginToken(req, mode, body.challengeId, body.loginToken), body.code);
+    if (mode === 'web') auth.clearLogin(res);
+    res.json(auth.session(res, mode, session));
   });
   router.post('/webhooks/connected/:connectionId/:callbackToken', async (req, res) => {
     const connectionId = String(req.params.connectionId), token = String(req.params.callbackToken);
@@ -136,10 +165,14 @@ export function multiUserRouter(options: {
   });
 
   router.use(async (req, res, next) => {
-    const header = req.get('Authorization') ?? '';
-    if (!header.startsWith('Bearer ')) throw new IdentityError(401, 'invalid_session');
-    res.locals.principal = await identity.authenticate(header.slice(7));
+    res.locals.principal = await auth.authenticate(req);
     next();
+  });
+  router.post('/auth/logout', async (req, res) => {
+    const { allDevices } = z.object({ allDevices: z.boolean().default(false) }).strict().parse(req.body ?? {});
+    await identity.logout(principal(res), allDevices);
+    if (auth.transport(req) === 'web') { auth.clearSession(res); auth.clearLogin(res); }
+    res.json({ ok: true });
   });
   router.get('/me', async (_req, res) => {
     const p = principal(res);

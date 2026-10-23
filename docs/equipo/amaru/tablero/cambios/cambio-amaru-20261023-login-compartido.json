@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-amaru-20261023-login-compartido",
+  "title": "Recuperar la misma identidad en iPhone y web",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "summary": "Código de login WhatsApp y sesiones separadas para una identidad verificada.",
+  "before": "Cada instalación creaba una identidad y no podía recuperar la misma memoria desde otro dispositivo.",
+  "after": "Un código enviado al propietario ya verificado permite abrir otra sesión del mismo usuario; web usa cookie privada y móvil bearer individual.",
+  "reason": "Amaru eligió continuidad entre web e iPhone con acceso por WhatsApp.",
+  "checked": "89 pruebas server y TypeScript; incluyen 13 nuevas de login, aislamiento, propósito de códigos, expiración, logout, cookies y CSRF. Sin OTP reales.",
+  "availability": "Implementado en rama; cliente y recorrido físico pendientes.",
+  "featureIds": ["feat-amaru-whatsapp-multiusuario"],
+  "flowIds": ["flujo-amaru-whatsapp-multiusuario"]
+}

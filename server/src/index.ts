@@ -23,7 +23,7 @@ const provider = multiConfig ? new UnipileMultiUserProvider(multiConfig.dsn, mul
 const identity = multiConfig && multiStore ? new IdentityService(multiStore, { secret: multiConfig.identitySecret }) : undefined;
 const queue = multiConfig?.workerToken && multiStore && identity ? new SyntheticAgentQueue(multiStore, identity) : undefined;
 const bridge = queue && identity && multiConfig?.workerToken ? {
-  worker: workerRouter(queue, { workerToken: multiConfig.workerToken }), demo: fixtureRouter(queue, identity),
+  worker: workerRouter(queue, { workerToken: multiConfig.workerToken }), demo: fixtureRouter(queue, identity, multiConfig.publicUrl),
 } : undefined;
 const multiUser = multiConfig && multiStore && provider && identity ? multiUserRouter({
   store: multiStore, identity, provider, catalog: new CatalogService(multiStore, identity, provider),

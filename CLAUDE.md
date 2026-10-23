@@ -25,6 +25,7 @@ Una app de celular que hace la guardia de noche por Rodrigo (soporte TI, turnos 
 ## Convenciones
 - Comunicación en español; código e identificadores en inglés.
 - Commits chicos y frecuentes; no hacer push ni commits sin que el usuario lo pida.
+- Al terminar una funcionalidad y verificarla, proponer siempre el cierre completo: commit selectivo, push, PR y merge a `main`. Si el usuario ya autorizó ese cierre, ejecutarlo y entregar los enlaces sin pedir de nuevo la misma autorización.
 
 ## Cómo trabajamos los tres
 Reparto por funcionalidad en `docs/equipo/README.md`. Antes de tocar un archivo, revisa de qué carril es.
@@ -39,6 +40,7 @@ Reparto por funcionalidad en `docs/equipo/README.md`. Antes de tocar un archivo,
 - Contrato compartido: el JSON que devuelve el agente y las respuestas de la API que usa la app. Se define entre los tres antes de construir, y después se cambia solo en un PR chico aparte, avisando a los otros dos.
 - Dónde trabajar: en tu propia rama (`amaru/<tema>`, `bishara/<tema>`, `quito/<tema>`), nunca directo en `main`. `main` es lo que se despliega. En local, todo tiene que poder correr sin claves con la semana simulada.
 - Ramas cortas: antes de empezar cada tarea, trae `main` (`git pull origin main`). PR a `main` cada 1 o 2 horas, con las pruebas y el build en verde. Una rama vive horas, no días.
+- Integrar cada funcionalidad terminada y verificada mediante su PR y merge a `main`, sin acumular varias funcionalidades completas en una rama. Cada persona mantiene el cierre de su propio carril. Acuerdo oficial: `docs/equipo/adr/oficiales/2026-10-23-cierre-funcionalidades-con-merge.md`.
 - Documentos de cada uno en `docs/equipo/<persona>/`. `README.md` y `SETUP.md` quedan en la raíz.
 
 ## Decisiones (ADR)

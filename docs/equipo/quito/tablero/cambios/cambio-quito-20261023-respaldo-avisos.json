@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-respaldo-avisos",
+  "title": "Conservar los avisos del equipo cuando falle GitHub",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Se documenta cómo conservar y reintentar avisos fallidos, con un caso comprobado del aviso a Bishara sobre el panel de referencia.",
+  "before": "El protocolo del equipo describía GitHub como canal de tareas, sin detallar qué conservar si fallaba el envío. El aviso a Bishara había quedado solo en un borrador local tras errores de conexión y permisos.",
+  "after": "docs/equipo/tareas.md describe el registro de avisos pendientes, la revisión de duplicados y la comprobación del envío. docs/equipo/quito/coordinacion/2026-10-23-bishara-panel-referencia.md conserva el mensaje y su publicación verificada en el comentario 6376276658 del issue #20. Quito indicó que definirá el segundo medio con otro agente; esta entrega solo documenta el incidente y deja pendiente esa elección y configuración.",
+  "reason": "Quito pidió documentar el incidente y contar con un segundo medio si GitHub no funciona; después indicó que verá ese segundo medio con otro agente y que aquí solo se documente.",
+  "checked": "2026-10-23: tools/tarea volvió a conectar y publicó el comentario en #20. Se comprobó por API el autor Quitogonzalez, el texto y el issue de destino. La lectura de Bishara no está comprobada. Cambio de coordinación del equipo; no modifica funcionalidades ni flujos de Rodrigo, por eso featureIds y flowIds están vacíos. El canal alternativo aún no está elegido ni verificado.",
+  "availability": "Documentación versionada del equipo. Aviso publicado en GitHub; segundo medio pendiente de definir con otro agente.",
+  "featureIds": [],
+  "flowIds": []
+}

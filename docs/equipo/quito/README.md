@@ -12,7 +12,7 @@ Decidido el 2026-10-23: agente propio en `agent/`, sin Hermes. El motor es el Co
 
 ## En esta carpeta
 
-Acceso al [tablero de funcionalidades, cambios y flujos](./tablero/README.md): `npm run tablero`. Reúne las fichas de los tres carriles y genera el mapa Excalidraw.
+El [tablero del equipo](./tablero/README.md#lugar-central-del-diseño-de-funcionalidades) es el lugar central para diseñar y consultar las funcionalidades de Solsets: necesidades, reglas, pantallas, flujos y cambios. Se abre con `npm run tablero` (normalmente en http://127.0.0.1:4175). Reúne las fichas de los tres carriles y genera el mapa Excalidraw; los acuerdos oficiales siguen en los ADR y los estados de construcción y verificación se muestran por separado.
 
 1. `research/sueno/`: tres investigaciones sobre el sueño de Rodrigo (guardia, turnos rotativos, cabeza y teléfono), con sus fuentes.
 2. `research/wellness/`: benchmark de soluciones de bienestar y sueño, mapa en Excalidraw y tablero.

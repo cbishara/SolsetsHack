@@ -1,5 +1,7 @@
 # Handoff para los agentes de Quito y Bishara
 
+> **Traspaso confirmado por Amaru:** Bishara y su agente dirigen ahora el diseño y la evolución móvil. Los agentes locales de Amaru cierran esta línea. [Mandato, trabajo entregado, ideas y criterios de aceptación](TRASPASO_BISHARA.md). El reparto descrito como historial de esta sesión no sustituye esta nueva instrucción.
+
 23 de octubre de 2026. Pedido de Amaru: [#14](https://github.com/cbishara/SolsetsHack/issues/14). Cuenta de Quito: [#8](https://github.com/cbishara/SolsetsHack/issues/8). Contrato del servidor: [#7](https://github.com/cbishara/SolsetsHack/issues/7).
 
 ## Actualización recibida al cerrar
@@ -12,7 +14,7 @@ SOL conversa con el usuario para sacar un pendiente de su cabeza y dejar un sigu
 
 La memoria es contexto persistido que se vuelve a entregar al modelo. No llamarla entrenamiento de pesos ni afirmar que demuestra mejoras clínicas. No diagnosticar ni prometer sueño; no fingir que un borrador se envió, que se agendó algo o que un pendiente quedó resuelto.
 
-Amaru reconstruye `mobile/` con [Mi espacio](DISENO_MOBILE.md), blanco/azul/lima. No se pide diseño a Quito. Las funciones de guardia/alertas tienen su propio contrato y no deben confundirse con este chat directo con el usuario.
+Amaru entregó la reconstrucción de `mobile/` y ahora Bishara la continúa con [Mi espacio](DISENO_MOBILE.md), blanco/azul/lima. No se pide diseño a Quito. Las funciones de guardia/alertas tienen su propio contrato y no deben confundirse con este chat directo con el usuario.
 
 ## Contrato temporal que hoy entiende el móvil
 
@@ -65,10 +67,10 @@ El código del piloto está en el checkout local `cbishara/codex/sol-desconexion
 | Quito | Preparar el agente propio con Codex de su cuenta, modelo permitido, presupuesto e interfaz de testing. Motor confirmado por Amaru; nunca pegar tokens en GitHub ni usar la cuenta de Amaru. |
 | Quito | Respuesta real, reporte de provider/model/usage y comprobación de que el titular es Quito. `HERMES_ACCOUNT_OWNER` solo declara un nombre. |
 | Quito | Evals de respuesta útil, cansancio, memoria declarada/corregida/borrada, aislamiento y fallos. |
-| Bishara + Quito | Contrato versionado de chat, historial, memoria, pendientes e idempotencia. |
-| Bishara | Testing HTTPS con persistencia y acceso por canal privado; recuperación tras reiniciar el servicio. |
-| Bishara | Identidad canónica y vinculación verificada app↔WhatsApp; verificar webhooks, autorización y deduplicación. |
-| Amaru + equipo | Recorrido con el backend real en teléfono y, después de integrar el canal, el mismo caso desde WhatsApp. |
+| Amaru + Quito, con Bishara como consumidor móvil | Contrato versionado de chat, historial, memoria, pendientes e idempotencia. |
+| Amaru / server | Testing HTTPS con persistencia y acceso por canal privado; recuperación tras reiniciar el servicio. |
+| Amaru / server | Identidad canónica y vinculación verificada app↔WhatsApp; verificar webhooks, autorización y deduplicación. |
+| Bishara + equipo | Recorrido con el backend real en teléfono y, después de integrar el canal, el mismo caso desde WhatsApp. |
 
 ## Prueba común de aceptación
 

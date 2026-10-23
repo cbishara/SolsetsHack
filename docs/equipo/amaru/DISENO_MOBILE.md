@@ -1,5 +1,7 @@
 # SOL móvil: Mi espacio
 
+> **Traspaso confirmado por Amaru:** Bishara y su agente dirigen ahora el diseño y la evolución móvil. Los agentes locales de Amaru cierran esta línea. [Mandato, trabajo entregado, ideas y criterios de aceptación](TRASPASO_BISHARA.md). El reparto descrito como historial de esta sesión no sustituye esta nueva instrucción.
+
 Actualizado el 23 de octubre de 2026. Dirección pedida expresamente por Amaru en esta sesión; implementación en `amaru/mobile-expo`, PR [#13](https://github.com/cbishara/SolsetsHack/pull/13). Este documento comunica el trabajo del carril de Amaru; no declara un consenso de los tres sobre los ADR del producto.
 
 ## Referencia elegida

@@ -1,5 +1,7 @@
 # SOL en el teléfono
 
+> Diseño y evolución móvil transferidos a Bishara por instrucción expresa de Amaru. [Traspaso completo](../docs/equipo/amaru/TRASPASO_BISHARA.md). Esta rama conserva la base que entregaron los agentes locales de Amaru.
+
 App Expo / React Native / TypeScript del carril de Amaru. SDK **58**, según la versión que Amaru confirmó en su iPhone. Solo datos ficticios. La arquitectura oficial `server/` + `agent/` se coordina con Bishara y Quito; esta app no modifica sus archivos.
 
 ## Abrir con Expo Go

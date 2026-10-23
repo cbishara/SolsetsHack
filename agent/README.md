@@ -39,6 +39,14 @@ Ejemplo sintético: «Termino mi turno a las 18:00 y prefiero primeros pasos de 
 
 Para un teléfono en la misma red, el operador puede arrancar con `HOST=0.0.0.0`, usar la IP privada del Mac como URL de la API y abrir la app según la guía móvil. El teléfono físico sigue pendiente de verificación.
 
+## Servicio compartido en Railway
+
+El equipo puede usar el chat con Codex sin levantar nada en su equipo. El servicio `agent` del proyecto `solsets-hack` corre esta carpeta con su [Dockerfile](./Dockerfile) y responde en https://agent-production-f80a.up.railway.app. En Ajustes de la app, conectar esa URL con la contraseña de testing, que se pide a Quito por un canal privado.
+
+La sesión de Codex del servidor es aparte de la del Mac de Quito: se creó con `codex login --device-auth`, como recomienda la documentación de Codex para máquinas sin navegador. Entra por la variable `CODEX_AUTH_JSON_B64` y [scripts/start.sh](./scripts/start.sh) la copia al disco `/data` la primera vez. Codex renueva el token en ese archivo, así que el disco manda sobre la variable; si se carga una sesión nueva en la variable, el arranque la reemplaza. El estado del piloto también vive en `/data`.
+
+Una sola réplica: el almacenamiento es un archivo y el chat ordena las peticiones dentro de un proceso. La conversación `demo:web` es compartida por todo el equipo. Para desplegar cambios de `agent/`, desde esta carpeta: `railway up --service agent`.
+
 ## API del piloto
 
 - `GET /api/disconnect` entrega `{ sessions: [session] }`.

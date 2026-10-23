@@ -1,0 +1,15 @@
+{
+  "type":"change",
+  "id":"cambio-amaru-20261023-unipile",
+  "title":"WhatsApp aporta contexto de un chat elegido",
+  "owner":"Amaru",
+  "updatedAt":"2026-10-23",
+  "summary":"Se incorpora Unipile al servidor sin convertir el historial personal en contexto global.",
+  "before":"La base del servidor solo tenía recepción por 2Chat y un chat de agente provisional que respondía 200.",
+  "after":"Hay verificación de cuenta, selección por chat, historial paginado, recepción autenticada y persistencia. El chat del agente devuelve 503 mientras falta conectar el motor real.",
+  "reason":"Amaru conectó su cuenta a Unipile y pidió ejecutar la integración con instrucciones simples.",
+  "checked":"TypeScript y 19 pruebas pasan. Unipile real verificó WhatsApp en estado OK. El estado de Railway y la prueba de grupo se registran en la guía de entrega.",
+  "availability":"Rama amaru/whatsapp-context; servicio de prueba separado del backend del prototipo.",
+  "featureIds":["feat-amaru-whatsapp-context"],
+  "flowIds":["flujo-amaru-whatsapp-context"]
+}

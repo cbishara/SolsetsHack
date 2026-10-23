@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-amaru-20261023-whatsapp-formato",
+  "title": "Recuperar un mensaje cuando la notificación tiene campos diferentes",
+  "owner": "Amaru",
+  "updatedAt": "2026-10-23",
+  "summary": "La prueba del grupo encontró un rechazo de formato; se añade resolución del mensaje por ID y se recupera el primer mensaje desde el historial.",
+  "before": "La cuenta recibía el mensaje y la notificación llegaba al servidor, pero el validador descartaba su estructura sin guardar el texto.",
+  "after": "La notificación del chat elegido recupera el mensaje canónico cuando account_info.user_id no coincide con el ejemplo. La prueba real entró automáticamente y quedó disponible por API.",
+  "reason": "El formato efectivo de los campos opcionales no siempre coincide con el ejemplo documentado del proveedor.",
+  "checked": "TypeScript y 21 pruebas pasan. Un mensaje recuperado por historial se conserva tras redeploy y no se duplica. Un mensaje nuevo llegó por webhook y se guardó en Postgres en aproximadamente 1,5 s, sin importarlo manualmente.",
+  "availability": "Corrección en amaru/whatsapp-context y despliegue del servicio sol-whatsapp-demo.",
+  "featureIds": [
+    "feat-amaru-whatsapp-context"
+  ],
+  "flowIds": [
+    "flujo-amaru-whatsapp-context"
+  ]
+}

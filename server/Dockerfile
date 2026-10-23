@@ -1,0 +1,9 @@
+FROM node:24-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY src ./src
+COPY scripts ./scripts
+USER node
+ENV NODE_ENV=production
+CMD ["npm", "start"]

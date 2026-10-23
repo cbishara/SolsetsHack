@@ -13,6 +13,8 @@
     "test": "node --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "eval": "node scripts/eval.ts",
+    "worker": "node scripts/worker.ts",
+    "integration:verify": "node scripts/verify-integration.ts",
     "check": "npm run typecheck && npm test && npm run eval"
   },
   "dependencies": {

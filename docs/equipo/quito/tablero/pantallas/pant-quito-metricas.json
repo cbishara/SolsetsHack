@@ -7,7 +7,7 @@
   "updatedAt": "2026-10-23",
   "moment": "manana",
   "summary": "Cuántas decisiones acertó Sol según el feedback de Rodrigo, y la propuesta de pasar del modo sombra al modo real.",
-  "designStatus": "propuesta",
+  "designStatus": "retirada",
   "buildStatus": "por-hacer",
   "featureIds": [
     "feat-amaru-confianza"
@@ -38,11 +38,18 @@
   ],
   "design": {
     "image": "docs/equipo/quito/tablero/pantallas/img/metricas.png",
-    "label": "Maqueta, dirección Ocaso",
+    "label": "Referencia funcional; estética Ocaso reemplazada",
     "date": "2026-10-23",
     "source": "docs/equipo/quito/diseno/funcionalidades.html"
   },
   "notes": [
+    "Estética Ocaso retirada por docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md. La app usa Mi espacio con modo noche. Esta maqueta se conserva solo como referencia de contenido y flujo; no es el diseño visual vigente.",
     "El umbral para proponer el modo real sigue abierto. Las cifras de la maqueta son inventadas."
+  ],
+  "evidence": [
+    {
+      "label": "Dirección visual vigente: Mi espacio con modo noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md"
+    }
   ]
 }

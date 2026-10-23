@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-cierre-funcionalidades",
+  "title": "Integrar cada funcionalidad al terminar y verificarla",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "El cierre de una funcionalidad incluye commit selectivo, push, PR y merge a main, y los agentes deben proponérselo siempre a Quito.",
+  "before": "Las instrucciones pedían ramas cortas y PR cada una o dos horas, pero no exigían proponer el cierre completo a Quito al terminar cada funcionalidad.",
+  "after": "El acuerdo oficial en docs/equipo/adr/oficiales/2026-10-23-cierre-funcionalidades-con-merge.md indica integrar cada funcionalidad terminada y verificada. CLAUDE.md, AGENTS.md mediante su enlace y las guías del equipo recuerdan proponer el cierre a Quito y completarlo cuando esté autorizado.",
+  "reason": "Quito pidió commit, push y merge de esta documentación, solicitó que siempre se le proponga ese cierre y que se comunique a Bishara y Amaru. Confirmó el acuerdo como oficial.",
+  "checked": "Cambio documental del flujo de trabajo del equipo; no modifica funcionalidades ni recorridos de Rodrigo, por eso featureIds y flowIds están vacíos. La integración de cada entrega se verifica con el commit, el PR y su estado de merge; registrar el acuerdo no acredita que otros PR ya se hayan fusionado.",
+  "availability": "Documentación versionada del equipo; el estado de integración se informa con el PR de esta entrega.",
+  "featureIds": [],
+  "flowIds": []
+}

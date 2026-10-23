@@ -4,7 +4,7 @@ Destino elegido por Quito: fichas en el repo con panel visual y Excalidraw. El p
 
 ## Para qué sirve
 
-Que cualquiera del equipo pueda entender qué hace Solsets, por qué existe cada funcionalidad, cómo la usa Rodrigo, qué pasa cuando algo falla y qué está realmente comprobado. El tablero también debe permitir ordenar funcionalidades y ver cómo se conectan, sin tener que leer el código.
+Ser el lugar central del equipo para diseñar y consultar las funcionalidades de Solsets: entender por qué existe cada una, cómo la usa Rodrigo, qué pantallas y flujos la concretan, qué pasa cuando algo falla y qué está realmente comprobado. El tablero también permite ordenar funcionalidades y ver cómo se conectan, sin tener que leer el código.
 
 Este tablero documenta el trabajo. No decide el alcance del producto ni autoriza acciones del agente. Las decisiones de producto siguen en [adr/oficiales](../../adr/oficiales/).
 
@@ -68,6 +68,7 @@ No usar porcentajes de avance inventados. Una funcionalidad acordada en un ADR o
 
 1. Leer `AGENTS.md` / `CLAUDE.md`, [adr/oficiales](../../adr/oficiales/) y el carril del responsable.
 2. Buscar si ya existe una ficha de la capacidad o flujo. Reutilizar su identificador y actualizarla; no duplicar tarjetas por agente, rama o sesión.
+   Consultar también su pantalla en **Mapa de pantallas** y los recorridos relacionados. El diseño de la capacidad se mantiene conectado en esas fichas; las maquetas, capturas e investigaciones se enlazan como respaldo.
 3. Registrar la intención, el dueño y lo acordado. Si falta una decisión, dejar la pregunta visible y preguntarla a Quito; no presentar la propuesta como aprobada.
 
 ### Implementar
@@ -107,4 +108,4 @@ Estos son requisitos de la experiencia del equipo, no una selección cerrada de 
 
 ## Destino y sincronización elegidos
 
-Quito eligió fuentes versionadas en el repo, panel visual y Excalidraw. `npm run tablero` reúne las fichas de esta copia, abre el panel y actualiza las vistas cuando cambian sus fuentes. No reúne automáticamente ramas sin integrar ni computadores ajenos. El registro formal de esta elección sigue en el ADR por confirmar hasta que Quito indique su categoría.
+Quito confirmó como oficial que este tablero es el panel de referencia y el lugar central del diseño de funcionalidades, con fuentes versionadas en el repo, panel visual y Excalidraw. `npm run tablero` reúne las fichas de esta copia, abre el panel y actualiza las vistas cuando cambian sus fuentes. No reúne automáticamente ramas sin integrar ni computadores ajenos. El acuerdo está en el [ADR oficial del tablero](../../adr/oficiales/2026-10-23-donde-vive-el-tablero.md).

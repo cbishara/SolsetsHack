@@ -13,7 +13,7 @@ Después del hackatón, el motor pasa a una API key de OpenAI. El servidor y el 
 
 ## Por qué
 
-Quito pidió que el chat de la app use su Codex como servicio, no en local, para que Amaru y Bishara lo ocupen sin levantar nada. La app ya aceptaba en Ajustes una URL https con contraseña (`mobile/src/api.ts`), así que bastaba con publicar `agent/`.
+Quito pidió que el chat de la app use su Codex como servicio, no en local, para que Amaru y Bishara lo ocupen sin levantar nada. La app de ese momento aceptaba en Ajustes una URL https con contraseña (`mobile/src/api.ts`), así que bastaba con publicar `agent/`. Ese mismo día entró a main la base Expo Router (PR #32): la app nueva habla solo con `server/`, y el chat queda conectado cuando `server/` llame a este servicio.
 
 La sesión va aparte porque la documentación de Codex recomienda el login por código para máquinas sin navegador, y así el servidor y el Mac no se pisan al renovar el token.
 
@@ -21,7 +21,7 @@ La sesión va aparte porque la documentación de Codex recomienda el login por c
 
 1. Contra la URL pública: sin credenciales, chat y clasificación responden 401. Un mensaje de chat respondió con `engine: codex` en 7 s y guardó el horario en memoria. "URGENTE: se cayó el servidor de facturación" dio DESPERTAR con `engine: codex` en 4 s.
 2. Tras reiniciar el servicio, la sesión se leyó del disco sin volver a sembrarse y la memoria seguía: a "A qué hora termino mi turno?" respondió "18:00".
-3. Desde la vista web de la app, conectada a esa URL, un mensaje respondió con Codex en 5,8 s. No se probó en un iPhone físico.
+3. Desde la vista web de la app anterior a la base Expo Router, conectada a esa URL, un mensaje respondió con Codex en 5,8 s. La app actual de main no se probó contra este servicio: su `/api/chat` pasa por `server/`, que hoy responde 503 (`server/src/app.ts`). No se probó en un iPhone físico.
 
 ## Lo que queda débil
 
@@ -29,6 +29,7 @@ La sesión va aparte porque la documentación de Codex recomienda el login por c
 2. El equipo gasta el mismo límite de uso del plan de Quito.
 3. Si la sesión vence, hay que repetir el login por código y cargarla en la variable `CODEX_AUTH_JSON_B64`.
 4. La conversación `demo:web` es una sola, compartida por todo el equipo. No hay identidad por persona ni conexión con `server/`.
+5. Otra sesión de Quito dejó en main un puente (`agent/INTEGRATION.md`) donde `server/` reparte trabajos y un trabajador en el Mac corre Codex. Las dos piezas no chocan en archivos, pero hay que elegir dónde corre ese trabajador.
 
 ## Las opciones que se miraron
 

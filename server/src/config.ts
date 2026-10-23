@@ -1,0 +1,61 @@
+import './env.ts';
+import type { EmailConfig } from './sources/email.ts';
+import { unipileOrigin } from './unipile/client.ts';
+
+const env = process.env;
+
+export type Config = {
+  port: number;
+  apiToken?: string; // Bearer token for the app; open when unset (local only)
+  databaseUrl?: string;
+  localDataFile?: string;
+  unipile?: { dsn: string; apiKey: string; accountId: string; webhookSecret: string; publicUrl?: string };
+  twoChat: { apiKey?: string; number?: string; webhookToken?: string; publicUrl?: string };
+  email?: EmailConfig;
+  allowSimulate: boolean;
+};
+
+export function loadConfig(): Config {
+  const email: EmailConfig | undefined =
+    env.EMAIL_IMAP_USER && env.EMAIL_IMAP_PASSWORD
+      ? {
+          host: env.EMAIL_IMAP_HOST || 'imap.gmail.com',
+          port: Number(env.EMAIL_IMAP_PORT || 993),
+          user: env.EMAIL_IMAP_USER,
+          password: env.EMAIL_IMAP_PASSWORD,
+          // Safe default: only demo emails. Set it to an empty string to read every unread email.
+          subjectFilter: env.EMAIL_SUBJECT_FILTER ?? '[SOLSETS-DEMO]',
+          intervalMs: Number(env.EMAIL_POLL_SECONDS || 30) * 1000,
+        }
+      : undefined;
+
+  const config: Config = {
+    port: Number(env.PORT || 3002),
+    apiToken: env.API_TOKEN || undefined,
+    databaseUrl: env.DATABASE_URL || undefined,
+    localDataFile: env.LOCAL_DATA_FILE || undefined,
+    unipile: env.UNIPILE_API_KEY ? {
+      dsn: unipileOrigin(env.UNIPILE_DSN || ''), apiKey: env.UNIPILE_API_KEY,
+      accountId: env.UNIPILE_ACCOUNT_ID || '', webhookSecret: env.UNIPILE_WEBHOOK_SECRET || '', publicUrl: env.PUBLIC_URL || undefined,
+    } : undefined,
+    twoChat: {
+      apiKey: env.TWOCHAT_API_KEY || undefined,
+      number: env.TWOCHAT_NUMBER || undefined,
+      webhookToken: env.TWOCHAT_WEBHOOK_TOKEN || undefined,
+      publicUrl: env.PUBLIC_URL || undefined,
+    },
+    email,
+    allowSimulate: env.ALLOW_SIMULATE !== 'false',
+  };
+
+  const live = config.databaseUrl || config.twoChat.webhookToken || config.email || config.unipile;
+  if (live && !config.apiToken) throw new Error('Configura API_TOKEN antes de conectar una base o una fuente real.');
+  if (config.unipile) {
+    if (!config.unipile.accountId || config.unipile.webhookSecret.length < 32 || (config.apiToken?.length ?? 0) < 32) {
+      throw new Error('Configura UNIPILE_ACCOUNT_ID, API_TOKEN y UNIPILE_WEBHOOK_SECRET (secretos de al menos 32 caracteres).');
+    }
+    if (!config.databaseUrl && !config.localDataFile) throw new Error('Unipile requiere DATABASE_URL o LOCAL_DATA_FILE para no perder mensajes.');
+    if (env.RAILWAY_ENVIRONMENT_ID && !config.databaseUrl) throw new Error('En Railway configura DATABASE_URL; no uses almacenamiento local efímero.');
+  }
+  return config;
+}

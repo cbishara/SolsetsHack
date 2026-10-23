@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Solsets, Ocaso con botón abajo</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{zoom:.98;background:#0a0a0b;font-family:system-ui,-apple-system,"SF Pro Text","Helvetica Neue",sans-serif;padding:36px 40px 40px;width:1000px}
+  .row{display:flex;gap:44px;align-items:flex-start;justify-content:center}
+  .col{display:flex;flex-direction:column;gap:18px;align-items:center}
+  .caption{color:#c9c6c1;font-size:20px;font-weight:600;letter-spacing:-.01em;text-align:center}
+  .caption small{display:block;color:#8a8780;font-size:14px;font-weight:400;margin-top:4px}
+  .phone{width:390px;height:844px;border-radius:54px;overflow:hidden;position:relative;outline:10px solid #1d1d1f;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;border-radius:20px;background:#000;z-index:9}
+  .status{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:center;padding:6px 34px 0 46px;font-size:16px;font-weight:600;z-index:8}
+  .status .icons{display:flex;gap:6px;align-items:center}
+  .status .bat{width:25px;height:12px;border-radius:4px;border:1.5px solid currentColor;position:relative}
+  .status .bat:after{content:"";position:absolute;inset:1.5px 6px 1.5px 1.5px;background:currentColor;border-radius:1.5px}
+  .screen{position:absolute;inset:0;padding:66px 20px 0;display:flex;flex-direction:column}
+  header{display:flex;justify-content:space-between;align-items:flex-start;padding:4px 4px 0}
+  header h1{font-family:Manrope,system-ui,sans-serif;font-size:26px;line-height:32px;font-weight:700;letter-spacing:-.03em}
+  header p{font-size:15px;line-height:20px;margin-top:2px;color:var(--ink2)}
+  .avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:600;flex:none;margin-top:2px;background:var(--card2)}
+  .chip{display:inline-block;font-size:12px;line-height:16px;padding:3px 9px;border-radius:999px;margin-top:8px;background:rgba(255,255,255,.06);color:var(--ink2)}
+  .status-line{padding:0 4px;margin-bottom:14px}
+  .status-line strong{display:block;font-family:Manrope,system-ui,sans-serif;font-size:20px;line-height:25px;font-weight:700;letter-spacing:-.01em;color:var(--calm)}
+  .status-line span{display:block;font-size:15px;line-height:20px;margin-top:3px;color:var(--ink2)}
+  .group{border-radius:20px;overflow:hidden;background:rgba(31,35,49,.86)}
+  .rowi{display:flex;align-items:center;gap:12px;padding:13px 16px;min-height:52px;font-size:17px;line-height:22px}
+  .rowi + .rowi{box-shadow:inset 0 1px 0 var(--sep)}
+  .rowi .lbl{flex:1}
+  .rowi .lbl small{display:block;font-size:13px;line-height:18px;margin-top:1px;color:var(--ink2)}
+  .rowi .val{font-variant-numeric:tabular-nums}
+  .rowi svg.chev{width:16px;height:16px;opacity:.5}
+  svg{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  .num{font-variant-numeric:tabular-nums}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:500;width:72px;color:var(--ink2)}
+  .tab svg{width:25px;height:25px}
+  .tab.on{color:var(--ink)}
+  .c{--card:#1F2331;--card2:#282C3D;--sep:#30344A;--ink:#DEDAD5;--ink2:#9496A9;--ember:#EE754E;--on:#1E1310;--calm:#7CC4B0;color:var(--ink)}
+
+  /* C1: sol grande arriba como estado, botón chico en la barra */
+  .c1{background:linear-gradient(180deg,#151824 0%,#171A26 44%,#211F2E 70%,#2B2333 100%)}
+  .c1 .hero{flex:1;display:flex;align-items:center;justify-content:center}
+  .c1 .scene{position:relative;width:390px;height:300px;margin:0 -20px}
+  .c1 .horizon{position:absolute;left:0;right:0;top:214px;height:1px;background:#3A3D55}
+  .c1 .below{position:absolute;left:0;right:0;top:215px;bottom:0;background:linear-gradient(180deg,rgba(33,31,46,.72),rgba(43,35,51,0))}
+  .c1 .sun{position:absolute;left:50%;top:34px;transform:translateX(-50%);width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#F7A072 0%,#EE754E 55%,#D9603C 100%);box-shadow:0 0 0 14px rgba(238,117,78,.08),0 0 90px rgba(238,117,78,.24);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--on);padding-bottom:26px}
+  .c1 .sun strong{font-family:Manrope,system-ui,sans-serif;font-size:24px;line-height:29px;font-weight:700;letter-spacing:-.02em}
+  .c1 .sun span{font-size:15px;line-height:20px;margin-top:2px;opacity:.8}
+  .c1 .tabbar{position:relative;height:88px;margin:16px -20px 0;display:flex;justify-content:space-between;padding:10px 46px 0;background:rgba(32,30,44,.82);box-shadow:inset 0 1px 0 var(--sep);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%)}
+  .c1 .fab{position:absolute;left:50%;top:-26px;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#F7A072 0%,#EE754E 60%,#D9603C 100%);box-shadow:0 0 0 6px #201E2C,0 0 0 7px var(--sep),0 0 40px rgba(238,117,78,.35);display:grid;place-items:center;color:var(--on)}
+  .c1 .fab svg{width:28px;height:28px;stroke-width:2}
+  .c1 .fablbl{position:absolute;left:50%;top:44px;transform:translateX(-50%);font-size:11px;font-weight:600;color:var(--ember)}
+
+  /* C2: el sol asoma desde la barra, la barra es el horizonte */
+  .c2{background:linear-gradient(180deg,#151824 0%,#171A26 40%,#1D1C2B 66%,#2E2434 92%,#3A2836 100%)}
+  .c2 .state{padding:36px 4px 28px}
+  .c2 .spacer{flex:1}
+  .c2 .big{font-family:Manrope,system-ui,sans-serif;font-size:64px;line-height:68px;font-weight:600;letter-spacing:-.04em}
+  .c2 .big small{font-size:28px;letter-spacing:-.02em;color:var(--ink2);font-weight:600;margin:0 6px 0 4px}
+  .c2 .sub{font-size:17px;line-height:22px;color:var(--ink2);margin-top:6px}
+  .c2 .sub b{color:var(--ember);font-weight:600}
+  .c2 .bar{position:relative;height:96px;margin:0 -20px}
+  .c2 .sunwrap{position:absolute;left:50%;top:-62px;transform:translateX(-50%);width:120px;height:120px}
+  .c2 .halo{position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle,rgba(238,117,78,.30) 0%,rgba(238,117,78,.10) 45%,rgba(238,117,78,0) 70%)}
+  .c2 .sun{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 28%,#F7A072 0%,#EE754E 55%,#D9603C 100%);box-shadow:0 0 0 10px rgba(238,117,78,.09)}
+  .c2 .glass{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(36,30,44,.80);box-shadow:inset 0 1px 0 #4A3F55;backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);display:flex;justify-content:space-between;padding:12px 46px 0}
+  .c2 .sunlbl{position:absolute;left:50%;top:44px;transform:translateX(-50%);font-size:11px;font-weight:600;color:var(--ember);z-index:2}
+  .c2 .hint{position:absolute;left:50%;top:-104px;transform:translateX(-50%);white-space:nowrap;font-size:13px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="row">
+
+  <div class="col">
+    <div class="phone c c1">
+      <div class="island"></div>
+      <div class="status"><span class="num">02:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+      <div class="screen">
+        <header><div><h1>Buenas noches, Rodrigo</h1><p>Guardia de soporte hasta las 07:00</p><span class="chip">Datos de ejemplo</span></div><span class="avatar">R</span></header>
+        <div class="hero"><div class="scene"><div class="sun"><strong>Sol de guardia</strong><span class="num">quedan 4 h 19 min</span></div><div class="below"></div><div class="horizon"></div></div></div>
+        <div class="status-line"><strong>Todo tranquilo</strong><span>Revisé 14 mensajes. Ninguno era urgente.</span></div>
+        <div class="group">
+          <div class="rowi"><span class="lbl">Para el parte de la mañana<small>Reseteo de clave de Paula, el último</small></span><span class="val num">6</span><svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+          <div class="rowi"><span class="lbl">Modo sombra<small>No silencio nada, solo te muestro qué haría</small></span><span class="val">Activo</span></div>
+        </div>
+        <nav class="tabbar">
+          <span class="tab on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</span>
+          <span class="fab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="fablbl">Guardia</span>
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg>Ajustes</span>
+        </nav>
+      </div>
+    </div>
+    <div class="caption">C1. Botón en la barra<small>El sol grande queda arriba como estado</small></div>
+  </div>
+
+  <div class="col">
+    <div class="phone c c2">
+      <div class="island"></div>
+      <div class="status"><span class="num">02:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" style="stroke:none;fill:currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span class="bat"></span></span></div>
+      <div class="screen">
+        <header><div><h1>Buenas noches, Rodrigo</h1><p>Guardia de soporte hasta las 07:00</p><span class="chip">Datos de ejemplo</span></div><span class="avatar">R</span></header>
+        <div class="state">
+          <div class="big num">4<small>h</small>19<small>min</small></div>
+          <div class="sub">para tu alarma. <b>Sol está de guardia.</b></div>
+        </div>
+        <div class="status-line"><strong>Todo tranquilo</strong><span>Revisé 14 mensajes. Ninguno era urgente.</span></div>
+        <div class="group">
+          <div class="rowi"><span class="lbl">Para el parte de la mañana<small>Reseteo de clave de Paula, el último</small></span><span class="val num">6</span><svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+          <div class="rowi"><span class="lbl">Modo sombra<small>No silencio nada, solo te muestro qué haría</small></span><span class="val">Activo</span></div>
+        </div>
+        <div class="spacer"></div>
+        <div class="bar">
+                    <div class="sunwrap"><div class="halo"></div><div class="sun"></div></div>
+          <nav class="glass">
+            <span class="tab on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</span>
+            <span class="tab"><svg viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg>Ajustes</span>
+          </nav>
+          <span class="sunlbl">Guardia</span>
+        </div>
+      </div>
+    </div>
+    <div class="caption">C2. Sol que asoma<small>La barra es el horizonte y el sol es el botón</small></div>
+  </div>
+
+</div>
+</body>
+</html>

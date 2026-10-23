@@ -2,7 +2,7 @@
 
 Estado: por confirmar
 Fecha: 2026-10-23
-Decidió: la deciden los tres (toca el perfil y la política de Quito, la pantalla de Amaru y la conexión de Bishara)
+Decidió: la deciden los tres (toca el perfil y la política de Quito, la pantalla de Bishara y la conexión de Amaru, desde el trueque de carriles)
 Carril: los tres
 
 ## Contexto
@@ -61,7 +61,7 @@ En la demo, la semana simulada hace de onboarding. El jurado ve a Rodrigo marcar
 
 Queda abierto cuánto se le pide a Rodrigo:
 
-1. Opción A, recomendada: solo check o X sobre lo que decidió el agente. Son dos botones. Equivale a "Bien / Debió despertarme / No debió despertarme" del README de Amaru, porque la dirección del error se deduce de lo que el agente había decidido. Cuesta casi nada, porque el feedback ya existe en el backend.
+1. Opción A, recomendada: solo check o X sobre lo que decidió el agente. Son dos botones. Equivale a "Bien / Debió despertarme / No debió despertarme" del README del carril de la app (hoy `docs/equipo/bishara/README.md`), porque la dirección del error se deduce de lo que el agente había decidido. Cuesta casi nada, porque el feedback ya existe en el backend.
 2. Opción B: además de las reglas que salen del historial, un cuestionario corto el primer día con horario de guardia, quiénes escriben y qué sistemas son críticos. Cuesta una pantalla más y más rato con el celular antes de dormir, que la investigación marca como parte del problema.
 
 ## Por qué

@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-centro-diseno",
+  "title": "Usar el tablero como lugar central del diseño de funcionalidades",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "La guía del tablero explicita dónde diseñar y consultar las capacidades de Solsets, con sus pantallas, flujos, reglas y preguntas abiertas.",
+  "before": "Las fichas, los flujos y el mapa de pantallas estaban conectados, pero la guía no declaraba expresamente al tablero como el lugar central del diseño de funcionalidades.",
+  "after": "El README del tablero, su protocolo y el acceso desde la guía de Quito explican cómo diseñar una capacidad desde su ficha, revisar sus flujos y pantallas y registrar sus cambios. Quito lo confirmó como oficial y el acuerdo está en docs/equipo/adr/oficiales/2026-10-23-donde-vive-el-tablero.md: este es el panel de referencia funcional del equipo.",
+  "reason": "Quito pidió documentar este tablero como el lugar central del diseño de funcionalidades, respondió «Oficial» al clasificar el acuerdo y pidió avisarle a Bishara que es el panel de referencia.",
+  "checked": "2026-10-23: se comprobó que las guías y el ADR describen el papel central del tablero y que sus enlaces locales apuntan a rutas existentes. Cambio documental de la herramienta del equipo; no modifica funcionalidades ni flujos de Rodrigo, por eso featureIds y flowIds quedan vacíos. No acredita construcción ni pruebas de la app.",
+  "availability": "Documentación versionada del equipo. No es una funcionalidad de la app desplegada.",
+  "featureIds": [],
+  "flowIds": []
+}

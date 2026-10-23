@@ -1,0 +1,25 @@
+{
+  "name": "@solsets/agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agente de guardia nocturna: clasifica, aplica la política y guarda la memoria de cada usuario.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/server.ts",
+    "dev": "node --watch src/server.ts",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "eval": "node scripts/eval.ts",
+    "check": "npm run typecheck && npm test && npm run eval"
+  },
+  "dependencies": {
+    "@openai/codex": "0.164.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

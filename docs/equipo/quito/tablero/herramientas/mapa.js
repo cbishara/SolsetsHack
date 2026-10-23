@@ -1,21 +1,64 @@
 // Mapa de pantallas: une apps de ejemplo → pantallas → funcionalidades → flujos.
 // Se concatena después de panel.js, así que usa sus utilidades ($, escapeHtml, data, label, featureLinks, sourceLink, bindLinks).
-const mapCss = '.mapintro{display:flex;justify-content:space-between;gap:24px;align-items:end;margin:4px 0 18px}.mapintro p{margin:0;color:var(--muted);max-width:760px}.mapintro label{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;white-space:nowrap}'
-  + '.mapgrid{position:relative;display:grid;grid-template-columns:minmax(220px,1fr) minmax(250px,1.15fr) minmax(220px,1fr) minmax(200px,.9fr);gap:56px;align-items:start}'
-  + '.mapedges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.mapedges path{fill:none;stroke-width:1.6;opacity:.55;transition:opacity .2s}'
-  + '.mapedges .e-ref{stroke:#d97706}.mapedges .e-screen{stroke:var(--light)}.mapedges .e-feat{stroke:var(--green)}'
-  + '.mapcol{position:relative;display:flex;flex-direction:column;gap:8px;z-index:1}.mapcol h3{font:11px ui-monospace,monospace;letter-spacing:.5px;text-transform:uppercase;color:var(--blue);margin:0 0 6px}.mapcol h4{font-size:11px;color:var(--muted);margin:14px 0 2px;font-weight:600}'
-  + '.mnode{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--rule);border-radius:10px;background:white;padding:8px 10px;color:var(--ink);width:100%;transition:opacity .2s,border-color .2s,box-shadow .2s}.mnode:hover,.mnode:focus-visible{border-color:var(--light)}'
-  + '.mnode b{display:block;font-size:13px;line-height:1.3;font-weight:650}.mnode small{display:block;font-size:11px;color:var(--muted);line-height:1.35;margin-top:2px}'
-  + '.mref{padding:5px 8px;gap:9px}.mref img{width:24px;height:42px;object-fit:cover;object-position:top;border-radius:5px;flex:none;background:var(--rule)}.mref .noimg{width:24px;height:42px;border-radius:5px;flex:none;background:var(--rule)}.mref b{font-size:12.5px}.mref.unused{opacity:.55}'
-  + '.mscreen{padding:10px}.mscreen .phones{display:flex;gap:6px;flex:none}.mscreen .phones img,.mscreen .phones i{width:70px;height:148px;border-radius:12px;object-fit:cover;object-position:top;background:#171a26;display:block}.mscreen .phones i{background:white;border:1.5px dashed var(--rule)}'
-  + '.mfeat{border-left:3px solid var(--light)}.mflow{border-left:3px solid var(--green)}'
-  + '.mapgrid.focus .mnode{opacity:.22}.mapgrid.focus .mnode.on{opacity:1;border-color:var(--light);box-shadow:0 0 0 3px var(--rule)}.mapgrid.focus .mapedges path{opacity:.06}.mapgrid.focus .mapedges path.on{opacity:.95;stroke-width:2.4}'
-  + '.legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:22px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:2px;display:inline-block}'
-  + '.phonepair{display:flex;gap:22px;flex-wrap:wrap;margin:18px 0 6px}.phonepair figure{margin:0;width:240px}.phonepair img{width:240px;display:block;border-radius:30px;background:#171a26}.phonepair .pending{width:240px;height:505px;border:2px dashed var(--rule);border-radius:30px;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;color:var(--muted);font-size:13px}.phonepair figcaption{font-size:12px;color:var(--muted);margin-top:8px}'
-  + '.refhero{display:flex;gap:22px;align-items:flex-start}.refhero img{width:150px;border-radius:12px;flex:none}.screenthumbs{display:flex;gap:10px;flex-wrap:wrap}.screenthumbs button{border:1px solid var(--rule);background:white;border-radius:10px;padding:6px;font-size:11px;color:var(--body);width:96px}.screenthumbs img{width:82px;border-radius:10px;display:block;margin-bottom:5px}'
-  + '.mapgrid.noapps{grid-template-columns:minmax(260px,.8fr) minmax(240px,1fr) minmax(220px,1fr)}.mapedges .hit{fill:none;stroke:transparent;stroke-width:14;pointer-events:stroke;cursor:help;opacity:1}.mapintro .toggles{display:flex;flex-direction:column;gap:6px;align-items:flex-end}'
-  + '@media(max-width:1100px){.mapgrid,.mapgrid.noapps{grid-template-columns:1fr 1fr;gap:28px}.mapedges{display:none}}';
+const mapCss = `
+.mapintro { display: flex; justify-content: space-between; gap: 32px; align-items: end; margin: 4px 0 28px; }
+.mapintro p { margin: 0; color: var(--muted); max-width: 760px; }
+.mapintro label { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+.mapintro input { accent-color: var(--blue); flex: none; }
+.mapintro .toggles { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.mapgrid { position: relative; display: grid; grid-template-columns: minmax(180px, 1fr) minmax(290px, 1.3fr) minmax(200px, 1fr) minmax(180px, .9fr); gap: 48px; align-items: start; }
+.mapedges { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.mapedges path { fill: none; stroke: var(--line); stroke-width: 1.5; transition: opacity .15s; }
+.mapcol { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 10px; z-index: 1; }
+.mapcol h3 { font-size: 13px; font-weight: 600; color: var(--ink); margin: 0 0 6px; }
+.mapcol h4 { font-size: 12px; color: var(--muted); margin: 16px 0 4px; font-weight: 600; }
+.mnode { display: flex; gap: 12px; align-items: center; text-align: left; border: 1px solid var(--rule); border-radius: 5px; background: var(--paper); padding: 12px; color: var(--ink); width: 100%; }
+.mnode:hover { background: var(--hover); border-color: var(--control-border); }
+.mnode > span { min-width: 0; }
+.mnode b { display: block; font-size: 13px; line-height: 1.4; font-weight: 600; overflow-wrap: anywhere; }
+.mnode small { display: block; font-size: 12px; color: var(--muted); line-height: 1.45; margin-top: 4px; }
+.mref { padding: 8px 10px; gap: 10px; }
+.mref img { width: 24px; height: 42px; object-fit: cover; object-position: top; border-radius: 4px; flex: none; background: var(--surface); }
+.mref .noimg { width: 24px; height: 42px; border-radius: 4px; flex: none; background: var(--surface); }
+.mref b { font-size: 13px; }
+.mref.unused { background: var(--surface); }
+.mscreen { padding: 12px; }
+.mscreen .phones { display: flex; gap: 6px; flex: none; }
+.mscreen .phones img, .mscreen .phones i { width: 60px; height: 128px; border-radius: 6px; object-fit: cover; object-position: top; background: var(--surface); display: block; }
+.mscreen .phones i { background: var(--paper); border: 1px dashed var(--control-border); }
+.mfeat, .mflow { min-height: 72px; }
+/* Keep every label legible while the active chain gets the only accent. */
+.mapgrid.focus .mnode.on { border-color: var(--blue); background: var(--selected); }
+.mapgrid.focus .mapedges path { opacity: .25; }
+.mapgrid.focus .mapedges path.on { opacity: 1; stroke: var(--blue); stroke-width: 2; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 12px; color: var(--muted); margin-top: 28px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { width: 18px; height: 2px; display: inline-block; background: var(--line); flex: none; }
+.phonepair { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; }
+.phonepair figure { margin: 0; width: 240px; max-width: 100%; }
+.phonepair img { width: 100%; display: block; border-radius: 6px; background: var(--surface); }
+.phonepair .pending { width: 100%; min-height: 505px; border: 1px dashed var(--control-border); border-radius: 6px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 28px; color: var(--muted); background: var(--surface); font-size: 13px; }
+.phonepair figcaption { font-size: 12px; color: var(--muted); margin-top: 10px; }
+.refhero { display: flex; gap: 24px; align-items: flex-start; }
+.refhero img { width: 150px; max-width: 100%; border-radius: 6px; flex: none; }
+.refhero > div { min-width: 0; }
+.screenthumbs { display: flex; gap: 12px; flex-wrap: wrap; }
+.screenthumbs button { border: 1px solid var(--rule); background: var(--paper); border-radius: 5px; padding: 6px; font-size: 12px; color: var(--body); width: 100px; }
+.screenthumbs button:hover { background: var(--hover); border-color: var(--control-border); }
+.screenthumbs img { width: 86px; border-radius: 4px; display: block; margin-bottom: 6px; }
+.mapgrid.noapps { grid-template-columns: minmax(290px, .8fr) minmax(240px, 1fr) minmax(220px, 1fr); }
+.mapedges .hit { fill: none; stroke: var(--clear); stroke-width: 14; pointer-events: stroke; cursor: help; opacity: 1; }
+@media (max-width: 1100px) {
+  .mapgrid, .mapgrid.noapps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+  .mapedges { display: none; }
+}
+@media (max-width: 650px) {
+  .mapintro { flex-direction: column; align-items: stretch; gap: 16px; }
+  .mapintro .toggles { align-items: flex-start; }
+  .mapgrid, .mapgrid.noapps { grid-template-columns: minmax(0, 1fr); }
+  .refhero { flex-direction: column; }
+}
+`;
 document.head.insertAdjacentHTML('beforeend', '<style>' + mapCss + '</style>');
 
 // panel.js dibuja todo apenas carga, antes de que corra este archivo: lo que usa renderMap va como function (se eleva) y no como const.
@@ -63,7 +106,7 @@ function renderMap() {
     + '<div class="mapcol"><h3>Pantallas (' + screens.length + ')</h3>' + screens.map(screenNode).join('') + '</div>'
     + '<div class="mapcol"><h3>Funcionalidades (' + features.length + ')</h3>' + features.map(featNode).join('') + '</div>'
     + '<div class="mapcol"><h3>Flujos (' + flows.length + ')</h3>' + flows.map(flowNode).join('') + '</div></div>'
-    + '<div class="legend">' + (mapShowApps ? '<span><i style="background:#d97706"></i>inspira (pasa el cursor por la línea para ver por qué)</span>' : '') + '<span><i style="background:var(--light)"></i>cumple la funcionalidad</span><span><i style="background:var(--green)"></i>aparece en el flujo</span></div>';
+    + '<div class="legend">' + (mapShowApps ? '<span><i></i>inspira (pasa el cursor por la línea para ver por qué)</span>' : '') + '<span><i></i>cumple la funcionalidad</span><span><i></i>aparece en el flujo</span></div>';
   $('#mapapps').onchange = e => { mapShowApps = e.target.checked; renderMap(); };
   if ($('#mapunused')) $('#mapunused').onchange = e => { mapShowUnused = e.target.checked; renderMap(); };
   bindLinks();

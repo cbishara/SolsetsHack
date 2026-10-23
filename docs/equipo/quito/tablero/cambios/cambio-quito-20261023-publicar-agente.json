@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-publicar-agente",
+  "title": "Compartir la base probada del agente para conectarla a la app del equipo",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Preparar un PR con clasificación, política, chat, memoria por usuario y pruebas reproducibles. El trabajo del trabajador saliente que sigue en curso se entrega por separado.",
+  "before": "El agente funcionaba solo en el Mac y sus archivos todavía no estaban compartidos en el repo.",
+  "after": "La rama quito/agente-base reúne el módulo probado y su documentación para que el equipo revise la conexión. La app móvil se toma de main. El piloto HTTP conserva su conversación de testing; no equivale al servidor compartido.",
+  "reason": "Quito autorizó publicar agent/ en un PR aparte sin mezclar los cambios pendientes de otras tareas.",
+  "checked": "2026-10-23: el árbol exacto del PR pasa TypeScript, sus 47 pruebas y la evaluación sintética con reglas (2/2 confirmados; 22/39 propuestos). La aceptación HTTP con Codex real pasó seis comprobaciones con tres llamadas y dos procesos sucesivos. El tablero se genera, valida y pasa sus 12 pruebas. No acredita backend compartido, WhatsApp ni teléfono físico.",
+  "availability": "Rama quito/agente-base, propuesta para revisión; no integrada ni desplegada. La cola del trabajador en curso queda fuera de esta base.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

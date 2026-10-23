@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-verificar-chat-real",
+  "title": "Repetir la prueba de memoria con Codex real y un reinicio del servicio",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Un comando comprueba respuesta real, corrección de horario, reintento sin otra inferencia y recuperación de memoria desde otro proceso, con datos sintéticos aislados del piloto abierto.",
+  "before": "El chat tenía pruebas automatizadas con motor controlado y una comprobación manual de inferencia y recuperación; faltaba un recorrido reproducible que combinara Codex real, corrección y reinicio de proceso.",
+  "after": "agent/scripts/verify-chat.ts permite repetir la aceptación con tres llamadas reales. Guarda un horario a las 18:00, lo corrige a las 19:00, reinicia el servicio y pregunta de nuevo por el horario y la preferencia de dos minutos. También comprueba que otro usuario no tenga esos recuerdos y que un UUID repetido no vuelva a ejecutar el motor.",
+  "reason": "Avanzar en la entrega verificable de nuestro agente mientras se acuerda el contrato con el servidor compartido. La prueba usa las rutas del piloto existentes y no modifica el contrato entre carriles.",
+  "checked": "2026-10-23: TypeScript y las 47 pruebas existentes pasan. La nueva aceptación HTTP pasó sus seis comprobaciones con tres inferencias reales y dos procesos de servidor sucesivos. Sin --codex, el comando termina sin inferir. Una primera redacción hipotética respondió sin guardar memoria; el recorrido aprobado usa declaraciones del usuario ficticio. No se probaron móvil físico, Postgres, cola compartida ni WhatsApp.",
+  "availability": "Rama quito/agente-base para revisión; entorno local, sin deploy. La integración con el servidor compartido y el dispositivo físico sigue pendiente.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

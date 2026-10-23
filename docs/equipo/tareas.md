@@ -20,6 +20,25 @@ Tener `gh` instalado y con sesión iniciada: `brew install gh` y después `gh au
 
 Una tarea recién creada puede tardar unos segundos en aparecer en `mias`.
 
+## Cerrar cada funcionalidad terminada
+
+Quito confirmó como oficial que cada persona integre su funcionalidad terminada y verificada mediante commit, push, PR y merge a `main`, con pruebas y build en verde. Evitar acumular funcionalidades completas en una rama.
+
+Los agentes deben proponerle siempre a Quito ese cierre al entregar una funcionalidad. Si ya lo autorizó para esa entrega, completarlo sin repetir la pregunta. Un estado final debe distinguir qué quedó preparado, subido, abierto como PR o efectivamente fusionado, con sus enlaces. Detalle: [ADR oficial de cierre](./adr/oficiales/2026-10-23-cierre-funcionalidades-con-merge.md).
+
+## Si falla el envío
+
+Conservar el aviso en un Markdown del carril de quien lo envía, con fecha, destinatario, texto, error observado y estado de entrega. Un archivo en `.context/` es solo una copia local; no alcanza como registro compartido. No guardar credenciales ni datos privados.
+
+1. Distinguir el fallo de conexión de un rechazo de permisos. El mensaje genérico de `tools/tarea` sobre autenticación no demuestra por sí solo que la credencial sea inválida: comprobar el error de `gh api` antes de diagnosticarlo.
+2. Marcar el aviso como **pendiente de envío** mientras no haya una respuesta exitosa con enlace al issue o comentario. Un borrador guardado o una lectura exitosa de GitHub no acreditan que se pudo escribir.
+3. Cuando el acceso vuelva, revisar el hilo para evitar duplicados y reenviar con `tools/tarea`. Registrar el enlace de la publicación y comprobar su contenido.
+4. Separar **publicado** de **leído o confirmado por la persona**. Solo registrar recepción humana cuando exista esa evidencia.
+
+Quito pidió contar con un segundo medio cuando falle GitHub y el 2026-10-23 indicó que lo definirá con otro agente. Esta entrega documenta el incidente y el procedimiento; la elección y configuración del canal de respaldo quedan pendientes para ese trabajo. No hay un reenvío alternativo configurado.
+
+Caso y texto conservados: [aviso a Bishara sobre el panel de referencia](./quito/coordinacion/2026-10-23-bishara-panel-referencia.md).
+
 ## Reglas para el agente
 
 1. "Cristóbal" es ambiguo: en el equipo hay dos. Pregunta si es Quito o Bishara antes de crear la tarea.

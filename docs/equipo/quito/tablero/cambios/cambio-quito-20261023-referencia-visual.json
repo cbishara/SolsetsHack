@@ -1,0 +1,26 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-referencia-visual",
+  "title": "Distinguir las maquetas funcionales de la estética vigente de la app",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Las seis maquetas Ocaso se conservan como referencia de contenido y flujo, con su estética retirada y el ADR de Mi espacio enlazado.",
+  "before": "Las seis fichas mostraban el diseño Ocaso como propuesta, aunque el ADR oficial ya había elegido Mi espacio con modo noche.",
+  "after": "Cada ficha marca el diseño Ocaso como retirado, conserva su imagen y origen, y cita el ADR vigente. Las capacidades y recorridos conservan sus identificadores y contenido.",
+  "reason": "Bishara pidió en #26 que las fichas apunten al ADR oficial de Mi espacio para evitar que las imágenes históricas se usen como diseño visual vigente.",
+  "checked": "Se comprobaron las seis fichas: diseño retirado, etiqueta y nota visibles en el modelo, evidencia con ruta al ADR existente e imágenes originales conservadas. Este cambio documental no acredita nuevas pantallas construidas.",
+  "availability": "Fuentes del tablero en la rama de esta entrega; el estado de integración se informa con el PR.",
+  "featureIds": [
+    "feat-amaru-confianza",
+    "feat-bishara-alerta-respaldo",
+    "feat-bishara-calendario",
+    "feat-quito-contrato-noche",
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-atender-alerta",
+    "flujo-quito-preparar-noche",
+    "flujo-quito-recuperar-pendientes",
+    "flujo-quito-revisar-confianza"
+  ]
+}

@@ -7,7 +7,7 @@
   "updatedAt": "2026-10-23",
   "moment": "descansar",
   "summary": "Lo que ve Rodrigo si mira el teléfono de madrugada: cuánto falta para la alarma, si Sol está de guardia y si pasó algo. El sol que asoma desde la barra es el botón de la guardia.",
-  "designStatus": "propuesta",
+  "designStatus": "retirada",
   "buildStatus": "por-hacer",
   "featureIds": [
     "feat-quito-contrato-noche",
@@ -39,11 +39,18 @@
   ],
   "design": {
     "image": "docs/equipo/quito/tablero/pantallas/img/inicio-noche.png",
-    "label": "Maqueta, dirección Ocaso",
+    "label": "Referencia funcional; estética Ocaso reemplazada",
     "date": "2026-10-23",
     "source": "docs/equipo/quito/diseno/funcionalidades.html"
   },
   "notes": [
+    "Estética Ocaso retirada por docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md. La app usa Mi espacio con modo noche. Esta maqueta se conserva solo como referencia de contenido y flujo; no es el diseño visual vigente.",
     "Ninguna de las cinco funcionalidades oficiales cubre esta pantalla por sí sola: muestra el estado que deja el contrato de la noche y si el modo sombra está activo."
+  ],
+  "evidence": [
+    {
+      "label": "Dirección visual vigente: Mi espacio con modo noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md"
+    }
   ]
 }

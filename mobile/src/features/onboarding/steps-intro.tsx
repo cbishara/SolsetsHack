@@ -1,0 +1,196 @@
+import { ArrowUpRight, Check, Mic } from 'lucide-react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
+import { ArrowField, Wordmark } from '../../components/brand';
+import { Button, T, tap } from '../../components/ui';
+import { useStore } from '../../data/store';
+import type { Goal } from '../../data/types';
+import { useTheme } from '../../theme/theme';
+import { font, radius, space } from '../../theme/tokens';
+import { StepShell } from './shell';
+import { GOALS, type Draft, type StepNav } from './types';
+
+// 1. Welcome --------------------------------------------------------------
+
+export function Welcome({ next }: { next: () => void }) {
+  const { p } = useTheme();
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: p.bg }} edges={['top', 'bottom']}>
+      <View style={w.page}>
+        <Wordmark size={22} />
+        <View style={w.hero}>
+          <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" preserveAspectRatio="none">
+            <Defs>
+              <LinearGradient id="welcome" x1="0" y1="0" x2="1" y2="1">
+                <Stop offset="0" stopColor={p.hero[0]} />
+                <Stop offset="1" stopColor={p.hero[1]} />
+              </LinearGradient>
+            </Defs>
+            <Rect x="0" y="0" width="100%" height="100%" fill="url(#welcome)" />
+          </Svg>
+          {/* Full-height field: the shared Hero draws 8 rows, too few for this screen. */}
+          <ArrowField color={p.onHero} opacity={p.scheme === 'night' ? 0.06 : 0.12} rows={26} />
+          <T v="eyebrow" tone="onHeroMuted">Tu asistente para el día y la noche</T>
+          <T accessibilityRole="header" style={[w.big, { color: p.onHero }]}>Suelta.</T>
+          <T v="h3" tone="onHero">Sol lee tu correo y tu WhatsApp, te ordena el día y cuida tu noche.</T>
+          <View style={w.points}>
+            {['Te avisa solo lo urgente', 'Convierte mensajes en tareas con fecha', 'Te deja todo listo antes de dormir'].map((t) => (
+              <View key={t} style={w.point}>
+                <ArrowUpRight size={18} color={p.lime} strokeWidth={2.6} />
+                <T v="callout" tone="onHero">{t}</T>
+              </View>
+            ))}
+          </View>
+        </View>
+        <View style={{ gap: space.sm }}>
+          <Button kind="lime" label="Empezar" onPress={next} />
+          <T v="caption" tone="muted" style={{ textAlign: 'center' }}>Toma unos 3 minutos. Todo se puede cambiar después.</T>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const w = StyleSheet.create({
+  page: { flex: 1, paddingHorizontal: space.xl, paddingTop: space.md, paddingBottom: space.md, gap: space.xl, justifyContent: 'space-between', width: '100%', maxWidth: 640, alignSelf: 'center' },
+  hero: { flex: 1, justifyContent: 'center', maxHeight: 560, borderRadius: radius.xl, borderCurve: 'continuous', padding: space.xxl, overflow: 'hidden', gap: space.md },
+  big: { fontFamily: font.semibold, fontSize: 76, lineHeight: 80, letterSpacing: -4 },
+  points: { gap: space.sm, marginTop: space.md },
+  point: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+});
+
+// 2. Goals ----------------------------------------------------------------
+
+export function Goals({ nav, draft, setDraft }: { nav: StepNav; draft: Draft; setDraft: (d: Draft) => void }) {
+  const { p } = useTheme();
+  const toggle = (id: Goal) =>
+    setDraft({ ...draft, goals: draft.goals.includes(id) ? draft.goals.filter((g) => g !== id) : [...draft.goals, id] });
+  return (
+    <StepShell
+      {...nav}
+      eyebrow="Lo primero"
+      title="¿Qué quieres que Sol haga por ti?"
+      lead="Elige todas las que quieras. Con esto ajusto lo que te pregunto y cómo trabajo."
+      footer={<Button label={draft.goals.length ? 'Continuar' : 'Elige al menos una'} disabled={!draft.goals.length} onPress={nav.next} />}
+    >
+      <View style={{ gap: space.sm }}>
+        {GOALS.map((g) => {
+          const on = draft.goals.includes(g.id);
+          return (
+            <Pressable
+              key={g.id}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: on }}
+              accessibilityLabel={`${g.title}. ${g.detail}`}
+              onPress={() => { tap(); toggle(g.id); }}
+              style={({ pressed }) => [
+                gs.option,
+                { backgroundColor: on ? p.accentSoft : p.card, borderColor: on ? p.accent : p.line },
+                pressed && { opacity: 0.85 },
+              ]}
+            >
+              <View style={{ flex: 1, gap: 2 }}>
+                <T v="bodyStrong">{g.title}</T>
+                <T v="callout" tone="muted">{g.detail}</T>
+              </View>
+              <View style={[gs.box, { borderColor: on ? p.accent : p.line, backgroundColor: on ? p.accent : 'transparent' }]}>
+                {on ? <Check size={16} color={p.onAccent} strokeWidth={3} /> : null}
+              </View>
+            </Pressable>
+          );
+        })}
+      </View>
+    </StepShell>
+  );
+}
+
+const gs = StyleSheet.create({
+  option: { flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.lg, borderRadius: radius.lg, borderWidth: 1.5, minHeight: 72 },
+  box: { width: 26, height: 26, borderRadius: 8, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+});
+
+// 3. About ----------------------------------------------------------------
+
+const SAMPLE_ABOUT =
+  'Trabajo en soporte TI con turnos que cambian cada semana. La guardia me llega por un grupo de WhatsApp. Vivo con mi pareja y mi hijo de 6 años. Me cuesta desconectarme en la noche.';
+
+export function About({ nav, draft }: { nav: StepNav; draft: Draft }) {
+  const { p } = useTheme();
+  const { state, dispatch } = useStore();
+  const [text, setText] = useState(state.profile.about && state.onboarded ? state.profile.about : '');
+  const [dictated, setDictated] = useState(false);
+
+  const save = () => {
+    const about = text.trim();
+    if (about) {
+      dispatch({ type: 'setProfile', patch: { about } });
+      about
+        .split(/\.\s+/)
+        .map((sentence) => sentence.trim().replace(/\.$/, ''))
+        .filter((sentence) => sentence.length > 8)
+        .forEach((sentence, i) =>
+          dispatch({
+            type: 'addMemory',
+            item: {
+              id: `ob-${Date.now()}-${i}`,
+              category: /trabaj|turno|guardia|oficina|jefe/i.test(sentence) ? 'trabajo' : /hijo|pareja|vivo|familia/i.test(sentence) ? 'vida' : 'preferencias',
+              text: sentence,
+              source: 'onboarding',
+              learnedAt: new Date().toISOString(),
+            },
+          }),
+        );
+    }
+    nav.next();
+  };
+
+  const hint = draft.goals.includes('guardia')
+    ? 'Por ejemplo: a qué te dedicas, cómo son tus turnos, quién te escribe de noche.'
+    : 'Por ejemplo: a qué te dedicas, con quién vives, qué te quita el sueño.';
+
+  return (
+    <StepShell
+      {...nav}
+      onSkip={nav.next}
+      eyebrow="Opcional, 30 segundos"
+      title="Cuéntame un poco de tu vida"
+      lead={`Así no parto de cero. ${hint}`}
+      footer={<Button label={text.trim() ? 'Guardar y seguir' : 'Seguir sin contar'} kind={text.trim() ? 'primary' : 'secondary'} onPress={save} />}
+    >
+      <View style={[ab.box, { backgroundColor: p.surface, borderColor: p.line }]}>
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          multiline
+          placeholder="Escríbelo como te salga"
+          placeholderTextColor={p.faint}
+          style={[ab.input, { color: p.ink }]}
+          accessibilityLabel="Cuéntame de ti"
+        />
+        <View style={ab.row}>
+          <T v="caption" tone="muted" style={{ flex: 1 }}>
+            {dictated ? 'Transcripción de ejemplo. Puedes corregirla.' : 'Lo guardo en tu memoria. Puedes verla y borrarla cuando quieras.'}
+          </T>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Dictar"
+            onPress={() => { tap('light'); setText(SAMPLE_ABOUT); setDictated(true); }}
+            style={({ pressed }) => [ab.mic, { backgroundColor: p.lime, opacity: pressed ? 0.85 : 1 }]}
+          >
+            <Mic size={20} color={p.onLime} strokeWidth={2.4} />
+            <T v="calloutStrong" tone="onLime">Dictar</T>
+          </Pressable>
+        </View>
+      </View>
+    </StepShell>
+  );
+}
+
+const ab = StyleSheet.create({
+  box: { borderRadius: radius.lg, borderWidth: 1, padding: space.lg, gap: space.md },
+  input: { fontFamily: font.regular, fontSize: 17, lineHeight: 25, minHeight: 150, textAlignVertical: 'top' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  mic: { flexDirection: 'row', alignItems: 'center', gap: space.xs + 2, minHeight: 48, paddingHorizontal: space.lg, borderRadius: radius.pill },
+});

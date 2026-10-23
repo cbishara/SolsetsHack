@@ -7,7 +7,7 @@
   "updatedAt": "2026-10-23",
   "moment": "preparar",
   "summary": "En el chat con Sol, Rodrigo anota en menos de un minuto lo que le da vueltas antes de dormir. Sol confirma cada pendiente y lo guarda para el parte de la mañana.",
-  "designStatus": "propuesta",
+  "designStatus": "retirada",
   "buildStatus": "por-hacer",
   "featureIds": [
     "feat-quito-descarga"
@@ -38,11 +38,18 @@
   ],
   "design": {
     "image": "docs/equipo/quito/tablero/pantallas/img/descarga.png",
-    "label": "Maqueta, dirección Ocaso",
+    "label": "Referencia funcional; estética Ocaso reemplazada",
     "date": "2026-10-23",
     "source": "docs/equipo/quito/diseno/funcionalidades.html"
   },
   "notes": [
+    "Estética Ocaso retirada por docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md. La app usa Mi espacio con modo noche. Esta maqueta se conserva solo como referencia de contenido y flujo; no es el diseño visual vigente.",
     "El ADR pide que tome menos de un minuto, porque usar el celular en la cama es parte del problema."
+  ],
+  "evidence": [
+    {
+      "label": "Dirección visual vigente: Mi espacio con modo noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-sistema-visual-mi-espacio-con-modo-noche.md"
+    }
   ]
 }

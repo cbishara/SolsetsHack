@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-daylio",
+  "title": "Daylio",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "reflexion-planificacion",
+  "summary": "Registro rápido de ánimo y actividades; notas opcionales, objetivos y gráficos.",
+  "aesthetic": "Caras e iconos de colores, tarjetas blancas y calendario visual.",
+  "takeaway": "Chequeo subjetivo de descanso con pocas opciones.",
+  "limit": "Sus registros no prueban causas ni sustituyen una medición de sueño.",
+  "url": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242",
+  "appStore": "https://apps.apple.com/us/app/daylio-journal-mood-tracker/id1194023242?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/daylio.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ea/10/7b/ea107b12-7d01-323f-2d69-6119dde628b4/en_ios_65_02.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

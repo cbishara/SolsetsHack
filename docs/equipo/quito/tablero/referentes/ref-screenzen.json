@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-screenzen",
+  "title": "ScreenZen",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "Pausas antes de abrir distracciones, límites de uso y aperturas, horarios y selección de apps/sitios.",
+  "aesthetic": "Campaña violeta; pausa oscura con una pregunta y contador.",
+  "takeaway": "Intervenir cuando aparece el impulso.",
+  "limit": "Mantener una vía directa para urgencias.",
+  "url": "https://screenzen.co/",
+  "appStore": "https://apps.apple.com/us/app/screenzen-screen-time-control/id1541027222?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/screenzen.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4f/19/b3/4f19b35c-1cd9-06d0-e570-94d187600cff/iPhone-EN-02-B.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

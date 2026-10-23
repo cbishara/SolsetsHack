@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-unrespiro",
+  "title": "unrespiro",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "Pausas con frase y temporizador, bloqueos manuales y rutinas horarias.",
+  "aesthetic": "Carbón, tarjetas compactas, acentos verdes/rojos y gráficos de uso.",
+  "takeaway": "Pausa voluntaria y decisión consciente al cerrar el día.",
+  "limit": "No introducir fricción en el acceso a un incidente urgente.",
+  "url": "https://apps.apple.com/es/app/unrespiro-bloqueo-apps-y-foco/id6742792786",
+  "appStore": "https://apps.apple.com/us/app/unrespiro-bloqueo-apps-y-foco/id6742792786?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/unrespiro.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f2/2d/05/f22d0569-d430-3fc4-ccd4-8f40e1a6936b/6.9__Display.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

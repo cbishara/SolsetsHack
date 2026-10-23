@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-brick",
+  "title": "Brick",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "App asociada a un objeto físico; elección de apps y modos; activación por contacto con el dispositivo.",
+  "aesthetic": "Grises cálidos, fotografía del objeto y estados de bloqueo sobrios.",
+  "takeaway": "Gesto claro de inicio del descanso.",
+  "limit": "Este mecanismo requiere hardware; no asumir que una web puede reproducirlo.",
+  "url": "https://getbrick.com/",
+  "appStore": "https://apps.apple.com/us/app/brick-ditch-distractions/id6448794069?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/brick.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/ab/51/08/ab510823-52d8-da66-e58a-d394f35bc27a/2_APP_IPHONE_69_2.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

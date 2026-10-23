@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-calm",
+  "title": "Calm",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Relatos para dormir, meditación, sonido y respiración.",
+  "aesthetic": "Paisajes, azules e imágenes amplias; biblioteca de contenido.",
+  "takeaway": "Sensación de refugio y entrada sencilla al descanso.",
+  "limit": "Un catálogo amplio también puede aumentar la carga de elección.",
+  "url": "https://www.calm.com/",
+  "appStore": "https://apps.apple.com/us/app/calm/id571800810?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/calm.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/89/56/d4/8956d4aa-3379-75de-5389-038475b05951/App_Store_iOS_Day_-_3__U005b5.5in_U005d.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "type":"change", "id":"cambio-persona-20261023-tema", "title":"Qué cambió en palabras humanas", "owner":"Persona que aporta el cambio", "updatedAt":"2026-10-23",
+  "summary":"Resumen del cambio lógico.", "before":"Qué ocurría antes.", "after":"Qué ocurre ahora y dónde está disponible.", "reason":"Necesidad o decisión que respalda el cambio.",
+  "checked":"Qué se probó, en qué entorno y con qué resultado; indicar lo pendiente.", "availability":"Rama, main o despliegue concreto.", "featureIds":[], "flowIds":[]
+}

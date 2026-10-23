@@ -1,0 +1,98 @@
+{
+  "type": "flow",
+  "id": "flujo-quito-recuperar-pendientes",
+  "title": "Dejar un pendiente y recuperarlo al despertar",
+  "owner": "Quito",
+  "summary": "Una preocupación escrita por la noche reaparece como pendiente, sin fingir que se resolvió.",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "trigger": "Rodrigo quiere dejar de repasar algo que teme olvidar.",
+  "outcome": "El parte permite reconocer lo que dejó anotado. Fallos y confirmaciones siguen por definir.",
+  "example": "Rodrigo escribe «Revisar el turno de la próxima semana». Al despertar, ese mismo pendiente debe poder reconocerse en el parte, sin aparecer como ejecutado.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "steps": [
+    {
+      "id": "preocupacion",
+      "kind": "start",
+      "actor": "Rodrigo",
+      "title": "Algo queda dando vueltas",
+      "detail": "Quiere conservar un pendiente para después.",
+      "x": 0,
+      "y": 80
+    },
+    {
+      "id": "chat",
+      "kind": "action",
+      "actor": "Rodrigo",
+      "title": "Anotarlo en el chat",
+      "detail": "Usa el espacio de descarga acordado antes de dormir.",
+      "featureId": "feat-quito-descarga",
+      "x": 430,
+      "y": 80
+    },
+    {
+      "id": "guardar",
+      "kind": "action",
+      "actor": "Solsets",
+      "title": "Conservarlo para el parte",
+      "detail": "El comportamiento de guardado y recuperación debe implementarse y probarse.",
+      "x": 860,
+      "y": 80
+    },
+    {
+      "id": "manana",
+      "kind": "end",
+      "actor": "Rodrigo",
+      "title": "Encontrarlo por la mañana",
+      "detail": "Lo reconoce como pendiente; no se afirma que se haya ejecutado.",
+      "x": 1320,
+      "y": 80
+    },
+    {
+      "id": "error",
+      "kind": "pending",
+      "actor": "Equipo",
+      "title": "Definir fallo de guardado",
+      "detail": "Falta acordar qué confirmación ve Rodrigo y cómo se recupera un error.",
+      "x": 860,
+      "y": 430
+    }
+  ],
+  "connections": [
+    {
+      "from": "preocupacion",
+      "to": "chat",
+      "label": "Antes de dormir"
+    },
+    {
+      "from": "chat",
+      "to": "guardar",
+      "label": "Registrar pendiente"
+    },
+    {
+      "from": "guardar",
+      "to": "manana",
+      "label": "Parte de la mañana"
+    },
+    {
+      "from": "guardar",
+      "to": "error",
+      "label": "Si no puede guardarse"
+    }
+  ],
+  "questions": [
+    "Confirmación de guardado, edición y borrado.",
+    "Horario y zona horaria del parte."
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo 5",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    }
+  ]
+}

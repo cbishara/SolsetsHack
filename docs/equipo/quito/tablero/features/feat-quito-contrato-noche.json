@@ -1,0 +1,63 @@
+{
+  "type": "feature",
+  "id": "feat-quito-contrato-noche",
+  "title": "Confirmar si esta noche estoy de guardia",
+  "owner": "Quito",
+  "collaborators": [
+    "Amaru: pantalla y explicación",
+    "Quito: regla de guardia"
+  ],
+  "moment": "preparar",
+  "productStatus": "acordada",
+  "buildStatus": "sin-verificar",
+  "availability": "sin-verificar",
+  "updatedAt": "2026-10-23",
+  "summary": "Rodrigo confirma si está de guardia y entiende qué podría despertarlo esa noche.",
+  "need": "Poder dejar el teléfono sin quedarse pensando qué mensajes debe seguir vigilando.",
+  "userActions": [
+    "Responde sí o no a «¿Te toca guardia esta noche?».",
+    "Si responde sí, revisa qué situaciones lo despertarían y por qué canal."
+  ],
+  "systemActions": [
+    "Usa la confirmación para distinguir una noche con guardia de una noche de descanso.",
+    "Muestra las condiciones y canales acordados antes de que Rodrigo se desconecte."
+  ],
+  "example": "Ejemplo de lo acordado: Rodrigo confirma que esta noche sí tiene guardia. La app le explica qué incidentes requieren su intervención y cómo intentará avisarle. Esta ficha todavía no acredita que ese recorrido esté construido o probado.",
+  "rules": [
+    "La noche sin guardia busca evitar interrupciones; el caso de una caída grave sigue abierto en un ADR por confirmar.",
+    "La interpretación del calendario puede sugerir una respuesta; la confirmación de Rodrigo sigue visible.",
+    "El ADR oficial fija que este recorrido tome menos de un minuto y ocurra antes de acostarse."
+  ],
+  "limits": [
+    "La pregunta y la explicación son parte de la app de Amaru; la regla corresponde a Quito.",
+    "No se afirma que un dispositivo permita atravesar el modo concentración sin una prueba concreta."
+  ],
+  "acceptance": [
+    "Rodrigo puede explicar si la guardia está activa y qué lo interrumpiría.",
+    "El recorrido distingue claramente sus respuestas sí y no."
+  ],
+  "questions": [
+    "¿Qué ocurre si no responde a la pregunta?",
+    "¿Cuándo vence la confirmación y cómo se cambia durante la noche?",
+    "¿Qué pasa con una caída grave si confirmó que no tiene guardia? No resolver esa excepción sin la decisión de Quito."
+  ],
+  "flowIds": [
+    "flujo-quito-preparar-noche",
+    "flujo-quito-atender-alerta"
+  ],
+  "relatedFeatureIds": [
+    "feat-bishara-calendario",
+    "feat-bishara-alerta-respaldo"
+  ],
+  "verification": [],
+  "evidence": [
+    {
+      "label": "Acuerdo de producto: contrato de la noche",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-cinco-funcionalidades.md"
+    },
+    {
+      "label": "Pregunta abierta: caída grave sin guardia",
+      "path": "docs/equipo/adr/por-confirmar/2026-10-23-caida-grave-sin-guardia.md"
+    }
+  ]
+}

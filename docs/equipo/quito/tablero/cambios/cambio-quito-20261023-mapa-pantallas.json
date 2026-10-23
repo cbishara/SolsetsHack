@@ -1,0 +1,26 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-mapa-pantallas",
+  "title": "Ver cada pantalla del celular conectada a funcionalidades y flujos",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "El tablero suma pantallas con su maqueta, las 26 apps de ejemplo del benchmark y un mapa de nodos que las une con funcionalidades y flujos.",
+  "before": "El tablero mostraba funcionalidades y flujos en texto y diagramas, sin cómo se ve cada cosa en el celular. Las apps de ejemplo vivían aparte, en docs/equipo/quito/research/wellness.",
+  "after": "Seis pantallas con maqueta (dirección Ocaso, propuesta) enlazadas a funcionalidades, pasos de flujo y apps de ejemplo. La pestaña Mapa de pantallas dibuja esas conexiones. npm run tablero:pantallas fotografía la app construida y la pone al lado de cada maqueta.",
+  "reason": "Quito pidió que el equipo vea la app como se ve en el celular, conectada a funcionalidades y flujos, y que el benchmark de apps de ejemplo quede en el tablero.",
+  "checked": "2026-10-23: tablero:build y tablero:check correctos; 11 pruebas del modelo aprobadas, 5 nuevas para pantallas, apps de ejemplo y capturas. Con Chrome sin ventana se revisó el mapa y el detalle de una pantalla en 127.0.0.1:4175. Se probó tablero:pantallas de punta a punta con una ruta temporal (captura de 780 × 1688 enganchada a su pantalla) y se borró la prueba. No hay app Expo todavía: la captura de la app real no está verificada. Las uniones entre apps de ejemplo y pantallas son criterio de diseño de Quito a partir del benchmark, no una decisión del equipo.",
+  "availability": "Rama de trabajo; documentación del equipo. No es una funcionalidad del producto desplegado.",
+  "featureIds": [
+    "feat-quito-contrato-noche",
+    "feat-bishara-alerta-respaldo",
+    "feat-bishara-calendario",
+    "feat-amaru-confianza",
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-preparar-noche",
+    "flujo-quito-atender-alerta",
+    "flujo-quito-recuperar-pendientes",
+    "flujo-quito-revisar-confianza"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-bettersleep",
+  "title": "BetterSleep",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Mezclas sonoras, relatos, meditación, temporizador, favoritos y funciones de registro de sueño.",
+  "aesthetic": "Nocturno, texturas e iconos de colores; controles de reproducción.",
+  "takeaway": "Recuperar una preferencia sin elegir cada noche.",
+  "limit": "El audio sería opcional; los claims de la campaña no son evidencia de eficacia.",
+  "url": "https://www.bettersleep.com/",
+  "appStore": "https://apps.apple.com/us/app/bettersleep-relax-and-sleep/id314498713?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/bettersleep.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ec/a6/ee/eca6ee39-90f9-b045-e3c0-c5c5bb9b4e2e/51945210-14ff-4587-ace1-9baa6b0f8449_BetterSleep__Brown.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-tide",
+  "title": "TIDE",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "sueno-regulacion",
+  "summary": "Naturaleza sonora, foco, sueño/siestas, meditación y respiración.",
+  "aesthetic": "Fotografía natural, tonos suaves, espacio y controles discretos.",
+  "takeaway": "Diferenciar estados por atmósfera y jerarquía.",
+  "limit": "Priorizar el descanso de Rodrigo frente a un menú de muchas modalidades.",
+  "url": "https://tide.fm/en_US/",
+  "appStore": "https://apps.apple.com/us/app/tide-sleep-focus-meditation/id1077776989?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/tide.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/bd/d8/48/bdd848ba-0c5e-b4a8-45ef-1e94e4a9ba1d/01.png/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

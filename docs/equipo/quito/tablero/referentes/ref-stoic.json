@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-stoic",
+  "title": "stoic.",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "reflexion-planificacion",
+  "summary": "Preparación de mañana, reflexión nocturna, diario guiado y registro de ánimo/hábitos.",
+  "aesthetic": "Blanco y negro, tipografía fuerte e iconos simples.",
+  "takeaway": "Descargar un pendiente y aclarar cuándo retomarlo.",
+  "limit": "Datos íntimos requieren decisiones de privacidad; no equivale a terapia.",
+  "url": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037",
+  "appStore": "https://apps.apple.com/us/app/stoic-journal-mental-health/id1312926037?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/stoic.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/0b/13/2b/0b132b89-b75e-bd86-17c9-590c0f51c213/2-iphone-small-en.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, segunda ronda",
+      "path": "docs/equipo/quito/research/wellness/ampliacion.md"
+    }
+  ]
+}

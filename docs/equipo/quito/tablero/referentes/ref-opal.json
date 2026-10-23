@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-opal",
+  "title": "Opal",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "Bloqueo de apps, reglas de foco, temporizador e hitos.",
+  "aesthetic": "Interfaz oscura; indicadores circulares grandes; brillo azul; fuerte jerarquía del tiempo.",
+  "takeaway": "Reglas fáciles de entender y estado de protección visible.",
+  "limit": "Bloquear el canal completo de WhatsApp puede impedir la guardia.",
+  "url": "https://www.opal.so/",
+  "appStore": "https://apps.apple.com/us/app/opal-screen-time-control/id1497465230?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/opal.jpg",
+  "imageSource": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/da/49/b4/da49b4eb-d471-85d9-7075-5f3338eaece0/AppstoreArtboard_3.jpg/600x1200bb.jpg",
+  "evidence": [
+    {
+      "label": "Benchmark wellness, primera ronda",
+      "path": "docs/equipo/quito/research/wellness/benchmark.md"
+    }
+  ]
+}

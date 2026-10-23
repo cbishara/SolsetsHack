@@ -1,0 +1,53 @@
+{
+  "type": "screen",
+  "id": "pant-quito-parte-manana",
+  "title": "Parte de la mañana",
+  "owner": "Amaru",
+  "designer": "Quito",
+  "updatedAt": "2026-10-23",
+  "moment": "manana",
+  "summary": "Al despertar: qué lo despertó, qué lo esperó hasta ahora y qué fue ruido. Cada decisión trae el feedback de un toque, Bien o Debió/No debió despertarme.",
+  "designStatus": "propuesta",
+  "buildStatus": "por-hacer",
+  "featureIds": [
+    "feat-quito-descarga",
+    "feat-amaru-confianza"
+  ],
+  "flowSteps": [
+    {
+      "flowId": "flujo-quito-recuperar-pendientes",
+      "stepId": "manana"
+    },
+    {
+      "flowId": "flujo-quito-revisar-confianza",
+      "stepId": "decisiones"
+    },
+    {
+      "flowId": "flujo-quito-revisar-confianza",
+      "stepId": "feedback"
+    }
+  ],
+  "inspiredBy": [
+    {
+      "refId": "ref-rise",
+      "why": "Hipótesis 4: una mañana que da contexto sobre lo que pasó en la noche."
+    },
+    {
+      "refId": "ref-finch",
+      "why": "Hipótesis 4: una mañana sin juicio, con feedback amable y breve."
+    },
+    {
+      "refId": "ref-daylio",
+      "why": "Ampliación, menos escritura: un chequeo breve y voluntario al despertar."
+    }
+  ],
+  "design": {
+    "image": "docs/equipo/quito/tablero/pantallas/img/parte-manana.png",
+    "label": "Maqueta, dirección Ocaso",
+    "date": "2026-10-23",
+    "source": "docs/equipo/quito/diseno/funcionalidades.html"
+  },
+  "notes": [
+    "No es una de las cinco funcionalidades: reúne lo que dejó la descarga de pendientes y el feedback que alimenta las métricas."
+  ]
+}

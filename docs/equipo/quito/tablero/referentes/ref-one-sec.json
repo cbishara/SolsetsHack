@@ -1,0 +1,22 @@
+{
+  "type": "reference",
+  "id": "ref-one-sec",
+  "title": "one sec",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "group": "bloqueo-foco",
+  "summary": "Pausas e intervenciones antes de abrir apps, bloqueo programado y límites para cortar el scroll.",
+  "aesthetic": "",
+  "takeaway": "Refuerza la familia de unrespiro/Opal.",
+  "limit": "El mecanismo sirve para distracciones elegidas; aplicarlo a urgencias de soporte podría ser contraproducente.",
+  "url": "https://one-sec.app/",
+  "appStore": "https://apps.apple.com/us/app/one-sec-screen-time-focus/id1532875441?uo=4",
+  "image": "docs/equipo/quito/tablero/referentes/img/one-sec.jpg",
+  "imageSource": "https://one-sec.app/assets/blocking-demo-BGT2XTe2.webp",
+  "evidence": [
+    {
+      "label": "Soluciones existentes",
+      "path": "docs/equipo/quito/research/wellness/soluciones.md"
+    }
+  ]
+}

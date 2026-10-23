@@ -1,0 +1,56 @@
+{
+  "type": "screen",
+  "id": "pant-quito-alerta",
+  "title": "Alerta con botón Lo vi",
+  "owner": "Amaru",
+  "designer": "Quito",
+  "updatedAt": "2026-10-23",
+  "moment": "urgencia",
+  "summary": "La notificación urgente en la pantalla bloqueada: qué pasó, por qué lo despertó y el botón Lo vi. Si no lo toca en 3 minutos, Sol lo llama.",
+  "designStatus": "propuesta",
+  "buildStatus": "por-hacer",
+  "featureIds": [
+    "feat-bishara-alerta-respaldo"
+  ],
+  "flowSteps": [
+    {
+      "flowId": "flujo-quito-atender-alerta",
+      "stepId": "push"
+    },
+    {
+      "flowId": "flujo-quito-atender-alerta",
+      "stepId": "ack"
+    },
+    {
+      "flowId": "flujo-quito-atender-alerta",
+      "stepId": "visto"
+    },
+    {
+      "flowId": "flujo-quito-atender-alerta",
+      "stepId": "llamada"
+    }
+  ],
+  "inspiredBy": [
+    {
+      "refId": "ref-alarmy",
+      "why": "Hipótesis 3: el principio de comprobación. La alerta pide un Lo vi explícito."
+    },
+    {
+      "refId": "ref-pagerduty",
+      "why": "Hipótesis 3: una política explícita cuando no hay respuesta, como el escalamiento de PagerDuty."
+    },
+    {
+      "refId": "ref-incident-io",
+      "why": "Hipótesis 3: hacer visible quién recibe la alerta y cómo avanza."
+    }
+  ],
+  "design": {
+    "image": "docs/equipo/quito/tablero/pantallas/img/alerta.png",
+    "label": "Maqueta, dirección Ocaso",
+    "date": "2026-10-23",
+    "source": "docs/equipo/quito/diseno/funcionalidades.html"
+  },
+  "notes": [
+    "Es la pantalla bloqueada del iPhone, no una pantalla de la app. No se puede capturar desde la app en el navegador: queda como maqueta hasta probarla en un teléfono real."
+  ]
+}

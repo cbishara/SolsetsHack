@@ -1,0 +1,48 @@
+{
+  "type": "screen",
+  "id": "pant-quito-metricas",
+  "title": "Métricas y graduación",
+  "owner": "Amaru",
+  "designer": "Quito",
+  "updatedAt": "2026-10-23",
+  "moment": "manana",
+  "summary": "Cuántas decisiones acertó Sol según el feedback de Rodrigo, y la propuesta de pasar del modo sombra al modo real.",
+  "designStatus": "propuesta",
+  "buildStatus": "por-hacer",
+  "featureIds": [
+    "feat-amaru-confianza"
+  ],
+  "flowSteps": [
+    {
+      "flowId": "flujo-quito-revisar-confianza",
+      "stepId": "resumen"
+    },
+    {
+      "flowId": "flujo-quito-revisar-confianza",
+      "stepId": "criterio"
+    }
+  ],
+  "inspiredBy": [
+    {
+      "refId": "ref-opal",
+      "why": "Benchmark, estética de Opal: indicadores circulares grandes con una cifra protagonista."
+    },
+    {
+      "refId": "ref-rise",
+      "why": "Benchmark, estética de RISE: una métrica ocupa el centro."
+    },
+    {
+      "refId": "ref-forest",
+      "why": "Ampliación, progreso como representación: una alternativa a mostrar solo números."
+    }
+  ],
+  "design": {
+    "image": "docs/equipo/quito/tablero/pantallas/img/metricas.png",
+    "label": "Maqueta, dirección Ocaso",
+    "date": "2026-10-23",
+    "source": "docs/equipo/quito/diseno/funcionalidades.html"
+  },
+  "notes": [
+    "El umbral para proponer el modo real sigue abierto. Las cifras de la maqueta son inventadas."
+  ]
+}

@@ -1,11 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  AccessibilityInfo,
   ActivityIndicator,
   Alert,
+  BackHandler,
   KeyboardAvoidingView,
   Linking,
   Platform,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,37 +17,64 @@ import {
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { BottomSheet, Host } from "@expo/ui";
+import {
+  ArrowUpRight,
+  FileText,
+  Heart,
+  House,
+  MessageCircle,
+  Settings,
+  X,
+} from "lucide-react-native";
 import { useSol } from "./src/useSol";
 import {
-  examples,
-  feedbackMetrics,
-  initialState,
-  type Feedback,
-} from "./src/model";
-import { Button, Card, Chip, colors, styles } from "./src/ui";
+  Button,
+  Card,
+  Heading,
+  IconButton,
+  colors,
+  space,
+  styles,
+} from "./src/ui";
+import {
+  HomeScreen,
+  MemoryScreen,
+  PendingScreen,
+} from "./src/workspace-screens";
+import { ChatScreen } from "./src/chat-screen";
 import FocusCard from "./src/FocusCard";
 
-type Tab = "night" | "chat" | "rhythm" | "settings";
-const tabs: { id: Tab; label: string; icon: string }[] = [
-  { id: "night", label: "Mi noche", icon: "☾" },
-  { id: "chat", label: "SOL", icon: "✳" },
-  { id: "rhythm", label: "Mi ritmo", icon: "≋" },
-  { id: "settings", label: "Ajustes", icon: "⋯" },
+type Tab = "home" | "chat" | "pending" | "memory";
+const tabs = [
+  { id: "home" as const, label: "Mi espacio", icon: House },
+  { id: "chat" as const, label: "SOL", icon: MessageCircle },
+  { id: "pending" as const, label: "Pendientes", icon: FileText },
+  { id: "memory" as const, label: "Memoria", icon: Heart },
 ];
-function confirm(title: string, message: string, action: () => void) {
+function confirm(
+  title: string,
+  message: string,
+  action: () => void,
+  destructive = false,
+) {
   if (Platform.OS === "web") {
     if (window.confirm(title + "\n\n" + message)) action();
   } else
     Alert.alert(title, message, [
       { text: "Cancelar", style: "cancel" },
-      { text: "Continuar", onPress: action },
+      {
+        text: destructive ? "Borrar" : "Continuar",
+        style: destructive ? "destructive" : "default",
+        onPress: action,
+      },
     ]);
 }
 export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.shell}>
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
         <SolApp />
       </SafeAreaView>
     </SafeAreaProvider>
@@ -52,720 +82,607 @@ export default function App() {
 }
 function SolApp() {
   const sol = useSol();
-  const [tab, setTab] = useState<Tab>("night");
-  const [draft, setDraft] = useState("");
-  const [url, setUrl] = useState(process.env.EXPO_PUBLIC_API_URL || "");
-  const [password, setPassword] = useState("");
-  const chat = useRef<React.ComponentRef<typeof ScrollView>>(null);
-  const { local, session } = sol;
-  const metrics = feedbackMetrics(local?.feedback || {});
-  function send(text = draft) {
-    const action = () => {
-      void sol.send(text).then((ok) => {
-        if (ok) setDraft("");
+  const [tab, setTab] = useState<Tab>("home");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const draftRef = useRef(sol.draft);
+  draftRef.current = sol.draft;
+  const { session } = sol;
+  const dataUnavailable =
+    !sol.storageReady || (!!sol.connection && !sol.remote);
+  const disabled = sol.busy || dataUnavailable || !!sol.pending;
+  useEffect(() => {
+    const back = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (settingsOpen) {
+        setSettingsOpen(false);
+        return true;
+      }
+      if (tab !== "home") {
+        setTab("home");
+        return true;
+      }
+      return false;
+    });
+    return () => back.remove();
+  }, [tab, settingsOpen]);
+  function navigate(next: Tab) {
+    setTab(next);
+    AccessibilityInfo.announceForAccessibility(
+      tabs.find((item) => item.id === next)?.label || "SOL",
+    );
+  }
+  function openChat(prompt?: string) {
+    const enter = () => {
+      if (prompt) sol.setDraft(prompt);
+      navigate("chat");
+    };
+    if (prompt && sol.draft.trim() && sol.draft !== prompt)
+      confirm(
+        "Ya tienes un borrador",
+        "Esto reemplazará el texto que todavía no enviaste.",
+        enter,
+      );
+    else enter();
+  }
+  async function submit(text: string, fromComposer = false) {
+    const ok = await sol.send(text);
+    if (ok && fromComposer && draftRef.current.trim() === text.trim()) sol.setDraft("");
+    return ok;
+  }
+  function clearConversation(fromComposer = false) {
+    const text = fromComposer ? sol.draft : "BORRAR";
+    confirm(
+      sol.connection
+        ? "Borrar el chat compartido"
+        : "Borrar conversación y memoria",
+      sol.connection
+        ? "Se borrarán la conversación de pruebas del equipo, su pendiente y sus preferencias. No borra WhatsApp. Esta acción no se puede deshacer."
+        : "Se borrarán la conversación, el pendiente y las preferencias guardados en este dispositivo. Esta acción no se puede deshacer.",
+      () => {
+        void submit(text, fromComposer).then((ok) => {
+          if (ok)
+            AccessibilityInfo.announceForAccessibility(
+              "Conversación y memoria borradas.",
+            );
+        });
+      },
+      true,
+    );
+  }
+  function sendComposer() {
+    if (sol.draft.trim().toLowerCase() === "borrar") clearConversation(true);
+    else void submit(sol.draft, true);
+  }
+  function newPending() {
+    const start = () => {
+      void submit("NUEVO").then((ok) => {
+        if (ok) openChat();
       });
     };
-    if (text.trim().toLowerCase() === "borrar" && sol.connection)
+    if (session.concern || session.messages.length)
       confirm(
-        "Borrar conversación del equipo",
-        "Se eliminará el contexto del chat compartido en testing. No borra WhatsApp. Este piloto todavía no tiene cuentas individuales.",
-        action,
+        "Empezar otro pendiente",
+        sol.connection
+          ? "El piloto reemplazará el pendiente y el historial de esta conversación compartida. Conservará tus preferencias."
+          : "El pendiente actual dejará de aparecer en esta vista. Su conversación y tus preferencias se conservan.",
+        start,
       );
-    else action();
+    else openChat();
   }
-  const feedbackLabels: [Feedback, string][] = [
-    ["correct", "Bien"],
-    ["should-wake", "Debió despertarme"],
-    ["should-wait", "No debió despertarme"],
-  ];
+  function smallerStep() {
+    void submit("MÁS PEQUEÑO").then((ok) => {
+      if (ok) openChat();
+    });
+  }
+  function preferTwoMinutes() {
+    void submit("Prefiero empezar con pasos de dos minutos.").then((ok) => {
+      if (ok) openChat();
+    });
+  }
+  function discard() {
+    confirm(
+      "Descartar este reintento",
+      "El mensaje puede haber llegado al servidor. Esto solo quita el envío pendiente de este dispositivo.",
+      () => {
+        void sol.discardPending();
+      },
+    );
+  }
   if (!sol.loaded)
     return (
-      <View style={app.center}>
+      <View style={s.center}>
         <ActivityIndicator color={colors.accent} />
         <Text style={styles.muted}>Preparando tu espacio…</Text>
       </View>
     );
+  const mode = !sol.connection
+    ? "Demo local"
+    : sol.refreshing
+      ? "Actualizando…"
+      : sol.error
+        ? "Revisar conexión"
+        : "Piloto del equipo";
   return (
     <>
-      <View style={app.header}>
-        <View>
-          <Text style={app.brand}>
-            sol<Text style={{ color: colors.accent }}>.</Text>
-          </Text>
-          <Text style={styles.small}>Menos ruido. Más descanso.</Text>
+      <View style={s.header}>
+        <View style={s.brandRow}>
+          <Text style={s.brand}>solsets</Text>
+          <ArrowUpRight size={28} color={colors.accent} accessible={false} />
         </View>
-        <View style={app.badge}>
-          <View style={app.dot} />
-          <Text style={styles.small}>DEMO DEL EQUIPO</Text>
+        <View style={styles.row}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={mode + ". Abrir ajustes"}
+            onPress={() => setSettingsOpen(true)}
+            style={s.mode}
+          >
+            <View
+              style={[
+                s.dot,
+                { backgroundColor: sol.error ? colors.danger : colors.accent },
+              ]}
+            />
+            <Text style={styles.small}>{mode}</Text>
+          </Pressable>
+          <IconButton
+            label="Abrir ajustes"
+            icon={Settings}
+            onPress={() => setSettingsOpen(true)}
+          />
         </View>
       </View>
-      {!!sol.error && (
-        <View style={styles.error} accessibilityRole="alert">
-          <Text style={[styles.small, { color: colors.danger }]}>
-            {sol.error}
-          </Text>
-          {sol.connection && (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => void sol.refresh()}
-              style={{ paddingTop: 12, minHeight: 44 }}
-            >
-              <Text style={styles.text}>Reintentar conexión ↻</Text>
-            </Pressable>
-          )}
-        </View>
-      )}
-      {tab === "chat" ? (
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <ScrollView
-            ref={chat}
-            contentContainerStyle={styles.page}
-            keyboardShouldPersistTaps="handled"
-            onContentSizeChange={() =>
-              chat.current?.scrollToEnd({ animated: true })
-            }
-          >
-            <Text style={styles.eyebrow}>
-              {sol.connection
-                ? "CHAT DEL PILOTO · SERVIDOR"
-                : "PRUEBA DE DISEÑO · LOCAL"}
+      {sol.error ? (
+        <View style={s.errorWrap}>
+          <View style={styles.error} accessibilityRole="alert">
+            <Text style={[styles.muted, { color: colors.danger }]}>
+              {sol.error}
             </Text>
-            <Text style={styles.title}>Suéltalo aquí.</Text>
-            <Text style={styles.muted}>
-              {sol.connection
-                ? "Esta conversación es compartida por el equipo. Usa ejemplos ficticios."
-                : "Anota algo que siga dando vueltas. Esta demo responde con reglas y guarda los cambios en este dispositivo."}
-            </Text>
-            {!session.messages.length && (
-              <View style={app.bubble}>
-                <Text style={styles.text}>
-                  ¿Qué te gustaría dejar encaminado antes de desconectar?
-                </Text>
-                <Text style={styles.small}>
-                  Prueba: «Me preocupa el informe de mañana».
-                </Text>
-              </View>
-            )}
-            {session.messages.map((message) => (
-              <View
-                key={message.id}
-                style={[app.bubble, message.role === "user" && app.userBubble]}
-              >
-                <Text style={styles.eyebrow}>
-                  {message.role === "user" ? "TÚ" : "SOL"}
-                </Text>
-                <Text selectable style={styles.text}>
-                  {message.text}
-                </Text>
-                {message.role === "assistant" && (
-                  <Text style={styles.small}>
-                    {message.inference?.engine === "hermes"
-                      ? "Respuesta de Hermes"
-                      : message.inference?.engine === "unavailable"
-                        ? "Modelo no disponible · propuesta pendiente"
-                        : message.inference?.engine === "control"
-                          ? "Contexto actualizado"
-                          : "Simulación guiada · sin modelo"}
-                  </Text>
-                )}
-              </View>
-            ))}
-            {sol.pending && (
-              <Card>
-                <Text style={styles.text}>Este envío sigue sin confirmar.</Text>
-                <Text style={styles.muted}>{sol.pending.text}</Text>
-                <Button
-                  title="Reintentar el mismo envío"
-                  disabled={sol.busy}
-                  onPress={() => send(sol.pending!.text)}
-                />
-                <Button
-                  secondary
-                  title="Descartar reintento"
-                  disabled={sol.busy}
-                  onPress={() =>
-                    confirm(
-                      "Descartar reintento",
-                      "El servidor puede haber recibido el mensaje. Descartarlo no lo borra ni envía uno nuevo.",
-                      () => void sol.discardPending(),
-                    )
-                  }
-                />
-              </Card>
-            )}
-          </ScrollView>
-          <View style={app.composer}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ gap: 8, paddingBottom: 12 }}
-            >
-              {["MÁS PEQUEÑO", "MEMORIA", "NUEVO"].map((value) => (
-                <Chip
-                  key={value}
-                  title={
-                    value === "MÁS PEQUEÑO"
-                      ? "Un paso más pequeño"
-                      : value === "MEMORIA"
-                        ? "Lo que sabes de mí"
-                        : "Otro pendiente"
-                  }
-                  onPress={() => send(value)}
-                  disabled={
-                    sol.busy ||
-                    !!sol.pending ||
-                    (!!sol.connection && !sol.remote)
-                  }
-                />
-              ))}
-            </ScrollView>
-            <View style={[styles.row, { alignItems: "flex-end" }]}>
-              <TextInput
-                accessibilityLabel="Mensaje para SOL"
-                placeholder="Un pendiente ficticio…"
-                placeholderTextColor={colors.dim}
-                multiline
-                maxLength={2000}
-                value={draft}
-                onChangeText={setDraft}
-                editable={!sol.busy && !sol.pending}
-                style={[styles.input, { flex: 1, maxHeight: 130 }]}
-              />
+            {!sol.storageReady ? (
               <Button
-                title="↑"
-                onPress={() => send()}
-                disabled={
-                  sol.busy ||
-                  !!sol.pending ||
-                  !draft.trim() ||
-                  (!!sol.connection && !sol.remote)
-                }
-                style={{ width: 52 }}
+                title="Reintentar lectura"
+                variant="quiet"
+                loading={sol.busy}
+                onPress={() => void sol.retryStorage()}
               />
-            </View>
-            <Text style={[styles.small, { marginTop: 8 }]}>
-              {sol.busy
-                ? "Guardando…"
-                : sol.connection
-                  ? "Persistencia en servidor · conversación del equipo"
-                  : "Persistencia local · datos ficticios"}
-            </Text>
+            ) : sol.pending ? (
+              <Button
+                title="Revisar envío pendiente"
+                variant="quiet"
+                onPress={() => openChat()}
+              />
+            ) : sol.connection ? (
+              <Button
+                title="Reintentar conexión"
+                variant="quiet"
+                loading={sol.refreshing}
+                disabled={sol.busy}
+                onPress={() => void sol.refresh()}
+              />
+            ) : null}
           </View>
-        </KeyboardAvoidingView>
+        </View>
+      ) : null}
+      {dataUnavailable &&
+      !(sol.storageReady && sol.pending && tab === "chat") ? (
+        <View style={s.center}>
+          {sol.refreshing ? <ActivityIndicator color={colors.accent} /> : null}
+          <Text accessibilityRole="header" style={styles.h2}>
+            {sol.storageReady
+              ? "Recuperando tu conversación"
+              : "No pudimos abrir tus datos"}
+          </Text>
+          <Text style={styles.muted}>
+            {sol.storageReady
+              ? "Tu contexto aparecerá al recuperar la conexión."
+              : "Reintenta la lectura. No se han reemplazado tus datos guardados."}
+          </Text>
+        </View>
+      ) : tab === "chat" ? (
+        <ChatScreen
+          session={session}
+          draft={sol.draft}
+          setDraft={sol.setDraft}
+          busy={sol.busy}
+          blocked={dataUnavailable}
+          refreshing={sol.refreshing}
+          connected={!!sol.connection}
+          pending={sol.pending}
+          onSend={sendComposer}
+          onRetry={() => {
+            if (sol.pending)
+              void submit(sol.pending.text, sol.draft.trim() === sol.pending.text.trim());
+          }}
+          onDiscard={discard}
+          onRefresh={() => void sol.refresh()}
+          onPending={() => navigate("pending")}
+          onSmallStep={smallerStep}
+          onSettings={() => setSettingsOpen(true)}
+        />
       ) : (
         <ScrollView
+          key={tab}
           contentContainerStyle={styles.page}
+          contentInsetAdjustmentBehavior="automatic"
           keyboardShouldPersistTaps="handled"
+          refreshControl={
+            sol.connection ? (
+              <RefreshControl
+                refreshing={sol.refreshing}
+                onRefresh={() => void sol.refresh()}
+                tintColor={colors.accent}
+              />
+            ) : undefined
+          }
         >
-          {tab === "night" && (
-            <>
-              <Text style={styles.eyebrow}>PREPARA TU NOCHE</Text>
-              <Text style={styles.title}>
-                Deja el día{"\n"}un poco más lejos.
-              </Text>
-              <View style={app.sunSpace} accessibilityElementsHidden>
-                <View style={app.orbit} />
-                <View style={app.sun} />
-                <View style={app.horizon} />
-                <Text style={app.sunLabel}>UN MOMENTO PARA BAJAR EL RITMO</Text>
-              </View>
-              <Card>
-                <View style={styles.spread}>
-                  <Text style={styles.eyebrow}>TU ACUERDO DE ESTA NOCHE</Text>
-                  <Text style={styles.small}>Local</Text>
-                </View>
-                <Text style={styles.h2}>¿Te toca guardia?</Text>
-                <View style={styles.row}>
-                  <Button
-                    title="Sí, estoy de guardia"
-                    secondary={local?.onDuty !== true}
-                    disabled={sol.busy || !local}
-                    style={{ flex: 1 }}
-                    onPress={() =>
-                      void sol.update((state) => ({
-                        ...state,
-                        onDuty: true,
-                        confirmedAt: new Date().toISOString(),
-                      }))
-                    }
-                  />
-                  <Button
-                    title="No, hoy descanso"
-                    secondary={local?.onDuty !== false}
-                    disabled={sol.busy || !local}
-                    style={{ flex: 1 }}
-                    onPress={() =>
-                      void sol.update((state) => ({
-                        ...state,
-                        onDuty: false,
-                        confirmedAt: new Date().toISOString(),
-                      }))
-                    }
-                  />
-                </View>
-                <Text style={styles.muted}>
-                  {local?.onDuty === true
-                    ? "En la propuesta, una urgencia nueva requeriría avisarte. Ante la duda, se revisa."
-                    : local?.onDuty === false
-                      ? "Hoy elegiste descansar. La política para incidentes graves fuera de guardia sigue pendiente del equipo."
-                      : "Una respuesta basta para empezar. Puedes cambiarla."}
-                </Text>
-                <Text style={styles.small}>
-                  Modo sombra: esta demo no silencia mensajes, no envía alertas
-                  y no realiza llamadas.
-                </Text>
-              </Card>
-              <Card>
-                <Text style={styles.eyebrow}>LO QUE SIGUE EN TU CABEZA</Text>
-                <Text style={styles.h2}>
-                  {session.concern || "No tienes que resolverlo todo ahora."}
-                </Text>
-                <Text style={styles.muted}>
-                  {session.plan?.nextStep ||
-                    "Deja un pendiente anotado y prepara el primer paso para mañana."}
-                </Text>
-                <Button
-                  title={
-                    session.concern
-                      ? "Retomar con SOL ↗"
-                      : "Dejar un pendiente con SOL ↗"
-                  }
-                  onPress={() => setTab("chat")}
-                />
-              </Card>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setTab("rhythm")}
-                style={[styles.spread, { minHeight: 56 }]}
-              >
-                <View>
-                  <Text style={styles.text}>Así habría sido la noche</Text>
-                  <Text style={styles.small}>
-                    3 ejemplos ficticios · revisa las decisiones
-                  </Text>
-                </View>
-                <Text style={styles.h2}>↗</Text>
-              </Pressable>
-            </>
-          )}
-          {tab === "rhythm" && (
-            <>
-              <Text style={styles.eyebrow}>CONTEXTO QUE CRECE CONTIGO</Text>
-              <Text style={styles.title}>Mi ritmo.</Text>
-              <Text style={styles.muted}>
-                SOL aprende de lo que le confirmas. Una señal de uso no explica
-                por sí sola cómo te sientes.
-              </Text>
-              <Card>
-                <Text style={styles.eyebrow}>LO QUE LE CONTASTE</Text>
-                {session.memory?.length ? (
-                  session.memory.map((item) => (
-                    <View key={item.key} style={{ gap: 4 }}>
-                      <Text style={styles.text}>{item.value}</Text>
-                      {!!item.evidence && (
-                        <Text style={styles.small}>
-                          Lo dijiste así: «{item.evidence}»
-                        </Text>
-                      )}
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.muted}>
-                    {session.preference
-                      ? `Prefieres pasos de ${session.preference.minutes} minutos.`
-                      : "Todavía no hay preferencias confirmadas. Empieza conversando."}
-                  </Text>
-                )}
-                <Button
-                  secondary
-                  title="Corregir mi contexto"
-                  onPress={() => setTab("chat")}
-                />
-              </Card>
-              <Card>
-                <Text style={styles.eyebrow}>MODO SOMBRA · EJEMPLOS</Text>
-                <Text style={styles.h2}>
-                  {metrics.reviewed
-                    ? `${metrics.correct} de ${metrics.reviewed} decisiones aprobadas`
-                    : "La confianza se construye."}
-                </Text>
-                <Text style={styles.muted}>
-                  {metrics.reviewed
-                    ? "Según tu feedback en estos ejemplos ficticios. No mide precisión en una guardia real."
-                    : "Revisa qué habría hecho SOL y corrígelo con un toque."}
-                </Text>
-                <Text style={styles.small}>
-                  El modo real sigue deshabilitado. La demo no se gradúa por
-                  acumular estos votos.
-                </Text>
-              </Card>
-              {examples.map((item) => (
-                <Card key={item.id}>
-                  <View style={styles.spread}>
-                    <Text style={styles.small}>{item.time} · FICTICIO</Text>
-                    <Text
-                      style={[
-                        styles.eyebrow,
-                        {
-                          color:
-                            item.decision === "DESPERTAR"
-                              ? colors.accent
-                              : colors.mint,
-                        },
-                      ]}
-                    >
-                      {item.decision}
-                    </Text>
-                  </View>
-                  <Text style={styles.h2}>{item.title}</Text>
-                  <Text style={styles.muted}>{item.reason}</Text>
-                  {item.decision === "DESPERTAR" && (
-                    <Button
-                      secondary
-                      title={
-                        local?.acknowledged.includes(item.id)
-                          ? "Visto · guardado localmente"
-                          : "Lo vi · probar reconocimiento"
-                      }
-                      disabled={
-                        sol.busy ||
-                        !local ||
-                        local.acknowledged.includes(item.id)
-                      }
-                      onPress={() =>
-                        void sol.update((state) => ({
-                          ...state,
-                          acknowledged: [
-                            ...new Set([...state.acknowledged, item.id]),
-                          ],
-                        }))
-                      }
-                    />
-                  )}
-                  <View style={styles.wrap}>
-                    {feedbackLabels.map(([value, label]) => (
-                      <Chip
-                        key={value}
-                        title={label}
-                        selected={local?.feedback[item.id] === value}
-                        disabled={sol.busy || !local}
-                        onPress={() =>
-                          void sol.update((state) => ({
-                            ...state,
-                            feedback: { ...state.feedback, [item.id]: value },
-                          }))
-                        }
-                      />
-                    ))}
-                  </View>
-                </Card>
-              ))}
-              <FocusCard />
-            </>
-          )}
-          {tab === "settings" && (
-            <>
-              <Text style={styles.eyebrow}>TU DEMO, SIN CONFUSIONES</Text>
-              <Text style={styles.title}>Conexión y datos.</Text>
-              <Card>
-                <Text style={styles.h2}>
-                  {sol.connection
-                    ? "Chat conectado al piloto"
-                    : "Estás probando en local"}
-                </Text>
-                <Text style={styles.muted}>
-                  {sol.connection
-                    ? "Solo el chat usa la API actual. La guardia, los ejemplos y sus votos se guardan en este dispositivo."
-                    : "La conversación, la selección de guardia y el feedback sobreviven al cerrar la app. No se han enviado a una base de datos."}
-                </Text>
-                {sol.connection && (
-                  <>
-                    <Text selectable style={styles.small}>
-                      {sol.connection.url}
-                    </Text>
-                    <Text style={styles.small}>
-                      {sol.remote?.agent?.engine === "hermes"
-                        ? sol.remote.agent.configured
-                          ? "Hermes configurado; una respuesta válida comprueba la inferencia."
-                          : "Hermes todavía necesita configuración del equipo."
-                        : "Motor de la demo: reglas, sin inferencia de IA."}
-                    </Text>
-                    {sol.syncedAt && (
-                      <Text style={styles.small}>
-                        Última lectura:{" "}
-                        {new Date(sol.syncedAt).toLocaleTimeString()}
-                      </Text>
-                    )}
-                    <Button
-                      secondary
-                      title="Recargar contexto del servidor"
-                      disabled={sol.busy}
-                      onPress={() => void sol.refresh()}
-                    />
-                    <Button
-                      secondary
-                      title="Volver a la demo local"
-                      disabled={sol.busy}
-                      onPress={() => void sol.disconnect()}
-                    />
-                  </>
-                )}
-              </Card>
-              <Card>
-                <Text style={styles.h2}>Conectar el chat a testing</Text>
-                <Text style={styles.muted}>
-                  Usa la URL del backend de esta rama y el acceso de prueba. No
-                  uses producción.
-                </Text>
-                <Text style={styles.small}>URL del backend</Text>
-                <TextInput
-                  accessibilityLabel="URL del backend de testing"
-                  placeholder="https://sol-testing…"
-                  placeholderTextColor={colors.dim}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="url"
-                  value={url}
-                  onChangeText={setUrl}
-                  style={styles.input}
-                  editable={!sol.busy}
-                />
-                <Text style={styles.small}>
-                  Contraseña de la demo · usuario solsets
-                </Text>
-                <TextInput
-                  accessibilityLabel="Contraseña del equipo"
-                  placeholder="Solo si el equipo configuró una"
-                  placeholderTextColor={colors.dim}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={password}
-                  onChangeText={setPassword}
-                  style={styles.input}
-                  editable={!sol.busy}
-                />
-                <Button
-                  title="Comprobar y conectar"
-                  disabled={sol.busy || !url.trim()}
-                  onPress={() =>
-                    void sol.connect({ url, password }).then((ok) => {
-                      if (ok) {
-                        setPassword("");
-                        setTab("chat");
-                      }
-                    })
-                  }
-                />
-                <Text style={styles.small}>
-                  El acceso se conserva en el almacenamiento seguro del
-                  teléfono. Este piloto comparte la conversación del equipo;
-                  todavía no tiene identidad individual.
-                </Text>
-                <Text style={styles.small}>
-                  Para desarrollo en la misma Wi-Fi, usa la IP del Mac.
-                  localhost en el iPhone significa el propio iPhone. La vista
-                  web necesita CORS del backend y no prueba por sí sola la
-                  conexión nativa.
-                </Text>
-              </Card>
-              <Card>
-                <Text style={styles.eyebrow}>CONTINUIDAD</Text>
-                <Text style={styles.h2}>
-                  WhatsApp es otro punto de entrada.
-                </Text>
-                <Text style={styles.muted}>
-                  El número de Kapso sigue pendiente. Su conversación se
-                  conserva por remitente y aún no se vincula a una cuenta móvil.
-                </Text>
-                {sol.remote?.connection?.chatUrl && (
-                  <Button
-                    secondary
-                    title="Abrir número de prueba"
-                    onPress={() =>
-                      void Linking.openURL(sol.remote!.connection!.chatUrl!)
-                    }
-                  />
-                )}
-              </Card>
-              <Card>
-                <Text style={styles.eyebrow}>TÚ DECIDES QUÉ SE RECUERDA</Text>
-                <Text style={styles.muted}>
-                  La selección y los eventos de Screen Time permanecen en el
-                  dispositivo. No se envían al chat ni a Hermes.
-                </Text>
-                <Button
-                  secondary
-                  title={
-                    sol.connection
-                      ? "Borrar chat compartido del piloto"
-                      : "Borrar chat local"
-                  }
-                  disabled={sol.busy}
-                  onPress={() =>
-                    confirm(
-                      sol.connection
-                        ? "Borrar chat del equipo"
-                        : "Borrar chat local",
-                      sol.connection
-                        ? "Se eliminará el contexto compartido del servidor. No borra WhatsApp."
-                        : "Se borrará el contexto y el historial local.",
-                      () => void sol.send("BORRAR"),
-                    )
-                  }
-                />
-                <Button
-                  secondary
-                  title="Restablecer ejemplos locales"
-                  disabled={sol.busy}
-                  onPress={() =>
-                    confirm(
-                      "Restablecer demo local",
-                      "Borra votos, acuerdo de guardia y conversación local. No borra el servidor ni cambia las restricciones de Screen Time.",
-                      () => void sol.update(() => initialState()),
-                    )
-                  }
-                />
-              </Card>
-              <Text style={styles.small}>
-                App: Amaru. API: Bishara. Agente y políticas: Quito. El bloqueo
-                de apps es un experimento separado de la guardia.
-              </Text>
-            </>
-          )}
+          {sol.pending ? (
+            <Button
+              title="Hay un envío por confirmar"
+              secondary
+              onPress={() => openChat()}
+            />
+          ) : null}
+          {tab === "home" ? (
+            <HomeScreen
+              session={session}
+              onChat={openChat}
+              onPending={() => navigate("pending")}
+            />
+          ) : null}
+          {tab === "pending" ? (
+            <PendingScreen
+              session={session}
+              connected={!!sol.connection}
+              onChat={() => openChat()}
+              onNew={newPending}
+              disabled={disabled}
+            />
+          ) : null}
+          {tab === "memory" ? (
+            <MemoryScreen
+              session={session}
+              onSmallStep={preferTwoMinutes}
+              onCorrect={() => openChat()}
+              onClear={() => clearConversation()}
+              disabled={disabled}
+              connected={!!sol.connection}
+            />
+          ) : null}
         </ScrollView>
       )}
-      <View style={app.tabs}>
+      <View style={s.tabBar} accessibilityRole="tablist">
         {tabs.map((item) => (
           <Pressable
             key={item.id}
             accessibilityRole="tab"
-            accessibilityState={{ selected: tab === item.id }}
             accessibilityLabel={item.label}
-            onPress={() => setTab(item.id)}
-            style={[app.tab, tab === item.id && app.activeTab]}
+            accessibilityState={{ selected: tab === item.id }}
+            onPress={() => navigate(item.id)}
+            style={({ pressed }) => [
+              s.tab,
+              pressed && { backgroundColor: colors.surface },
+            ]}
           >
-            <Text
-              style={[app.tabIcon, tab === item.id && { color: colors.accent }]}
+            <View
+              style={[
+                s.tabIcon,
+                tab === item.id && { backgroundColor: colors.blueSoft },
+              ]}
             >
-              {item.icon}
-            </Text>
+              <item.icon
+                size={22}
+                color={tab === item.id ? colors.accent : colors.muted}
+                accessible={false}
+              />
+            </View>
             <Text
-              style={[styles.small, tab === item.id && { color: colors.ink }]}
+              style={[
+                styles.small,
+                s.tabLabel,
+                tab === item.id && { color: colors.accent, fontWeight: "700" },
+              ]}
             >
               {item.label}
             </Text>
           </Pressable>
         ))}
       </View>
+      <SettingsSheet
+        sol={sol}
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onConnected={() => {
+          setSettingsOpen(false);
+          navigate("chat");
+        }}
+      />
     </>
   );
 }
-const app = StyleSheet.create({
-  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 16 },
+
+function SettingsSheet({
+  sol,
+  open,
+  onClose,
+  onConnected,
+}: {
+  sol: ReturnType<typeof useSol>;
+  open: boolean;
+  onClose: () => void;
+  onConnected: () => void;
+}) {
+  const [url, setUrl] = useState<string>(process.env.EXPO_PUBLIC_API_URL || "");
+  const [password, setPassword] = useState("");
+  const [linkError, setLinkError] = useState("");
+  useEffect(() => {
+    if (open)
+      setUrl((previous) => sol.pending?.url || sol.connection?.url || previous);
+  }, [open, sol.connection?.url, sol.pending?.url]);
+  const rawWhatsapp = sol.remote?.connection?.chatUrl;
+  const whatsapp =
+    typeof rawWhatsapp === "string" &&
+    /^https:\/\/(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com)\//i.test(
+      rawWhatsapp,
+    )
+      ? rawWhatsapp
+      : null;
+  return (
+    <Host
+      colorScheme="light"
+      seedColor={colors.accent}
+      style={{ position: "absolute" }}
+    >
+      <BottomSheet
+        isPresented={open}
+        onDismiss={onClose}
+        snapPoints={["full"]}
+        containerColor={colors.bg}
+        contentPadding={0}
+      >
+        <KeyboardAvoidingView
+          style={styles.shell}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          accessibilityViewIsModal
+          onAccessibilityEscape={onClose}
+        >
+          <View style={s.sheetHeader}>
+            <Text accessibilityRole="header" style={styles.h2}>
+              Ajustes
+            </Text>
+            <IconButton label="Cerrar ajustes" icon={X} onPress={onClose} />
+          </View>
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={styles.page}
+            contentInsetAdjustmentBehavior="automatic"
+            keyboardShouldPersistTaps="handled"
+          >
+            <Heading
+              title="Tu espacio, conectado."
+              description="Aquí puedes revisar dónde se guarda tu conversación y conectar el piloto del equipo."
+            />
+            <Card>
+              <Text accessibilityRole="header" style={styles.h2}>
+                {sol.connection
+                  ? "Chat del equipo"
+                  : "Demo en este dispositivo"}
+              </Text>
+              <Text style={styles.muted}>
+                {sol.connection
+                  ? "Este piloto comparte una conversación de prueba. Usa ejemplos ficticios; todavía no tiene cuentas individuales."
+                  : "La conversación y las preferencias quedan guardadas aquí. Las respuestas son ejemplos con reglas, sin IA ni conexión a una base de datos."}
+              </Text>
+              {sol.connection ? (
+                <>
+                  <Text selectable style={styles.small}>
+                    {sol.connection.url}
+                  </Text>
+                  <Text style={styles.small}>
+                    {sol.remote?.agent?.engine === "hermes"
+                      ? sol.remote.agent.configured
+                        ? "Hermes figura configurado. Una respuesta válida comprueba la inferencia."
+                        : "Hermes todavía necesita configuración del equipo."
+                      : sol.remote?.agent?.engine === "demo"
+                        ? "Motor de la demo: reglas."
+                        : "El servidor no informó qué motor está usando."}
+                  </Text>
+                  {sol.syncedAt ? (
+                    <Text style={styles.small}>
+                      Última lectura:{" "}
+                      {new Date(sol.syncedAt).toLocaleTimeString("es-CL")}
+                    </Text>
+                  ) : null}
+                  <Button
+                    title="Actualizar conversación"
+                    secondary
+                    loading={sol.refreshing}
+                    disabled={sol.busy}
+                    onPress={() => void sol.refresh()}
+                  />
+                  <Button
+                    title="Volver a la demo local"
+                    variant="quiet"
+                    disabled={sol.busy || !!sol.pending}
+                    onPress={() => {
+                      void sol.disconnect();
+                    }}
+                  />
+                </>
+              ) : null}
+            </Card>
+            <View style={{ gap: space.md }}>
+              <Text accessibilityRole="header" style={styles.h2}>
+                Conectar el piloto
+              </Text>
+              <Text style={styles.muted}>
+                Ingresa el servidor de pruebas y el acceso que te comparta el
+                equipo.
+              </Text>
+              <Text style={styles.muted}>URL del servidor</Text>
+              <TextInput
+                accessibilityLabel="URL del servidor de pruebas"
+                value={url}
+                onChangeText={setUrl}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+                placeholder="https://…"
+                placeholderTextColor={colors.muted}
+                style={styles.input}
+                editable={!sol.busy}
+              />
+              <Text style={styles.muted}>Contraseña de pruebas</Text>
+              <TextInput
+                accessibilityLabel="Contraseña de pruebas"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="Acceso del equipo"
+                placeholderTextColor={colors.muted}
+                style={styles.input}
+                editable={!sol.busy}
+              />
+              <Button
+                title="Conectar"
+                loading={sol.busy}
+                disabled={!url.trim() || !sol.storageReady}
+                onPress={() => {
+                  void sol.connect({ url, password }).then((ok) => {
+                    if (ok) {
+                      setPassword("");
+                      onConnected();
+                    }
+                  });
+                }}
+              />
+              {sol.error ? (
+                <Text
+                  accessibilityRole="alert"
+                  style={[styles.muted, { color: colors.danger }]}
+                >
+                  {sol.error}
+                </Text>
+              ) : null}
+              <Text style={styles.small}>
+                {Platform.OS === "web"
+                  ? "En web el acceso se conserva solo durante esta sesión. El borrador sí se guarda."
+                  : "La contraseña se guarda con el almacenamiento seguro del teléfono."}
+              </Text>
+            </View>
+            <View style={styles.rule} />
+            <View style={{ gap: space.md }}>
+              <Text accessibilityRole="header" style={styles.h2}>
+                SOL en WhatsApp
+              </Text>
+              <Text style={styles.muted}>
+                {whatsapp
+                  ? "Hay un enlace de prueba disponible. La continuidad de memoria entre este chat y WhatsApp todavía debe verificarse."
+                  : "La conexión con WhatsApp está pendiente. Falta habilitar el número de pruebas y vincularlo a este chat."}
+              </Text>
+              {whatsapp ? (
+                <Button
+                  title="Abrir WhatsApp de prueba"
+                  secondary
+                  icon={ArrowUpRight}
+                  onPress={() => {
+                    void Linking.openURL(whatsapp).catch(() =>
+                      setLinkError(
+                        "No se pudo abrir WhatsApp. Vuelve a intentarlo.",
+                      ),
+                    );
+                  }}
+                />
+              ) : null}
+              {linkError ? (
+                <Text
+                  accessibilityRole="alert"
+                  style={[styles.muted, { color: colors.danger }]}
+                >
+                  {linkError}
+                </Text>
+              ) : null}
+            </View>
+            <FocusCard />
+            <Text style={styles.small}>SOL · Demo del equipo</Text>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </BottomSheet>
+    </Host>
+  );
+}
+const s = StyleSheet.create({
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 10,
-    paddingBottom: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    paddingHorizontal: space.lg,
+    paddingVertical: space.sm,
     borderBottomWidth: 1,
-    borderColor: colors.line,
+    borderBottomColor: colors.line,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: space.sm,
+    flexWrap: "wrap",
   },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: space.xs },
   brand: {
     color: colors.ink,
-    fontSize: 36,
-    fontWeight: "700",
-    letterSpacing: -2,
+    fontSize: 28,
+    fontWeight: "600",
+    letterSpacing: -1.5,
   },
-  badge: { flexDirection: "row", alignItems: "center", gap: 7 },
-  dot: { height: 6, width: 6, borderRadius: 3, backgroundColor: colors.mint },
-  sunSpace: {
-    height: 178,
+  mode: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    maxWidth: 160,
+    flexShrink: 1,
+  },
+  dot: { width: 6, height: 6, borderRadius: 3 },
+  center: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
-    marginVertical: -8,
+    padding: space.xxl,
+    gap: space.lg,
   },
-  sun: {
-    height: 118,
-    width: 118,
-    borderRadius: 59,
-    backgroundColor: colors.accent,
-    position: "absolute",
-    top: 16,
-  },
-  orbit: {
-    height: 190,
-    width: 190,
-    borderRadius: 95,
-    borderWidth: 1,
-    borderColor: "#59443E",
-    position: "absolute",
-    top: -19,
-  },
-  horizon: {
-    height: 80,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.bg,
-    borderTopColor: "#765345",
-    borderTopWidth: 1,
-  },
-  sunLabel: {
-    position: "absolute",
-    bottom: 30,
-    fontSize: 10,
-    letterSpacing: 2,
-    color: colors.muted,
-  },
-  tabs: {
-    flexDirection: "row",
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderTopWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.bg,
-  },
-  tab: {
-    alignItems: "center",
-    gap: 2,
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 16,
-    minHeight: 56,
-  },
-  activeTab: { backgroundColor: colors.card },
-  tabIcon: { fontSize: 23, color: colors.muted, height: 28 },
-  bubble: {
-    backgroundColor: colors.card,
-    padding: 18,
-    borderRadius: 22,
-    borderTopLeftRadius: 4,
-    gap: 8,
-    maxWidth: "95%",
-    alignSelf: "flex-start",
-  },
-  userBubble: {
-    backgroundColor: "#3E3838",
-    alignSelf: "flex-end",
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 4,
-  },
-  composer: {
-    padding: 16,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderColor: colors.line,
+  errorWrap: {
+    padding: space.md,
+    paddingBottom: 0,
     width: "100%",
     maxWidth: 640,
     alignSelf: "center",
+  },
+  tabBar: {
+    flexDirection: "row",
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    paddingHorizontal: space.xs,
+    paddingVertical: space.xs,
+    backgroundColor: colors.bg,
+  },
+  tab: {
+    flex: 1,
+    minHeight: 64,
+    paddingVertical: space.xs,
+    paddingHorizontal: space.xs,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: space.xs,
+    borderRadius: 12,
+  },
+  tabIcon: {
+    borderRadius: 16,
+    paddingVertical: space.xs,
+    paddingHorizontal: space.lg,
+  },
+  tabLabel: { textAlign: "center", flexShrink: 1 },
+  sheetHeader: {
+    paddingHorizontal: space.xl,
+    paddingVertical: space.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
   },
 });

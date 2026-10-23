@@ -11,9 +11,11 @@ import {
 import { demoReply, emptySession, type LocalState } from "./model";
 import {
   loadConnection,
+  loadDraft,
   loadLocal,
   loadPending,
   saveConnection,
+  saveDraft,
   saveLocal,
   savePending,
 } from "./storage";
@@ -25,63 +27,128 @@ export function useSol() {
   const [pending, setPending] = useState<PendingTurn | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [draft, setDraftValue] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [syncedAt, setSyncedAt] = useState<string | null>(null);
   const inFlight = useRef(false);
   const connectionRef = useRef<Connection | null>(null);
+  const refreshRevision = useRef(0);
+  const draftRef = useRef("");
+  const draftHydrated = useRef(false);
+  const storageReady = useRef(false);
+  const mounted = useRef(false);
+  const hydrating = useRef(false);
+  const hydrationRevision = useRef(0);
+
+  function setDraft(value: string) {
+    draftRef.current = value;
+    setDraftValue(value);
+  }
 
   async function refresh(target = connectionRef.current) {
-    if (!target) return;
+    if (!target || inFlight.current) return;
+    const revision = ++refreshRevision.current;
+    const isCurrent = () =>
+      refreshRevision.current === revision &&
+      connectionRef.current?.url === target.url &&
+      connectionRef.current.password === target.password;
+    setRefreshing(true);
     try {
       const value = await createPilotClient(target).load();
-      if (
-        connectionRef.current?.url !== target.url ||
-        connectionRef.current.password !== target.password
-      )
-        return;
+      if (!isCurrent()) return;
       setRemote(value);
       setSyncedAt(new Date().toISOString());
       setError("");
     } catch (e) {
-      setError((e as Error).message || "No se pudo conectar con SOL.");
+      if (isCurrent())
+        setError((e as Error).message || "No se pudo conectar con SOL.");
+    } finally {
+      if (isCurrent()) setRefreshing(false);
     }
   }
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const [saved, access, turn] = await Promise.all([
-          loadLocal(),
-          loadConnection(),
-          loadPending(),
-        ]);
-        if (!mounted) return;
-        const valid = access ? validateConnection(access, __DEV__) : null;
-        setLocal(saved);
-        setConnection(valid);
-        connectionRef.current = valid;
-        setPending(turn);
+  async function hydrateStorage() {
+    const revision = ++hydrationRevision.current;
+    const isCurrent = () => mounted.current && hydrationRevision.current === revision;
+    hydrating.current = true;
+    storageReady.current = false;
+    draftHydrated.current = false;
+    refreshRevision.current++;
+    setRefreshing(false);
+    setLoaded(false);
+    setError("");
+    try {
+      const [saved, access, turn, savedDraft] = await Promise.all([
+        loadLocal(),
+        loadConnection(),
+        loadPending(),
+        loadDraft(),
+      ]);
+      if (!isCurrent()) return false;
+      const valid = access ? validateConnection(access, __DEV__) : null;
+      setLocal(saved);
+      setConnection(valid);
+      connectionRef.current = valid;
+      setRemote(null);
+      setSyncedAt(null);
+      setPending(turn);
+      setDraft(savedDraft);
+      draftHydrated.current = true;
+      storageReady.current = true;
+      setLoaded(true);
+      if (valid) await refresh(valid);
+      return true;
+    } catch (e) {
+      if (isCurrent()) {
+        setError((e as Error).message || "No se pudieron leer los datos de este dispositivo.");
         setLoaded(true);
-        if (valid) await refresh(valid);
-      } catch (e) {
-        if (mounted) {
-          setError((e as Error).message);
-          setLoaded(true);
-        }
       }
-    })();
+      return false;
+    } finally {
+      if (isCurrent()) hydrating.current = false;
+    }
+  }
+
+  async function retryStorage() {
+    if (inFlight.current || hydrating.current || storageReady.current) return false;
+    return hydrateStorage();
+  }
+
+  useEffect(() => {
+    mounted.current = true;
+    void hydrateStorage();
     const sub = AppState.addEventListener("change", (value) => {
-      if (value === "active" && !inFlight.current) void refresh();
+      if (value === "active" && storageReady.current && !inFlight.current) void refresh();
+      if (value !== "active" && draftHydrated.current)
+        void saveDraft(draftRef.current).catch(() => {
+          if (mounted.current) setError("No se pudo guardar el borrador en este dispositivo.");
+        });
     });
     return () => {
-      mounted = false;
+      mounted.current = false;
+      hydrationRevision.current++;
+      refreshRevision.current++;
+      if (draftHydrated.current) void saveDraft(draftRef.current).catch(() => {});
       sub.remove();
     };
   }, []);
 
+  useEffect(() => {
+    if (!draftHydrated.current) return;
+    const timer = setTimeout(() => {
+      void saveDraft(draftRef.current).catch(() =>
+        setError("No se pudo guardar el borrador. El texto sigue disponible en pantalla."),
+      );
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [draft, loaded]);
+
   async function run(operation: () => Promise<void>) {
     if (inFlight.current) return false;
     inFlight.current = true;
+    // Any GET started before this mutation must not replace its newer result.
+    refreshRevision.current++;
+    setRefreshing(false);
     setBusy(true);
     setError("");
     try {
@@ -135,6 +202,10 @@ export function useSol() {
     });
   }
   async function send(text: string) {
+    if (!storageReady.current) {
+      setError("No se pudo recuperar el estado guardado. No se enviará otro mensaje hasta recuperar los datos del dispositivo.");
+      return false;
+    }
     const trimmed = text.trim();
     if (!trimmed || trimmed.length > 2000) {
       setError("Escribe entre 1 y 2.000 caracteres.");
@@ -142,6 +213,10 @@ export function useSol() {
     }
     return run(async () => {
       if (!connection) {
+        if (pending)
+          throw new Error(
+            "Hay un envío real pendiente. Vuelve a conectar con su servidor o descártalo antes de usar la demo local.",
+          );
         if (!local) throw new Error("La demo todavía no está lista.");
         const next = {
           ...local,
@@ -182,7 +257,12 @@ export function useSol() {
     pending,
     error,
     busy,
+    refreshing,
+    draft,
+    setDraft,
     loaded,
+    storageReady: storageReady.current,
+    retryStorage,
     syncedAt,
     refresh,
     update,

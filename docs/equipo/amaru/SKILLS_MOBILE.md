@@ -108,3 +108,23 @@ El lima no debe indicar estado por sí solo: acompañar con texto/icono. La vist
 - `AccessibilityTools/iOSAccessibilitySkill`: `388bfb67061cdb67ee108829109ea68d5115c230`
 
 Manifest de fuentes y hashes: [skills-mobile-manifest.json](skills-mobile-manifest.json). La aplicación comprobada se actualiza en MOBILE.md; las casillas de arriba son criterios, no resultados ya verificados.
+
+
+## Aplicación revisada en esta entrega
+
+Instalar diez skills no significa instalar diez librerías. Se leyeron las diez y se contrastaron sus recomendaciones con el proyecto. Estado comprobado por revisión de código y, donde se indica, por Safari:
+
+| Skill | Aplicación / decisión | Evidencia |
+| --- | --- | --- |
+| expo-native-ui | Adaptada a RN: safe areas, insets, scroll único, teclado previsto, texto seleccionable | App.tsx y chat-screen.tsx; Lucide conserva la referencia visual, no se usan SF Symbols |
+| expo-ui | Aplicada: Host claro, BottomSheet con cierre y controles accesibles | Ajustes en App.tsx; apertura, scroll y cierre comprobados en Safari |
+| expo-router | Evaluada; **no se migró a Router** | Se conservaron cuatro destinos por estado y un sheet secundario; no hay native Stack/NativeTabs/deep links nuevos |
+| expo-animation | Adaptada: feedback al pulsar y ausencia de movimiento decorativo | Pressable en ui.tsx, scroll sin animación en chat; sheet del sistema |
+| expo-design-system | Aplicada: tokens y primitivas compartidas azul/blanco/lima | ui.tsx; botones, tipografía y separación coherentes |
+| expo-data-fetching | Aplicada: carga, error, recuperación, contenido y borrador persistido | useSol.ts/App.tsx; borrador comprobado tras recarga y ante atajo |
+| vercel-react-native-skills | Aplicada: FlatList, IDs estables, filas memoizadas, scroll en refs | chat-screen.tsx |
+| mobile-ios-design | Adaptada: jerarquía, acción dominante y ajustes secundarios | workspace-screens.tsx/App.tsx; revisión 320/390/430 |
+| typography | Aplicada: sistema, escala34/22/17/15/12, wrapping, números tabulares | ui.tsx/workspace-screens.tsx; Dynamic Type extremo aún sin probar |
+| accessibility | Aplicada en código: roles, labels, estados, objetivos48pt, anuncios y cierre explícito | ui.tsx/App.tsx/chat-screen.tsx; VoiceOver nativo pendiente |
+
+No se migró a SwiftUI ni se añadieron animaciones, sliders o pantallas sin función para cumplir un contador. La navegación existente fue una adaptación de alcance, no una implementación de Expo Router. La validación web no equivale a VoiceOver, teclado nativo o prueba física en iPhone.

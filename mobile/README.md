@@ -12,9 +12,21 @@ npm start
 
 Mac y iPhone en la misma Wi-Fi. Escanear el QR con la cámara del iPhone y abrir Expo Go. Si Expo Go pide iniciar sesión, usar la misma cuenta Expo en el CLI y el teléfono. El SDK de Expo Go debe coincidir con 58. La app arranca sin claves con ejemplos locales.
 
-Recorrido: **Mi noche** → confirmar guardia → **SOL** → escribir un pendiente ficticio → «Un paso más pequeño» → «Otro pendiente» → escribir otro. En **Mi ritmo** aparece la preferencia confirmada y el feedback de las decisiones de ejemplo. Cerrar/reabrir conserva la información local. Las métricas cuentan solo ejemplos revisados; no habilitan modo real.
+Dirección vigente: **Mi espacio `/demo?caso=personal`**, blanco, azul y amarillo lima. Amaru pidió reemplazar la interpretación Ocaso. Pantallas y criterios en [DISENO_MOBILE.md](../docs/equipo/amaru/DISENO_MOBILE.md).
+
+Recorrido: **Mi espacio** → **Hablemos** → escribir un pendiente ficticio → revisar el primer paso en **Pendientes** → guardar una preferencia en **Memoria** → volver al chat. Cerrar/reabrir conserva la información local y el borrador. El piloto muestra un pendiente actual; no afirmar que existe una lista de tareas sincronizada.
 
 `npm run web` ofrece una vista de diseño. No demuestra permisos de iOS, bloqueo de apps ni funcionamiento en un iPhone físico.
+
+Para revisar a 320, 390 y 430 puntos:
+
+```sh
+npm run preview:mobile
+python3 -m http.server 4176 --bind 127.0.0.1 --directory dist
+# Abrir http://localhost:4176/phone-preview.html
+```
+
+El marco de revisión es un archivo de `dist/` generado por `scripts/preview-mobile.mjs`; no se incluye en la UI nativa. Si el puerto ya está ocupado por una preview anterior, no hace falta abrir otro servidor.
 
 ## Conectar el chat al piloto existente
 
@@ -27,9 +39,11 @@ Adaptador temporal, acordado con la sesión local de Hermes:
 - `assistant.inference.engine="unavailable"` se muestra como modelo no disponible, aunque HTTP sea 200.
 - No se invoca `/api/disconnect/verify`: esa prueba consume inferencias y pertenece al operador.
 
-Esta conversación es **compartida por el equipo**, no una cuenta individual. La guardia, los votos y los ejemplos siguen siendo locales. La app no envía esos datos al contrato provisional. Tampoco vincula el teléfono de WhatsApp a la sesión móvil. El contrato oficial de identidad, alertas y turnos está solicitado en [#7](https://github.com/cbishara/SolsetsHack/issues/7).
+Esta conversación es **compartida por el equipo**, no una cuenta individual. Tampoco vincula el teléfono de WhatsApp a la sesión móvil. El contrato oficial de identidad, historial, memoria y pendientes está solicitado en [#7](https://github.com/cbishara/SolsetsHack/issues/7). El comportamiento del mismo chatbot para app y WhatsApp se encargó a Quito en [#14](https://github.com/cbishara/SolsetsHack/issues/14); su cuenta Hermes depende de [#8](https://github.com/cbishara/SolsetsHack/issues/8). Ningún indicador de configuración demuestra por sí solo una inferencia real.
 
-El agente de Quito respondió con un borrador. Los fixtures de `src/proposed-fixtures.ts` ya usan sus tipos `IncomingMessage`/`Classification`/`Verdict`; la envoltura del feed, identidad, idempotencia y lectura del historial siguen por acordar. Esto no habilita endpoints oficiales ni confunde `decision` del clasificador con `wouldWake` de la política.
+Actualización de Quito en #8/#14: propone agente propio con Codex CLI/SDK y su cuenta, sin Hermes por ahora. Esa diferencia con el pedido inicial se señaló a Amaru. La app no se conectó automáticamente a ese motor: necesita un contrato y endpoint propios, aún pendientes. El PR #16 reporta un intercambio de carriles; esta revisión móvil ya en curso se entrega en #13 para continuar desde ella.
+
+Los fixtures de guardia de `src/proposed-fixtures.ts` quedan como referencia del borrador de Quito, fuera del recorrido principal Mi espacio. Bishara propuso TypeScript/Express, Bearer de testing y un servicio Railway aparte. Todavía requieren contrato y adaptador propios; el cliente Basic del piloto no los implementa automáticamente.
 
 Para un backend local de prueba sin contraseña se permite HTTP en desarrollo, usando la IP privada del Mac (no `localhost` en el iPhone). No se permite enviar contraseñas por HTTP. El QR de Expo publica el frontend, no el backend. Una vista web necesita que el servidor autorice su origen/CORS; esta app no relaja las reglas del backend.
 

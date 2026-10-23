@@ -5,7 +5,7 @@ export type Message = {
   id: string;
   role: "user" | "assistant";
   text: string;
-  inference?: { engine: string; model?: string; error?: string };
+  inference?: { engine: string; model?: string | null; error?: string };
 };
 export type Memory = { key: string; value: string; evidence?: string };
 export type Session = {

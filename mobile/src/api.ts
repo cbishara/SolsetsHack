@@ -5,7 +5,7 @@ export type Connection = { url: string; password: string };
 export type PendingTurn = { text: string; requestId: string; url: string };
 export type PilotStatus = {
   sessions: Session[];
-  agent?: { engine: string; configured: boolean; model?: string };
+  agent?: { engine: string; configured: boolean; model?: string | null };
   connection?: { chatUrl?: string | null };
 };
 
@@ -13,6 +13,8 @@ export function validateConnection(
   input: Connection,
   development = false,
 ): Connection {
+  if (typeof input?.url !== "string" || typeof input.password !== "string")
+    throw new Error("El acceso guardado no es válido. Vuelve a conectar en Ajustes.");
   let url: URL;
   try {
     url = new URL(input.url.trim());
@@ -43,22 +45,103 @@ export function validateConnection(
   return { url: url.origin, password: input.password };
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+const optionalString = (value: unknown) =>
+  value === undefined || typeof value === "string";
+const validMinutes = (value: unknown) =>
+  typeof value === "number" && Number.isFinite(value) && value > 0;
+
+// A pending request is persisted before sending. Never invent a replacement UUID
+// when that record cannot be recovered: the server may already have processed it.
+export function restorePending(raw: string | null): PendingTurn | null {
+  if (!raw) return null;
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch {
+    throw new Error("No se pudo recuperar el envío pendiente. No se ha reenviado ni borrado.");
+  }
+  if (
+    !isRecord(value) ||
+    typeof value.text !== "string" || !value.text.trim() || value.text.length > 2000 ||
+    typeof value.url !== "string" ||
+    typeof value.requestId !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.requestId)
+  ) throw new Error("El envío pendiente no tiene el formato esperado. No se ha reenviado ni borrado.");
+  return { text: value.text, requestId: value.requestId, url: value.url };
+}
+
 function assertSession(value: unknown): asserts value is Session {
-  const item = value as Session | undefined;
+  const item = isRecord(value) ? value : undefined;
   if (
     item?.id !== "demo:web" ||
     !Array.isArray(item.messages) ||
     item.messages.some(
       (message) =>
+        !isRecord(message) ||
         typeof message.id !== "string" ||
         typeof message.text !== "string" ||
-        !["user", "assistant"].includes(message.role),
-    )
+        (message.role !== "user" && message.role !== "assistant") ||
+        (message.inference !== undefined && (
+          !isRecord(message.inference) ||
+          typeof message.inference.engine !== "string" ||
+          (message.inference.model !== null && !optionalString(message.inference.model)) ||
+          !optionalString(message.inference.error)
+        )),
+    ) ||
+    !optionalString(item.concern) ||
+    (item.memory !== undefined && (
+      !Array.isArray(item.memory) || item.memory.some((memory) =>
+        !isRecord(memory) || typeof memory.key !== "string" ||
+        typeof memory.value !== "string" || !optionalString(memory.evidence)
+      )
+    )) ||
+    (item.plan != null && (
+      !isRecord(item.plan) || typeof item.plan.title !== "string" ||
+      typeof item.plan.nextStep !== "string" || !optionalString(item.plan.prepared) ||
+      (item.plan.minutes !== undefined && !validMinutes(item.plan.minutes))
+    )) ||
+    (item.preference != null && (
+      !isRecord(item.preference) || !validMinutes(item.preference.minutes)
+    ))
   ) {
     throw new Error(
       "La API no devolvió la conversación de prueba esperada. No se guardó una respuesta ficticia.",
     );
   }
+}
+
+function readMetadata(value: Record<string, unknown>): Pick<PilotStatus, "agent" | "connection"> {
+  const metadata: Pick<PilotStatus, "agent" | "connection"> = {};
+  if (value.agent !== undefined) {
+    const agent = value.agent;
+    if (
+      !isRecord(agent) ||
+      (agent.engine !== "hermes" && agent.engine !== "demo") ||
+      typeof agent.configured !== "boolean" ||
+      (agent.model !== null && !optionalString(agent.model))
+    ) throw new Error("La API devolvió un estado del agente incompatible. No se confirmó la conexión.");
+    metadata.agent = {
+      engine: agent.engine,
+      configured: agent.configured,
+      ...(agent.model !== undefined ? { model: agent.model as string | null } : {}),
+    };
+  }
+  if (value.connection !== undefined) {
+    const connection = value.connection;
+    if (!isRecord(connection) || (connection.chatUrl !== null && !optionalString(connection.chatUrl)))
+      throw new Error("La API devolvió una conexión de WhatsApp incompatible.");
+    if (typeof connection.chatUrl === "string") {
+      let url: URL;
+      try { url = new URL(connection.chatUrl); }
+      catch { throw new Error("La API devolvió un enlace de WhatsApp inválido."); }
+      if (url.protocol !== "https:" || url.hostname !== "wa.me" || url.username || url.password || url.port)
+        throw new Error("La API devolvió un enlace de WhatsApp inválido.");
+    }
+    metadata.connection = connection.chatUrl === undefined ? {} : { chatUrl: connection.chatUrl as string | null };
+  }
+  return metadata;
 }
 
 export function createPilotClient(
@@ -97,7 +180,7 @@ export function createPilotClient(
       const value = await response.json();
       if (!response.ok)
         throw new Error(
-          typeof value.error === "string"
+          isRecord(value) && typeof value.error === "string"
             ? value.error
             : `El servidor respondió ${response.status}.`,
         );
@@ -115,16 +198,16 @@ export function createPilotClient(
   return {
     async load(): Promise<PilotStatus> {
       const value = await request("/api/disconnect");
-      if (!Array.isArray(value.sessions))
+      if (!isRecord(value) || !Array.isArray(value.sessions))
         throw new Error(
           "La API no es compatible con el piloto de conversación.",
         );
       const session = value.sessions.find(
-        (item: Session) => item.id === "demo:web",
+        (item: unknown) => isRecord(item) && item.id === "demo:web",
       );
       if (session) assertSession(session);
       // Never expose another sender's WhatsApp context in this mobile pilot.
-      return { ...value, sessions: session ? [session] : [] };
+      return { ...readMetadata(value), sessions: session ? [session] : [] };
     },
     async send(pending: PendingTurn): Promise<Session> {
       if (pending.url !== connection.url)
@@ -133,6 +216,7 @@ export function createPilotClient(
         text: pending.text,
         requestId: pending.requestId,
       });
+      if (!isRecord(value)) throw new Error("La API no devolvió una respuesta de conversación válida.");
       assertSession(value.session);
       return value.session;
     },

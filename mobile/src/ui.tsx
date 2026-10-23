@@ -5,156 +5,248 @@ import {
   StyleSheet,
   Text,
   View,
+  type StyleProp,
   type ViewStyle,
 } from "react-native";
+import type { LucideIcon } from "lucide-react-native";
 
+// Shared SOL tokens, following the Mi espacio reference.
 export const colors = {
-  bg: "#141824",
-  card: "#202636",
-  line: "#343E53",
-  ink: "#F4F0E9",
-  muted: "#B5B8C9",
-  dim: "#8D95AA",
-  accent: "#F18A62",
-  mint: "#91D1BB",
-  danger: "#FFAFA4",
+  bg: "#ffffff",
+  card: "#ffffff",
+  surface: "#f5f7fc",
+  blueSoft: "#edf2ff",
+  line: "#dfe4ee",
+  inputLine: "#8992a5",
+  ink: "#151b2e",
+  muted: "#62677a",
+  dim: "#62677a",
+  accent: "#2e59e5",
+  lime: "#e4f51a",
+  mint: "#2e59e5",
+  danger: "#a12d36",
+  errorBg: "#fff1f2",
+  white: "#ffffff",
+  heroMuted: "#e3eaff",
+};
+export const space = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  section: 32,
 };
 export const styles = StyleSheet.create({
   shell: { flex: 1, backgroundColor: colors.bg },
   page: {
-    padding: 22,
-    paddingBottom: 32,
-    gap: 20,
+    padding: space.xl,
+    paddingBottom: space.section,
+    gap: space.xxl,
     width: "100%",
     maxWidth: 640,
     alignSelf: "center",
   },
-  row: { flexDirection: "row", alignItems: "center", gap: 12 },
+  row: { flexDirection: "row", alignItems: "center", gap: space.md },
   spread: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 12,
+    gap: space.md,
+    flexWrap: "wrap",
   },
   title: {
     color: colors.ink,
-    fontSize: 36,
+    fontSize: 34,
     fontWeight: "600",
     letterSpacing: -1.2,
-    lineHeight: 41,
+    lineHeight: 40,
   },
   h2: {
     color: colors.ink,
-    fontSize: 23,
+    fontSize: 22,
     fontWeight: "600",
-    lineHeight: 30,
-    letterSpacing: -0.4,
+    lineHeight: 28,
+    letterSpacing: -0.5,
   },
-  text: { color: colors.ink, fontSize: 16, lineHeight: 24 },
+  text: { color: colors.ink, fontSize: 17, lineHeight: 25 },
   muted: { color: colors.muted, fontSize: 15, lineHeight: 22 },
   small: { color: colors.muted, fontSize: 12, lineHeight: 18 },
   eyebrow: {
-    color: colors.mint,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.7,
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: "600",
+    lineHeight: 18,
+    letterSpacing: 1.2,
     textTransform: "uppercase",
   },
   card: {
     backgroundColor: colors.card,
-    borderRadius: 24,
-    padding: 20,
-    gap: 12,
+    borderRadius: 20,
+    borderCurve: "continuous",
+    padding: space.xl,
+    gap: space.lg,
     borderColor: colors.line,
     borderWidth: 1,
   },
   input: {
     backgroundColor: colors.bg,
-    borderColor: colors.line,
+    borderColor: colors.inputLine,
     borderWidth: 1,
-    borderRadius: 16,
-    padding: 15,
+    borderRadius: 12,
+    padding: space.lg,
     color: colors.ink,
-    fontSize: 16,
+    fontSize: 17,
     minHeight: 52,
   },
   button: {
-    borderRadius: 16,
+    borderRadius: 12,
+    borderCurve: "continuous",
     backgroundColor: colors.accent,
-    minHeight: 50,
-    paddingHorizontal: 18,
-    paddingVertical: 13,
+    minHeight: 48,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    gap: space.sm,
   },
   buttonText: {
-    color: "#261710",
-    fontSize: 16,
-    fontWeight: "700",
+    color: colors.white,
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: "600",
     textAlign: "center",
+    flexShrink: 1,
   },
   secondary: {
-    backgroundColor: "transparent",
+    backgroundColor: colors.bg,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: colors.inputLine,
   },
   secondaryText: { color: colors.ink },
   chip: {
     borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    minHeight: 44,
+    borderColor: colors.inputLine,
+    borderRadius: 24,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+    minHeight: 48,
     justifyContent: "center",
   },
-  selectedChip: { backgroundColor: "#31493F", borderColor: colors.mint },
-  wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  error: {
-    padding: 14,
-    backgroundColor: "#452C30",
-    borderRadius: 14,
-    marginHorizontal: 22,
-    marginTop: 8,
+  selectedChip: {
+    backgroundColor: colors.blueSoft,
+    borderColor: colors.accent,
   },
-  rule: { height: 1, backgroundColor: colors.line, marginVertical: 4 },
+  wrap: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
+  error: {
+    padding: space.lg,
+    backgroundColor: colors.errorBg,
+    borderRadius: 12,
+    gap: space.sm,
+  },
+  rule: { height: 1, backgroundColor: colors.line },
+  iconButton: {
+    minWidth: 48,
+    minHeight: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
-export function Button({
-  title,
-  onPress,
-  secondary = false,
-  disabled = false,
-  loading = false,
-  style,
-}: {
+type ButtonProps = {
   title: string;
   onPress: () => void;
   secondary?: boolean;
   disabled?: boolean;
   loading?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  icon?: LucideIcon;
+  variant?: "primary" | "lime" | "secondary" | "quiet" | "danger";
+  accessibilityHint?: string;
+};
+export function Button({
+  title,
+  onPress,
+  secondary,
+  disabled,
+  loading,
+  style,
+  icon: Icon,
+  variant = secondary ? "secondary" : "primary",
+  accessibilityHint,
+}: ButtonProps) {
+  const foreground =
+    variant === "lime" || variant === "secondary"
+      ? colors.ink
+      : variant === "quiet"
+        ? colors.accent
+        : variant === "danger"
+          ? colors.danger
+          : colors.white;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{
+        disabled: !!disabled || !!loading,
+        busy: !!loading,
+      }}
+      onPress={onPress}
+      disabled={disabled || loading}
+      pressRetentionOffset={16}
+      style={({ pressed }) => [
+        styles.button,
+        variant === "secondary" && styles.secondary,
+        variant === "lime" && { backgroundColor: colors.lime },
+        (variant === "quiet" || variant === "danger") && {
+          backgroundColor: "transparent",
+        },
+        { opacity: disabled || loading ? 0.5 : pressed ? 0.72 : 1 },
+        style,
+      ]}
+    >
+      {loading ? (
+        <ActivityIndicator color={foreground} />
+      ) : Icon ? (
+        <Icon size={20} color={foreground} accessible={false} />
+      ) : null}
+      <Text style={[styles.buttonText, { color: foreground }]}>{title}</Text>
+    </Pressable>
+  );
+}
+export function IconButton({
+  label,
+  icon: Icon,
+  onPress,
+  disabled,
+  color = colors.ink,
+}: {
+  label: string;
+  icon: LucideIcon;
+  onPress: () => void;
+  disabled?: boolean;
+  color?: string;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ disabled: disabled || loading, busy: loading }}
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled }}
+      disabled={disabled}
       onPress={onPress}
-      disabled={disabled || loading}
       style={({ pressed }) => [
-        styles.button,
-        secondary && styles.secondary,
-        style,
-        (pressed || disabled || loading) && { opacity: 0.55 },
+        styles.iconButton,
+        {
+          backgroundColor: pressed ? colors.blueSoft : "transparent",
+          opacity: disabled ? 0.45 : 1,
+        },
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={secondary ? colors.ink : colors.bg} />
-      ) : (
-        <Text style={[styles.buttonText, secondary && styles.secondaryText]}>
-          {title}
-        </Text>
-      )}
+      <Icon size={22} color={color} accessible={false} />
     </Pressable>
   );
 }
@@ -163,7 +255,7 @@ export function Card({
   style,
 }: {
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
@@ -184,13 +276,36 @@ export function Chip({
       disabled={disabled}
       accessibilityRole="button"
       accessibilityState={{ selected, disabled }}
-      style={[
+      style={({ pressed }) => [
         styles.chip,
         selected && styles.selectedChip,
-        disabled && { opacity: 0.55 },
+        { opacity: disabled ? 0.45 : pressed ? 0.7 : 1 },
       ]}
     >
-      <Text style={styles.small}>{title}</Text>
+      <Text
+        style={[styles.muted, { color: selected ? colors.accent : colors.ink }]}
+      >
+        {title}
+      </Text>
     </Pressable>
+  );
+}
+export function Heading({
+  kicker,
+  title,
+  description,
+}: {
+  kicker?: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <View style={{ gap: space.sm }}>
+      {kicker ? <Text style={styles.eyebrow}>{kicker}</Text> : null}
+      <Text accessibilityRole="header" style={styles.title}>
+        {title}
+      </Text>
+      {description ? <Text style={styles.muted}>{description}</Text> : null}
+    </View>
   );
 }

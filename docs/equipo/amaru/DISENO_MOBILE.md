@@ -57,7 +57,7 @@ flowchart LR
   W[WhatsApp vinculado] --> S
   S --> I[Identidad canónica y autorización]
   I --> C[Conversación y memoria por usuario]
-  C --> A[Agente de Quito en Hermes]
+  C --> A[Agente de Quito: motor por confirmar]
   A --> S
 ```
 
@@ -80,3 +80,7 @@ Un issue asignado comunica el trabajo; no implica que la sesión privada del otr
 - TypeScript, pruebas relevantes y exportación Expo verdes. Registrar por separado la inferencia real y WhatsApp; ninguna se da por aprobada por pasar tests con mocks.
 
 Estado de implementación y comprobaciones: [MOBILE.md](MOBILE.md). Fuentes y aplicación de las diez skills: [SKILLS_MOBILE.md](SKILLS_MOBILE.md).
+
+## Novedades de coordinación al cerrar
+
+Quito recibió #14 y propuso Codex CLI/SDK con su cuenta, sin Hermes por ahora (#8). Se informó a Amaru de la diferencia con el pedido inicial. Las capacidades del chat y la identidad compartida aún necesitan contrato/prueba. El PR #16 reporta el intercambio de carriles; la UI que Amaru pidió durante esta sesión se entrega terminada y revisable en #13 para evitar reconstrucciones paralelas. El diseño confirmado Mi espacio sigue siendo la fuente de esta entrega.

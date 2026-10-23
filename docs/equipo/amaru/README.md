@@ -14,3 +14,4 @@ Listo cuando (propuesta): alguien mira el panel 10 segundos y entiende qué habr
 3. [DISENO_MOBILE.md](DISENO_MOBILE.md): dirección vigente pedida por Amaru, Mi espacio `/demo`, pantallas y handoff app/WhatsApp.
 4. [MOBILE.md](MOBILE.md): estado y evidencia de implementación móvil.
 5. [SKILLS_MOBILE.md](SKILLS_MOBILE.md): las diez skills instaladas, fuentes y criterios de aplicación.
+6. [HANDOFF_AGENTE.md](HANDOFF_AGENTE.md): resumen de contrato, memoria, pruebas y pendientes del asistente para Quito y el responsable de server.

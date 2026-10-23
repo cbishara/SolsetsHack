@@ -10,7 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: "sol-mobile-demo",
     scheme: "sol-demo",
     version: "0.1.0",
-    userInterfaceStyle: "dark",
+    userInterfaceStyle: "light",
     ios: {
       ...config.ios,
       supportsTablet: false,

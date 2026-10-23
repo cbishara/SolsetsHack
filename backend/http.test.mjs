@@ -5,7 +5,7 @@ import { mkdtemp, mkdir, rm, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createServer } from 'node:net';
-import { createHmac } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 
 test('HTTP demo persists decisions and verifies Kapso v2 signature, identity and deduplication', { timeout: 15000 }, async () => {
  const dir = await mkdtemp(join(tmpdir(), 'solsets-test-'));
@@ -20,14 +20,28 @@ test('HTTP demo persists decisions and verifies Kapso v2 signature, identity and
   const critical = await (await request('/api/demo/run', { scenario: 'critical' })).json(); assert.equal(critical.wake, true); assert.equal(critical.effects.some(e => e.channel === 'calendar'), false);
   const repeat = await (await request('/api/demo/run', { scenario: 'critical' })).json(); assert.equal(repeat.wake, false); assert.equal(repeat.duplicate, true);
   await request('/api/settings', { ...state.settings, paused: true }, 'PATCH');
-  const payload = { phone_number_id: 'fixture-number', message: { id: 'wamid.fixture', from: '56900000000', type: 'text', text: { body: 'P1 servicio caído (ficticio)' }, kapso: { direction: 'inbound' } }, conversation: { phone_number: '56900000000' } };
+  const payload = { phone_number_id: 'fixture-number', message: { id: 'wamid.fixture', timestamp: String(Math.floor(Date.now() / 1000)), from: '56900000000', type: 'text', text: { body: 'Necesito preparar el cierre de turno (ficticio).' }, kapso: { direction: 'inbound' } }, conversation: { phone_number: '56900000000' } };
   const headers = { 'x-webhook-event': 'whatsapp.message.received', 'x-webhook-signature': createHmac('sha256', 'fixture-secret').update(JSON.stringify(payload)).digest('hex') };
   assert.equal((await request('/api/webhooks/kapso', payload, 'POST', { ...headers, 'x-webhook-signature': 'bad' })).status, 401);
   assert.equal((await request('/api/webhooks/kapso', payload, 'POST', headers)).status, 200);
   assert.equal((await request('/api/webhooks/kapso', payload, 'POST', headers)).status, 200);
-  for (let i = 0; i < 40; i++) { const s = await (await fetch(base + '/api/state')).json(); if (s.tasks.some(t => t.externalId === 'wamid.fixture')) break; await new Promise(r => setTimeout(r, 100)); }
-  const stored = JSON.parse(await readFile(join(dir, 'state.json'), 'utf8'));
-  const incoming = stored.tasks.filter(t => t.externalId === 'wamid.fixture'); assert.equal(incoming.length, 1); assert.equal(incoming[0].wake, false); assert.deepEqual(incoming[0].effects, []);
+  let stored = JSON.parse(await readFile(join(dir, 'state.json'), 'utf8'));
+  assert.equal(stored.inbox.length, 1, 'paused inbox is durable and deduplicated');
+  await request('/api/settings', { ...state.settings, paused: false, shadow: true }, 'PATCH');
+  for (let i = 0; i < 40; i++) { const s = await (await fetch(base + '/api/disconnect')).json(); if (s.sessions.length) break; await new Promise(r => setTimeout(r, 100)); }
+  stored = JSON.parse(await readFile(join(dir, 'state.json'), 'utf8'));
+  const incoming = Object.values(stored.disconnectSessions); assert.equal(incoming.length, 1);
+  assert.equal(incoming[0].messages.at(-1).delivery, 'shadow');
+  assert.match(incoming[0].concern, /cierre de turno/);
+  assert.equal((await request('/api/webhooks/kapso', payload, 'POST', headers)).status, 200);
+  assert.equal((await (await fetch(base + '/api/state')).json()).inbox.length, 0);
+  const webMessage = { text: 'Quiero preparar la clase de mañana.', requestId: randomUUID() };
+  const first = await (await request('/api/disconnect/messages', webMessage)).json();
+  assert.equal(first.session.id, 'demo:web');
+  assert.equal(first.session.messages.at(-1).delivery, 'simulated');
+  assert.equal((await (await request('/api/disconnect/messages', webMessage)).json()).duplicate, true);
+  assert.equal((await request('/api/disconnect/messages', { ...webMessage, recipient: '56900000000' })).status, 400);
+  assert.equal((await (await fetch(base + '/api/disconnect')).json()).sessions.length, 2);
  } finally { const exited = new Promise(r => child.once('exit', r)); child.kill(); await exited; await rm(dir, { recursive: true, force: true }); }
 });
 
@@ -47,7 +61,7 @@ test('production landing assets are public while workspace, API and OAuth remain
   const demo = await fetch(base + '/demo?caso=profesor'); assert.equal(demo.status, 200); assert.match(await demo.text(), /SOL landing fixture/);
   const asset = await fetch(base + '/assets/landing.js'); assert.equal(asset.status, 200); assert.match(await asset.text(), /public compiled asset/);
   assert.equal((await fetch(base + '/favicon.svg')).status, 200);
-  for (const path of ['/app', '/app/tasks', '/api/state', '/auth/google', '/.env', '/SETUP.md', '/private-fixture.txt']) {
+  for (const path of ['/app', '/app/tasks', '/desconectar', '/api/disconnect', '/api/state', '/auth/google', '/.env', '/SETUP.md', '/private-fixture.txt']) {
    const response = await fetch(base + path, { redirect: 'manual' });
    assert.equal(response.status, 401, path); assert.match(response.headers.get('www-authenticate'), /Basic/);
   }

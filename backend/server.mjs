@@ -6,10 +6,12 @@ import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { initializeStore, getState, mutate, storageMode } from './store.mjs';
 import { scenarios } from './seed.mjs';
-import { integrations, googleClient, saveGoogleTokens, loadGoogleTokens, googleFetch, createCalendarAlert } from './integrations.mjs';
+import { integrations, googleClient, saveGoogleTokens, loadGoogleTokens, googleFetch, createCalendarAlert, sendWhatsApp } from './integrations.mjs';
 import { processMessage } from './processor.mjs';
+import { createDisconnectProcessor, disconnectStatus, receiptId } from './disconnect.mjs';
 
 const app = express();
+const processDisconnect = createDisconnectProcessor({ getState, mutate, sendWhatsApp });
 app.disable('x-powered-by');
 const port = Number(process.env.PORT || 3001);
 const liveConfigured = Boolean(process.env.KAPSO_API_KEY || process.env.GOOGLE_CLIENT_SECRET || process.env.HERMES_API_KEY);
@@ -31,13 +33,16 @@ app.post('/api/webhooks/kapso', express.raw({ type: 'application/json', limit: '
  if (payload.phone_number_id !== process.env.KAPSO_PHONE_NUMBER_ID) return res.status(403).json({ error: 'Número receptor incorrecto.' });
  const message = payload.data?.message || payload.message;
  const conversation = payload.data?.conversation || payload.conversation;
- const text = message?.text?.body || message?.content?.text || message?.kapso?.content;
+ if (message?.type !== 'text') return res.json({ ignored: true, reason: 'Esta demo recibe solo texto.' });
+ const text = message?.text?.body;
  const from = message?.from || conversation?.phone_number;
  if (message?.kapso?.passive || message?.kapso?.direction === 'outbound') return res.json({ ignored: true });
- if (!message?.id || typeof text !== 'string' || !from) return res.status(422).json({ error: 'Se esperaba un evento Kapso v2 con mensaje de texto, id y remitente.' });
+ if (typeof message?.id !== 'string' || !message.id || message.id.length > 250 || typeof text !== 'string' || !text.trim() || typeof from !== 'string') return res.status(422).json({ error: 'Se esperaba un evento Kapso v2 con mensaje de texto, id y remitente.' });
  const allowed = (process.env.KAPSO_ALLOWED_NUMBERS || process.env.RODRIGO_WHATSAPP_NUMBER || '').split(',').map(v => v.trim()).filter(Boolean);
  if (!allowed.includes(from)) return res.json({ ignored: true, reason: 'Número fuera de la demo.' });
- await mutate(s => { s.inbox ||= []; if (!s.inbox.some(m => m.externalId === message.id) && !s.tasks.some(t => t.externalId === message.id)) s.inbox.push({ externalId: message.id, source: 'whatsapp', sender: 'Contacto de prueba', recipient: from, text: text.slice(0, 8000), synthetic: false }); });
+ const received = Number(message.timestamp) * 1000;
+ const item = { externalId: message.id, source: 'whatsapp', recipient: from, text: text.trim().slice(0, 2000), synthetic: false, receivedAt: Number.isFinite(received) && received > 0 ? new Date(Math.min(received, Date.now())).toISOString() : null };
+ await mutate(s => { s.inbox ||= []; if (!s.inbox.some(m => m.externalId === message.id) && !s.disconnectReceipts?.includes(receiptId(item))) s.inbox.push(item); });
  res.json({ accepted: true });
 });
 
@@ -66,6 +71,12 @@ app.use((req, res, next) => {
  next();
 });
 app.get('/api/state', (req, res) => { res.set('Cache-Control', 'no-store'); res.json({ ...getState(), integrations: integrations(), scenarios, storageMode }); });
+app.get('/api/disconnect', (req, res) => { res.set('Cache-Control', 'no-store'); res.json(disconnectStatus(getState())); });
+app.post('/api/disconnect/messages', async (req, res) => {
+ const input = z.object({ text: z.string().trim().min(1).max(2000), requestId: z.uuid() }).strict().parse(req.body);
+ const result = await processDisconnect({ text: input.text, externalId: input.requestId, synthetic: true });
+ res.json(result);
+});
 const permission = z.enum(['auto', 'ask', 'never']);
 const settingsSchema = z.object({ paused: z.boolean(), shadow: z.boolean(), sleepStart: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), sleepEnd: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), timezone: z.literal('America/Santiago'), permissions: z.object({ reply: permission, draft: permission, calendar: permission, purchase: permission }) });
 app.patch('/api/settings', async (req, res) => { const settings = settingsSchema.parse(req.body); await mutate(s => { s.settings = settings; }); res.json(settings); });
@@ -112,5 +123,16 @@ if (existsSync(resolve('dist/index.html'))) { app.use(express.static(resolve('di
 app.use((err, req, res, next) => { if (res.headersSent) return next(err); const validation = err instanceof z.ZodError || err instanceof SyntaxError; res.status(validation ? 400 : 500).json({ error: validation ? 'Datos inválidos. Revisa los campos enviados.' : err.message || 'No se pudo completar la acción.' }); });
 await initializeStore(); await loadGoogleTokens();
 let draining = false;
-setInterval(async () => { if (draining) return; draining = true; try { for (const item of getState().inbox || []) { await processMessage(item); await mutate(s => { s.inbox = s.inbox.filter(m => m.externalId !== item.externalId); }); } } catch { console.error('No se pudo procesar un mensaje; permanece en la cola.'); } finally { draining = false; } }, 2000).unref();
+setInterval(async () => {
+ if (draining || getState().settings.paused) return;
+ draining = true;
+ try {
+  for (const item of getState().inbox || []) {
+   if (getState().settings.paused) break;
+   await processDisconnect(item);
+   await mutate(s => { s.inbox = s.inbox.filter(m => m.externalId !== item.externalId); });
+  }
+ } catch { console.error('No se pudo procesar un mensaje; permanece en la cola.'); }
+ finally { draining = false; }
+}, 2000).unref();
 app.listen(port, '0.0.0.0', () => console.log(`Solsets Sistem · http://localhost:${port} · almacenamiento ${storageMode}`));

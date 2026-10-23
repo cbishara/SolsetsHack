@@ -33,7 +33,7 @@ export async function googleFetch(path, options = {}) {
 export async function sendWhatsApp(to, body) {
  if (!process.env.KAPSO_API_KEY || !process.env.KAPSO_PHONE_NUMBER_ID) throw new Error('Kapso no está configurado.');
  if (!to) throw new Error('Falta el número de destino.');
- const client = new WhatsAppClient({ baseUrl: 'https://api.kapso.ai/meta/whatsapp', kapsoApiKey: process.env.KAPSO_API_KEY });
+ const client = new WhatsAppClient({ baseUrl: 'https://api.kapso.ai/meta/whatsapp', kapsoApiKey: process.env.KAPSO_API_KEY, fetch: (url, init) => fetch(url, { ...init, signal: AbortSignal.timeout(15000) }) });
  return client.messages.sendText({ phoneNumberId: process.env.KAPSO_PHONE_NUMBER_ID, to, body });
 }
 export function calendarEvent(summary, description, start = new Date(Date.now() + 120000)) {

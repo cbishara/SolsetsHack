@@ -54,18 +54,18 @@ export default function Landing({ onStart }) {
     <header className={`lp-header ${scrolled ? 'lp-header-scrolled' : ''}`}>
       <a href="#inicio" aria-label="Solsets, inicio"><Wordmark/></a>
       <span className="lp-header-tagline">Tu vida. Un poco más ligera.</span>
-      <div className="lp-header-actions"><button className="lp-login" onClick={() => onStart({})}>Mi espacio <ArrowUpRight size={15}/></button><a className="lp-button lp-yellow" href="#empezar">Empieza con SOL</a></div>
+      <div className="lp-header-actions"><button className="lp-login" onClick={() => onStart({})}>Mi espacio <ArrowUpRight size={15}/></button><a className="lp-button lp-yellow" href="/desconectar">Probar desconexión</a></div>
     </header>
 
     <section className="lp-hero" id="inicio" aria-labelledby="lp-hero-title">
       <ArrowField variant="hero" className="lp-arrow-field"/>
-      <div className="lp-hero-content"><span className="lp-hero-kicker">UN ASISTENTE PARA TODO ESO QUE LLEVAS CONTIGO</span><h1 id="lp-hero-title">Suelta.</h1><p>Menos en tu cabeza.<br/>Más vida fuera de la pantalla.</p></div>
+      <div className="lp-hero-content"><span className="lp-hero-kicker">UNA AYUDA PARA DESCONECTAR, A TU MANERA</span><h1 id="lp-hero-title">Suelta.</h1><p>Menos en tu cabeza.<br/>Más vida fuera de la pantalla.</p></div>
       <a className="lp-hero-discover" href="#como-funciona">Conoce a SOL <ArrowDown size={17}/></a>
     </section>
 
     <main className="lp-main">
       <section className="lp-section lp-benefits" id="como-funciona" aria-labelledby="lp-benefits-title">
-        <div className="lp-section-intro"><span className="lp-kicker">DEJA DE LLEVARLO TODO TÚ</span><h2 id="lp-benefits-title">Una cosa menos.<br/>Un poco más de vida.</h2><p>Un ticket que falta. Una clase por preparar. Un alumno al que dar seguimiento. Cuéntaselo a SOL: te ayuda a ordenarlo, preparar el siguiente paso y retomarlo sin empezar de cero.</p></div>
+        <div className="lp-section-intro"><span className="lp-kicker">DEJA DE LLEVARLO TODO TÚ</span><h2 id="lp-benefits-title">Una cosa menos.<br/>Un poco más de vida.</h2><p>A veces sales del trabajo, pero el trabajo sigue en tu cabeza. Cuéntale a SOL qué te impide desconectar: prepara un paso pequeño y ajusta la ayuda con tus respuestas. Prueba el nuevo recorrido web y su conexión a WhatsApp.</p></div>
         <div className="lp-benefit-grid">
           <article><span className="lp-symbol lp-symbol-arrow" aria-hidden="true">↗</span><h3>Empieza como hablas</h3><p>Sin aprender comandos ni escribir el prompt perfecto. Una preocupación es suficiente.</p></article>
           <article><span className="lp-symbol lp-symbol-circle" aria-hidden="true"/><h3>El contexto se queda</h3><p>Retoma lo que dejaste preparado. Revisa y corrige lo que SOL usa para ayudarte.</p></article>

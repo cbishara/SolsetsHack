@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { mkdtemp, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, rm, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { createServer } from 'node:net';
 import { createHmac } from 'node:crypto';
 
@@ -28,5 +28,33 @@ test('HTTP demo persists decisions and verifies Kapso v2 signature, identity and
   for (let i = 0; i < 40; i++) { const s = await (await fetch(base + '/api/state')).json(); if (s.tasks.some(t => t.externalId === 'wamid.fixture')) break; await new Promise(r => setTimeout(r, 100)); }
   const stored = JSON.parse(await readFile(join(dir, 'state.json'), 'utf8'));
   const incoming = stored.tasks.filter(t => t.externalId === 'wamid.fixture'); assert.equal(incoming.length, 1); assert.equal(incoming[0].wake, false); assert.deepEqual(incoming[0].effects, []);
+ } finally { const exited = new Promise(r => child.once('exit', r)); child.kill(); await exited; await rm(dir, { recursive: true, force: true }); }
+});
+
+test('production landing assets are public while workspace, API and OAuth remain authenticated', { timeout: 15000 }, async () => {
+ const dir = await mkdtemp(join(tmpdir(), 'solsets-public-test-'));
+ await mkdir(join(dir, 'dist/assets'), { recursive: true });
+ await writeFile(join(dir, 'dist/index.html'), '<!doctype html><title>SOL landing fixture</title>');
+ await writeFile(join(dir, 'dist/assets/landing.js'), '/* public compiled asset */');
+ await writeFile(join(dir, 'dist/favicon.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+ await writeFile(join(dir, 'private-fixture.txt'), 'must-not-be-public');
+ const reservation = createServer(); await new Promise(r => reservation.listen(0, '127.0.0.1', r)); const port = reservation.address().port; await new Promise(r => reservation.close(r));
+ const child = spawn(process.execPath, [resolve('backend/server.mjs')], { cwd: dir, env: { PATH: process.env.PATH, PORT: String(port), DATA_DIR: join(dir, 'data'), DOTENV_CONFIG_PATH: join(dir, 'absent.env'), DASHBOARD_PASSWORD: 'fixture-password' }, stdio: 'ignore' });
+ const base = `http://127.0.0.1:${port}`;
+ try {
+  for (let i = 0; i < 50; i++) { try { if ((await fetch(base + '/api/health')).ok) break; } catch {} await new Promise(r => setTimeout(r, 100)); }
+  const landing = await fetch(base + '/'); assert.equal(landing.status, 200); assert.match(await landing.text(), /SOL landing fixture/);
+  const demo = await fetch(base + '/demo?caso=profesor'); assert.equal(demo.status, 200); assert.match(await demo.text(), /SOL landing fixture/);
+  const asset = await fetch(base + '/assets/landing.js'); assert.equal(asset.status, 200); assert.match(await asset.text(), /public compiled asset/);
+  assert.equal((await fetch(base + '/favicon.svg')).status, 200);
+  for (const path of ['/app', '/app/tasks', '/api/state', '/auth/google', '/.env', '/SETUP.md', '/private-fixture.txt']) {
+   const response = await fetch(base + path, { redirect: 'manual' });
+   assert.equal(response.status, 401, path); assert.match(response.headers.get('www-authenticate'), /Basic/);
+  }
+  const update = await fetch(base + '/api/settings', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: '{}' }); assert.equal(update.status, 401);
+  const traversal = await fetch(base + '/assets/..%2f..%2fprivate-fixture.txt'); assert.notEqual(traversal.status, 200); assert.doesNotMatch(await traversal.text(), /must-not-be-public/);
+  const headers = { Authorization: 'Basic ' + Buffer.from('solsets:fixture-password').toString('base64') };
+  assert.equal((await fetch(base + '/app', { headers })).status, 200);
+  const state = await fetch(base + '/api/state', { headers }); assert.equal(state.status, 200); assert.ok(Array.isArray((await state.json()).tasks));
  } finally { const exited = new Promise(r => child.once('exit', r)); child.kill(); await exited; await rm(dir, { recursive: true, force: true }); }
 });

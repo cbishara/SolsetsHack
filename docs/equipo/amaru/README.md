@@ -8,4 +8,5 @@ Listo cuando (propuesta): alguien mira el panel 10 segundos y entiende qué habr
 
 ## En esta carpeta
 
-1. `DEMO.md`: el guion del recorrido de 3 minutos. Venía en el PR #1 y antes estaba en `docs/DEMO.md`.
+1. `DEMO.md`: el guion del recorrido de 3 minutos del prototipo. Antes estaba en `docs/DEMO.md`.
+2. `PRODUCTO_SOL.md`: el documento de producto del prototipo SOL. Antes estaba en `docs/PRODUCTO_SOL.md`.

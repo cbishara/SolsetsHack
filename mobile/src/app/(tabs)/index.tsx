@@ -1,5 +1,52 @@
-import { Placeholder } from '../../components/placeholder';
+import { View } from 'react-native';
+import { Wordmark } from '../../components/brand';
+import { Badge, Screen, T } from '../../components/ui';
+import { useStore } from '../../data/store';
+import { EveningCard, Important, MorningHero, Watching, Week } from '../../features/today/day-sections';
+import { greeting, momentOf } from '../../features/today/moment';
+import { NightView } from '../../features/today/night-view';
+import { useTheme } from '../../theme/theme';
+import { space } from '../../theme/tokens';
 
+// Synthetic: messages Sol has read today across WhatsApp and email.
+const REVIEWED_TODAY = 38;
+
+/**
+ * Hoy. By day Sol works as a secretary: what matters, the week, and proof it
+ * is watching. At night the screen changes purpose: guard status or a free
+ * night, with very little light.
+ */
 export default function Hoy() {
-  return <Placeholder title="Hoy" />;
+  const { scheme } = useTheme();
+  const { state } = useStore();
+  const moment = momentOf(scheme, state.profile.eveningAt);
+  const need = state.tasks.filter((t) => t.important && !t.done).length;
+
+  return (
+    <Screen>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Wordmark size={22} />
+        <Badge label="Datos de ejemplo" tone="neutral" />
+      </View>
+
+      {moment === 'night' ? (
+        <NightView name={state.profile.name} />
+      ) : (
+        <>
+          <View style={{ gap: space.xs }}>
+            <T v="title" accessibilityRole="header">{greeting()}, {state.profile.name}</T>
+            <T tone="muted">
+              Revisé {REVIEWED_TODAY} mensajes hoy.{' '}
+              {need ? 'Lo demás ya está ordenado.' : 'Nada te necesita ahora.'}
+            </T>
+          </View>
+          {moment === 'morning' ? <MorningHero /> : null}
+          {moment === 'evening' ? <EveningCard /> : null}
+          <Important />
+          <Week />
+          <Watching />
+        </>
+      )}
+    </Screen>
+  );
 }

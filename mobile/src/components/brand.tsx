@@ -1,5 +1,5 @@
 import { ArrowUpRight } from 'lucide-react-native';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Defs, G, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { useTheme } from '../theme/theme';
@@ -23,10 +23,15 @@ const ARROW = 'M2 10 L10 2 M4.5 2 H10 V7.5';
  * Field of small ↗ arrows: Amaru's signature texture ("suelta", let go).
  * Static on purpose: nothing animates forever.
  */
-export function ArrowField({ color, opacity = 0.18, cell = 22, rows = 8, cols = 18 }: { color: string; opacity?: number; cell?: number; rows?: number; cols?: number }) {
-  const items = [];
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) items.push([c * cell + 6, r * cell + 6]);
+export function ArrowField({ color, opacity = 0.18, cell = 22, rows, cols }: { color: string; opacity?: number; cell?: number; rows?: number; cols?: number }) {
+  // Fill whatever box it is in: rows and columns come from the measured size unless given.
+  const [box, setBox] = useState({ w: 0, h: 0 });
+  const r = rows ?? Math.ceil(box.h / cell);
+  const c = cols ?? Math.ceil(box.w / cell);
+  const items: [number, number][] = [];
+  for (let y = 0; y < r; y++) for (let x = 0; x < c; x++) items.push([x * cell + 6, y * cell + 6]);
   return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none" onLayout={(e) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
     <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" pointerEvents="none">
       <G opacity={opacity}>
         {items.map(([x, y], i) => (
@@ -34,6 +39,7 @@ export function ArrowField({ color, opacity = 0.18, cell = 22, rows = 8, cols = 
         ))}
       </G>
     </Svg>
+    </View>
   );
 }
 

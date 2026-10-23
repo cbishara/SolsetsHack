@@ -14,6 +14,9 @@ export function at(offset: number, hhmm: string): string {
   return new Date(d.getTime() + offset * DAY).toISOString();
 }
 
+/** ISO for `minutes` ago: keeps "last checked" fresh on any day. */
+export const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000).toISOString();
+
 export function dateKey(offset = 0): string {
   const d = new Date(Date.now() + offset * DAY);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -82,7 +85,7 @@ export const events: CalendarEvent[] = [
   { id: 'e7', title: 'Guardia nocturna', start: at(2, '23:00'), end: at(3, '07:00'), kind: 'shift', source: 'calendar' },
 ];
 
-export const shifts: Shift[] = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((offset) => {
+export const shifts: Shift[] = Array.from({ length: 49 }, (_, i) => i - 14).map((offset) => {
   const pattern: Shift['kind'][] = ['dia', 'dia', 'dia', 'dia', 'dia', 'libre', 'libre'];
   const d = new Date(Date.now() + offset * DAY);
   const kind = pattern[(d.getDay() + 6) % 7];
@@ -94,27 +97,27 @@ export const shifts: Shift[] = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((offset) =>
 export const lastNight: Handled[] = [
   {
     id: 'h1', at: at(0, '03:05'), source: 'whatsapp', from: 'Supervisión', group: 'Guardia TI',
-    text: 'Se cayó la VPN de la sucursal Ñuñoa, 12 personas sin acceso', decision: 'wake',
+    text: 'Se cayó la VPN de la sucursal Ñuñoa, 12 personas sin acceso', title: 'VPN de Ñuñoa caída', ruleId: 'r1', decision: 'wake',
     reason: 'Es un servicio crítico y nunca lo habías visto. Por eso te desperté.', wouldWake: true, seenAt: at(0, '03:06'),
   },
   {
-    id: 'h2', at: at(0, '03:09'), source: 'whatsapp', from: 'Diego', group: 'Guardia TI', text: 'Confirmo, la VPN no conecta',
+    id: 'h2', at: at(0, '03:09'), source: 'whatsapp', from: 'Diego', group: 'Guardia TI', text: 'Confirmo, la VPN no conecta', title: 'Confirmación de la VPN caída',
     decision: 'noise', reason: 'Mismo incidente de la VPN. No te desperté dos veces.', wouldWake: false,
   },
   {
-    id: 'h3', at: at(-1, '01:47'), source: 'whatsapp', from: 'Paula', group: 'Guardia TI', text: 'Necesito resetear mi clave del correo',
+    id: 'h3', at: at(-1, '01:47'), source: 'whatsapp', from: 'Paula', group: 'Guardia TI', text: 'Necesito resetear mi clave del correo', title: 'Reseteo de clave de Paula', ruleId: 'r5',
     decision: 'report', reason: 'Solicitud de una usuaria. Puede esperar a la mañana.', wouldWake: false, taskId: 't4',
   },
   {
-    id: 'h4', at: at(-1, '00:40'), source: 'whatsapp', from: 'Andrés', group: 'Guardia TI', text: 'URGENTE: impresora del 3er piso sin tóner',
+    id: 'h4', at: at(-1, '00:40'), source: 'whatsapp', from: 'Andrés', group: 'Guardia TI', text: 'URGENTE: impresora del 3er piso sin tóner', title: 'Tóner del 3er piso', ruleId: 'r5',
     decision: 'report', reason: 'Dice urgente, pero es rutina.', wouldWake: false, taskId: 't7',
   },
   {
-    id: 'h5', at: at(0, '03:05'), source: 'email', from: 'Alertas SSL', text: 'El certificado del portal vence en 14 días',
+    id: 'h5', at: at(0, '03:05'), source: 'email', from: 'Alertas SSL', text: 'El certificado del portal vence en 14 días', title: 'Certificado SSL por vencer', ruleId: 'r7',
     decision: 'report', reason: 'Tiene plazo. Lo dejé como tarea para el lunes.', wouldWake: false, taskId: 't1',
   },
   {
-    id: 'h6', at: at(0, '05:20'), source: 'whatsapp', from: 'Marcela', text: 'Rodrigo, cuando despiertes revisa lo de la VPN porfa',
+    id: 'h6', at: at(0, '05:20'), source: 'whatsapp', from: 'Marcela', text: 'Rodrigo, cuando despiertes revisa lo de la VPN porfa', title: 'Marcela pide revisar la VPN', ruleId: 'r6',
     decision: 'report', reason: 'Viene de tu jefa, pero no es urgente.', wouldWake: false, taskId: 't2',
   },
   ...['¿Alguien vio el partido?', 'Jaja buenísimo', 'Buenas noches equipo', 'Gracias Paula', 'Recibido', 'Ok, quedo atento', 'Mañana lo vemos'].map(
@@ -134,17 +137,18 @@ export const rules: Rule[] = [
   { id: 'r6', text: 'Lo de Marcela que no diga "urgente" espera', kind: 'wait', origin: 'onboarding', confirmed: true, examples: 9 },
   { id: 'r7', text: 'Avisos con plazo de días se vuelven tarea', kind: 'task', origin: 'onboarding', confirmed: true, examples: 7 },
   { id: 'r8', text: 'Conversación del grupo no se muestra', kind: 'ignore', origin: 'default', confirmed: true },
+  { id: 'r9', text: 'Falla un respaldo a fin de mes', kind: 'wake', origin: 'feedback', confirmed: true, examples: 1 },
 ];
 
 export const memory: MemoryItem[] = [
-  { id: 'm1', category: 'vida', text: 'Vive con su pareja y su hijo Tomás, de 6 años.', source: 'onboarding', learnedAt: at(-6, '21:00') },
-  { id: 'm2', category: 'trabajo', text: 'Soporte TI. Turnos que rotan cada semana: día, tarde y noche.', source: 'onboarding', learnedAt: at(-6, '21:00') },
-  { id: 'm3', category: 'trabajo', text: 'La guardia llega por el grupo "Guardia TI" de WhatsApp.', source: 'whatsapp', learnedAt: at(-6, '21:05') },
-  { id: 'm4', category: 'personas', text: 'Marcela es su jefa. Cuando algo es urgente, lo dice.', source: 'whatsapp', learnedAt: at(-5, '08:00') },
-  { id: 'm5', category: 'personas', text: 'Javier y Diego comparten la guardia con él.', source: 'whatsapp', learnedAt: at(-5, '08:00') },
-  { id: 'm6', category: 'horarios', text: 'Esta semana trabaja de día y tiene guardia lunes, miércoles y viernes.', source: 'calendar', learnedAt: at(-2, '07:00') },
-  { id: 'm7', category: 'preferencias', text: 'Prefiere el resumen de la mañana por WhatsApp a las 07:00.', source: 'chat', learnedAt: at(-3, '07:10') },
-  { id: 'm8', category: 'preferencias', text: 'No quiere que lo despierten por impresoras ni claves.', source: 'chat', learnedAt: at(-1, '07:12') },
+  { id: 'm1', category: 'vida', text: 'Vives con tu pareja y tu hijo Tomás, de 6 años.', source: 'onboarding', learnedAt: at(-6, '21:00') },
+  { id: 'm2', category: 'trabajo', text: 'Trabajas en soporte TI, con turnos que rotan cada semana: día, tarde y noche.', source: 'onboarding', learnedAt: at(-6, '21:00') },
+  { id: 'm3', category: 'trabajo', text: 'Tu guardia llega por el grupo "Guardia TI" de WhatsApp.', source: 'whatsapp', learnedAt: at(-6, '21:05') },
+  { id: 'm4', category: 'personas', text: 'Marcela es tu jefa. Cuando algo es urgente, lo dice.', source: 'whatsapp', learnedAt: at(-5, '08:00') },
+  { id: 'm5', category: 'personas', text: 'Javier y Diego comparten la guardia contigo.', source: 'whatsapp', learnedAt: at(-5, '08:00') },
+  { id: 'm6', category: 'horarios', text: 'Esta semana trabajas de día y tienes guardia lunes, miércoles y viernes.', source: 'calendar', learnedAt: at(-2, '07:00') },
+  { id: 'm7', category: 'preferencias', text: 'Prefieres el resumen de la mañana por WhatsApp a las 07:00.', source: 'chat', learnedAt: at(-3, '07:10') },
+  { id: 'm8', category: 'preferencias', text: 'No quieres que te despierte por impresoras ni claves.', source: 'chat', learnedAt: at(-1, '07:12') },
 ];
 
 export const training: Training = {
@@ -165,9 +169,9 @@ export const training: Training = {
 };
 
 export const connections: Connection[] = [
-  { id: 'whatsapp', name: 'WhatsApp', status: 'connected', detail: '3 chats vigilados', lastCheck: at(0, '06:58') },
-  { id: 'gmail', name: 'Correo', status: 'connected', detail: 'rodrigo@empresa-demo.cl', lastCheck: at(0, '06:59') },
-  { id: 'calendar', name: 'Calendario', status: 'connected', detail: 'Turnos y eventos', lastCheck: at(0, '06:00') },
+  { id: 'whatsapp', name: 'WhatsApp', status: 'connected', detail: '3 chats vigilados', lastCheck: ago(1) },
+  { id: 'gmail', name: 'Correo', status: 'connected', detail: 'rodrigo@empresa-demo.cl', lastCheck: ago(2) },
+  { id: 'calendar', name: 'Calendario', status: 'connected', detail: 'Turnos y eventos', lastCheck: ago(14) },
   { id: 'slack', name: 'Slack', status: 'off', detail: 'No conectado' },
 ];
 

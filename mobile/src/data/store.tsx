@@ -23,6 +23,7 @@ export type AppState = {
   night: NightSettings;
   chats: typeof fx.watchedChats;
   connections: typeof fx.connections;
+  sleepCheck: Record<string, 'bien' | 'regular' | 'mal'>; // optional one-tap check, by date
 };
 
 export function initialAppState(onboarded = true): AppState {
@@ -31,7 +32,8 @@ export function initialAppState(onboarded = true): AppState {
     onboarded,
     profile: fx.profile,
     tasks: fx.tasks,
-    rules: fx.rules,
+    // A new person has no learned rules yet; the demo after onboarding does.
+    rules: onboarded ? fx.rules : fx.rules.filter((r) => r.origin !== 'feedback'),
     memory: fx.memory,
     feedback: {},
     questions: fx.training.questions,
@@ -39,6 +41,7 @@ export function initialAppState(onboarded = true): AppState {
     night: defaultNight,
     chats: fx.watchedChats,
     connections: fx.connections,
+    sleepCheck: {},
   };
 }
 
@@ -61,6 +64,7 @@ type Action =
   | { type: 'setProfile'; patch: Partial<Profile> }
   | { type: 'toggleChat'; id: string }
   | { type: 'setConnection'; id: ConnectionId; status: 'connected' | 'needs_attention' | 'off' }
+  | { type: 'sleepCheck'; date: string; value: 'bien' | 'regular' | 'mal' }
   | { type: 'finishOnboarding' }
   | { type: 'reset'; onboarded: boolean };
 
@@ -84,6 +88,7 @@ function reducer(s: AppState, a: Action): AppState {
     case 'setProfile': return { ...s, profile: { ...s.profile, ...a.patch } };
     case 'toggleChat': return { ...s, chats: s.chats.map((c) => (c.id === a.id ? { ...c, on: !c.on } : c)) };
     case 'setConnection': return { ...s, connections: s.connections.map((c) => (c.id === a.id ? { ...c, status: a.status } : c)) };
+    case 'sleepCheck': return { ...s, sleepCheck: { ...(s.sleepCheck ?? {}), [a.date]: a.value } };
     case 'finishOnboarding': return { ...s, onboarded: true };
     case 'reset': return initialAppState(a.onboarded);
   }
@@ -120,7 +125,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       .then((raw) => {
         if (raw) {
           const parsed = JSON.parse(raw) as AppState;
-          if (parsed.version === 2) dispatch({ type: 'hydrate', state: parsed });
+          if (parsed.version === 2) {
+            // Sources are checked continuously: refresh the demo's "last check" on every launch.
+            const fresh = fx.connections;
+            const connections = parsed.connections.map((c) => ({ ...c, lastCheck: fresh.find((f) => f.id === c.id)?.lastCheck ?? c.lastCheck }));
+            dispatch({ type: 'hydrate', state: { ...initialAppState(parsed.onboarded), ...parsed, connections } });
+          }
         }
       })
       .catch(() => {})

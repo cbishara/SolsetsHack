@@ -46,6 +46,8 @@ export type Handled = {
   from: string;
   group?: string;
   text: string;
+  title?: string; // short headline for summaries; falls back to text
+  ruleId?: string; // the rule that decided it
   decision: Decision;
   reason: string;
   wouldWake: boolean;

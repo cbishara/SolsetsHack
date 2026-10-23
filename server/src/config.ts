@@ -1,4 +1,6 @@
+import './env.ts';
 import type { EmailConfig } from './sources/email.ts';
+import { unipileOrigin } from './unipile/client.ts';
 
 const env = process.env;
 
@@ -6,6 +8,8 @@ export type Config = {
   port: number;
   apiToken?: string; // Bearer token for the app; open when unset (local only)
   databaseUrl?: string;
+  localDataFile?: string;
+  unipile?: { dsn: string; apiKey: string; accountId: string; webhookSecret: string; publicUrl?: string };
   twoChat: { apiKey?: string; number?: string; webhookToken?: string; publicUrl?: string };
   email?: EmailConfig;
   allowSimulate: boolean;
@@ -29,6 +33,11 @@ export function loadConfig(): Config {
     port: Number(env.PORT || 3002),
     apiToken: env.API_TOKEN || undefined,
     databaseUrl: env.DATABASE_URL || undefined,
+    localDataFile: env.LOCAL_DATA_FILE || undefined,
+    unipile: env.UNIPILE_API_KEY ? {
+      dsn: unipileOrigin(env.UNIPILE_DSN || ''), apiKey: env.UNIPILE_API_KEY,
+      accountId: env.UNIPILE_ACCOUNT_ID || '', webhookSecret: env.UNIPILE_WEBHOOK_SECRET || '', publicUrl: env.PUBLIC_URL || undefined,
+    } : undefined,
     twoChat: {
       apiKey: env.TWOCHAT_API_KEY || undefined,
       number: env.TWOCHAT_NUMBER || undefined,
@@ -39,7 +48,14 @@ export function loadConfig(): Config {
     allowSimulate: env.ALLOW_SIMULATE !== 'false',
   };
 
-  const live = config.databaseUrl || config.twoChat.webhookToken || config.email;
+  const live = config.databaseUrl || config.twoChat.webhookToken || config.email || config.unipile;
   if (live && !config.apiToken) throw new Error('Configura API_TOKEN antes de conectar una base o una fuente real.');
+  if (config.unipile) {
+    if (!config.unipile.accountId || config.unipile.webhookSecret.length < 32 || (config.apiToken?.length ?? 0) < 32) {
+      throw new Error('Configura UNIPILE_ACCOUNT_ID, API_TOKEN y UNIPILE_WEBHOOK_SECRET (secretos de al menos 32 caracteres).');
+    }
+    if (!config.databaseUrl && !config.localDataFile) throw new Error('Unipile requiere DATABASE_URL o LOCAL_DATA_FILE para no perder mensajes.');
+    if (env.RAILWAY_ENVIRONMENT_ID && !config.databaseUrl) throw new Error('En Railway configura DATABASE_URL; no uses almacenamiento local efímero.');
+  }
   return config;
 }

@@ -9,7 +9,10 @@
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
-    "2chat:subscribe": "tsx scripts/2chat-subscribe.ts"
+    "2chat:subscribe": "tsx scripts/2chat-subscribe.ts",
+    "unipile": "tsx scripts/unipile.ts",
+    "unipile:check": "tsx scripts/unipile.ts check",
+    "unipile:subscribe": "tsx scripts/unipile.ts subscribe"
   },
   "type": "module",
   "dependencies": {

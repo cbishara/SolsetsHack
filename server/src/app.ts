@@ -5,6 +5,9 @@ import type { Config } from './config.ts';
 import { syntheticNight } from './fixtures.ts';
 import type { Guard } from './guard.ts';
 import { parseTwoChat } from './sources/twochat.ts';
+import { unipileWebhook, whatsappRoutes } from './unipile/routes.ts';
+import { WhatsAppError } from './unipile/client.ts';
+import type { WhatsAppService } from './unipile/service.ts';
 
 const WHATSAPP_SOURCE_ID = 'whatsapp';
 
@@ -16,12 +19,14 @@ const safeEqual = (a = '', b = '') => {
 
 const fail = (res: Response, code: number, error: string) => res.status(code).json({ error });
 
-export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoChat' | 'allowSimulate'>) {
+export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoChat' | 'allowSimulate'> & Pick<Partial<Config>, 'unipile'>, whatsapp?: WhatsAppService) {
+  if (whatsapp && !config.apiToken) throw new Error('La API de WhatsApp requiere autenticación.');
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '256kb' }));
 
   app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'solsets-server' }));
+  app.use('/api/webhooks/unipile', unipileWebhook(whatsapp, config.unipile?.webhookSecret));
 
   // Webhooks: authenticated by the secret in the URL, not by the app token.
   app.post('/api/webhooks/2chat/:token', async (req, res) => {
@@ -51,6 +56,7 @@ export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoCh
     if (scheme !== 'Bearer' || !safeEqual(token, config.apiToken)) return fail(res, 401, 'Falta el token de la app.');
     next();
   });
+  app.use('/api/whatsapp', whatsappRoutes(whatsapp));
 
   app.get('/api/night/today', async (_req, res) => res.json(await guard.night()));
   app.put('/api/night/today', async (req, res) => {
@@ -101,7 +107,7 @@ export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoCh
   // Chat belongs to agent/ (Quito). Placeholder so the app can wire the screen.
   app.post('/api/chat', (req, res) => {
     z.object({ text: z.string().min(1) }).parse(req.body);
-    res.json({ reply: 'El chat todavía no está conectado al agente.' });
+    res.status(503).json({ error: 'agent_not_connected', message: 'El chat todavía no está conectado al agente.' });
   });
 
   // Backup console: push a message by hand, and replay the synthetic night.
@@ -126,6 +132,7 @@ export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoCh
 
   app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
     if (res.headersSent) return next(err);
+    if (err instanceof WhatsAppError) return fail(res, err.status, err.message);
     if (err instanceof z.ZodError || err instanceof SyntaxError) return fail(res, 400, 'Datos inválidos. Revisa los campos enviados.');
     console.error(err);
     fail(res, 500, 'No se pudo completar la acción.');

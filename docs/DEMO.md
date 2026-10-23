@@ -1,23 +1,27 @@
-# Recorrido de 3 minutos
+# Recorrido de 3 minutos con SOL
 
-1. Mi espacio: «Rodrigo no necesita otro gráfico. Necesita dejar de hacer guardia con la cabeza mientras intenta dormir».
-2. Mi agente: mostrar modo sombra y permisos. Las compras piden aprobación. El modelo no cambia estas reglas.
-3. Probar una noche → VPN: consulta conocida, propuesta con motivo; no despertar. Desactivar modo sombra y repetir si quieren mostrar una resolución simulada.
-4. Compras: queda pendiente de aprobación. Aprobar y ver el cambio persistido.
-5. Caída de producción: situación crítica, escalar. Mostrar registro de WhatsApp con etiqueta «Simulado». Para incluir Calendar, habilitar su permiso Automático antes del incidente.
-6. Repetir la caída: no volver a alertar por el mismo incidente dentro de 30 minutos.
-7. Resumen de la mañana: resueltas, pendientes, urgentes. Objetivo: una hora más de sueño; todavía no es un resultado medido.
+Todos los ejemplos usan datos ficticios. No se han demostrado mejoras del sueño.
 
-## Recorrido real, tras configurar claves
+1. Abrir `/`: mostrar «Suelta.», la trama de flechas al mover el cursor y los casos ilustrativos con hover. La propuesta es pasar de una preocupación a un siguiente paso sin configurar un sistema.
+2. Pulsar «Empieza con SOL». Escribir: «Terminé la guardia. La VPN dio error 809, reinicié el servicio y todavía falla. Necesito dejar preparado el registro».
+3. Revisar el borrador en `/demo`: corregir un campo, elegir «Sigue abierta» y guardar. Mostrar que preparado no significa registrado ni incidencia resuelta.
+4. Abrir «Mis pendientes», volver al borrador y recargar. El contexto permanece en este navegador; no hay cuenta ni conexión obligatoria.
+5. Cambiar a Profesor: «Curso 1A: evaluación de ecuaciones el lunes; curso 2B: revisar entregas». Mostrar las filas organizadas desde los datos aportados. En Coach: «Ana: confirmar sesión; Pedro: revisar seguimiento». Son ejemplos locales, no sistemas de gestión académica o deportiva completos.
+6. En «Lo que SOL recuerda», cambiar extensión o revisión propuesta. Corregir y eliminar el dato. El horario propuesto no programa una notificación.
 
-El contacto de prueba escribe primero al número de Kapso. Probar una consulta VPN y una caída de producción. Usar Gmail con un correo `[SOLSETS-DEMO]` y sincronización manual. Probar el evento Calendar dos minutos antes de presentar. No afirmar acceso a grupos ni vibración del reloj sin haberlo observado.
+## Espacio operativo de Rodrigo
 
-## Reparto sugerido
+Abrir `/app` y acceder con la contraseña del panel si está configurada. «Tus reglas» conserva modo sombra, pausa y permisos del backend. «Mis pendientes» → «Una guardia con SOL» contiene los escenarios VPN, compras, turno y caída crítica.
 
-- Panel/pitch: ejecutar la demo local y ajustar los textos con el equipo.
-- Integraciones: crear Google OAuth, número/webhook Kapso y servicio Railway.
-- Base/agente: ejecutar SQL, configurar Hermes y validar el recorrido real.
+- Abrir un escenario para ver propuesta, motivo y evidencia.
+- Aprobar compras solo en la simulación. El resultado permanece marcado como acción simulada.
+- El escenario crítico requiere atención. Repetirlo dentro de 30 minutos permite comprobar deduplicación.
+- «Ver mi resumen» separa preparados, decisiones y espera. No verifica relevo ni resolución de incidentes.
 
-## Próxima iteración
+## Integraciones configuradas
 
-Interpretar turnos con fecha y zona horaria confirmadas, calendarizar descanso y resumen; completar aprobaciones reales; ingestión de procedimientos y búsqueda vectorial; seguimiento de entrega; pruebas con dispositivo. La ventana de descanso guardada es una preferencia: la primera versión clasifica todo el día y no activa «No molestar» en el teléfono.
+Usar exclusivamente cuentas y contenido de prueba. El contacto de WhatsApp escribe primero al número Kapso. Gmail consulta manualmente mensajes con `[SOLSETS-DEMO]`; Calendar permite crear un evento de prueba. No afirmar acceso a grupos ni recepción en reloj sin haberlo observado. Estas acciones no se ejecutan desde la demo pública.
+
+## Límites que deben quedar claros
+
+El nuevo flujo SOL utiliza plantillas locales y no envía sus borradores a servicios externos. La aplicación mantiene un solo espacio operativo de backend. Los contextos profesor y coach no modifican sus permisos. La memoria es local y limitada; falta gestión completa de cursos/alumnos, sincronización entre dispositivos y ejecución de nuevos borradores con autorización y comprobación por versión. Ver [PRODUCTO_SOL.md](./PRODUCTO_SOL.md).

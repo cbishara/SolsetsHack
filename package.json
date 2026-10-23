@@ -7,7 +7,7 @@
     "dev": "concurrently -k -n api,web \"node --watch backend/server.mjs\" \"vite --host 0.0.0.0\"",
     "build": "vite build",
     "start": "node backend/server.mjs",
-    "test": "node --test classifier/*.test.mjs backend/*.test.mjs"
+    "test": "node --test classifier/*.test.mjs backend/*.test.mjs web/src/*.test.mjs"
   },
   "dependencies": {
     "@kapso/whatsapp-cloud-api": "^0.2.0",

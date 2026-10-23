@@ -109,4 +109,4 @@ node scripts/verify-chat.ts --codex --report ../.context/agent-chat-verification
 
 La [aceptación con Codex real](./VERIFY-CHAT.md) pasó seis comprobaciones con tres llamadas y dos procesos de servidor: horario declarado, corrección a las 19:00, reintento sin otra inferencia, recuperación tras reiniciar, recuerdo del horario y preferencia, y memoria separada para otro usuario. El informe de cada ejecución queda local; el comando permite repetirla.
 
-Pendientes: servidor compartido, identidad app–WhatsApp, base remota, dispositivo físico y canales de alerta. El trabajador saliente y las funciones de voz que se desarrollan en paralelo se entregan por separado.
+Pendientes: conexión con `server/`, identidad app–WhatsApp, base remota, dispositivo físico y canales de alerta. El trabajador saliente y las funciones de voz que se desarrollan en paralelo se entregan por separado.

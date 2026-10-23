@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { applyPolicy, demoClassify } from './policy.mjs';
+const settings = { paused: false, shadow: false, permissions: { reply: 'auto', draft: 'auto', calendar: 'ask', purchase: 'ask' } };
+const routine = demoClassify('No puedo acceder a la VPN');
+test('known routine incident can be handled without waking', () => { const r = applyPolicy(routine, settings); assert.equal(r.wake, false); assert.equal(r.execute, true); });
+test('new incident overrides the model and wakes', () => { const r = applyPolicy({ ...routine, isNew: true }, settings); assert.equal(r.decision, 'DESPERTAR'); assert.equal(r.wake, true); assert.equal(r.execute, false); });
+test('low confidence overrides PARTE', () => { assert.equal(applyPolicy({ ...routine, confidence: .69 }, settings).wake, true); });
+test('30 minute duplicate does not re-wake', () => { assert.equal(applyPolicy(demoClassify('P1 producción caída'), settings, { duplicate: true }).wake, false); });
+test('shadow never executes routine actions but still escalates urgent ones', () => { assert.equal(applyPolicy(routine, { ...settings, shadow: true }).execute, false); assert.equal(applyPolicy(demoClassify('P1 caída'), { ...settings, shadow: true }).wake, true); });
+test('pause blocks actions and new alerts', () => { assert.equal(applyPolicy(routine, { ...settings, paused: true }).execute, false); assert.equal(applyPolicy(demoClassify('P1 caída'), { ...settings, paused: true }).wake, false); });
+test('purchase requires approval', () => { const r = applyPolicy(demoClassify('Compra del supermercado'), settings); assert.equal(r.requiresApproval, true); assert.equal(r.execute, false); });
+test('never permission cannot be overridden by model', () => { const r = applyPolicy(routine, { ...settings, permissions: { ...settings.permissions, reply: 'never' } }); assert.equal(r.blocked, true); assert.equal(r.execute, false); });
+test('malformed confidence and unknown actions are rejected', () => { assert.throws(() => applyPolicy({ ...routine, confidence: 9 }, settings)); assert.throws(() => applyPolicy({ ...routine, action: 'shell' }, settings)); });

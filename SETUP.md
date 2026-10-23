@@ -6,6 +6,16 @@ Desplegar este repositorio con el Dockerfile raíz. `railway.json` define health
 
 ## 2. Supabase
 
+### Alternativa desplegada: PostgreSQL en Railway
+
+El proyecto `solsets-hack` contiene `backend`, `Postgres` y `hermes`. El backend recibe `DATABASE_URL` por referencia a `${{Postgres.DATABASE_URL}}`; las conexiones permanecen en la red privada. El arranque crea las tablas del esquema `solsets` mediante una transacción y un bloqueo de migración. El volumen de PostgreSQL conserva los datos entre despliegues. No configurar `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` a la vez que `DATABASE_URL`.
+
+Verificación dentro del servicio: `railway ssh --service backend node backend/verify-postgres.mjs`. Comprueba migración repetible, estado y tokens cifrados con un workspace sintético que elimina al terminar. Desplegar solo una réplica de backend: las decisiones se serializan en ese proceso.
+
+Cambiar de proveedor no importa datos automáticamente. Para volver a Supabase o al almacenamiento local, respaldar y transferir primero los datos deseados; quitar `DATABASE_URL` solo después. Las tablas PostgreSQL permanecen intactas. Las migraciones de Supabase siguientes se conservan para quien elija ese proveedor.
+
+### Configuración de Supabase
+
 Ejecutar los dos archivos de `supabase/migrations` en orden desde SQL Editor. Configurar `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` únicamente en el servicio backend. RLS está activo y los clientes anon/authenticated no tienen acceso: esta demo usa acceso servidor con autenticación básica. No es todavía una aplicación multiusuario. El primer inicio crea el workspace sintético.
 
 El almacenamiento local no se importa automáticamente al activar Supabase. La nueva base comienza con el escenario inicial; conserva `.data/state.json` si necesitas recuperar una sesión local. `knowledge_chunks` usa vectores de 1536 dimensiones; escoger ese tamaño cuando se implemente la ingestión.

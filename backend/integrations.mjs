@@ -1,9 +1,7 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
 import { OAuth2Client } from 'google-auth-library';
 import { WhatsAppClient } from '@kapso/whatsapp-cloud-api';
-import { supabase, dir, workspaceId } from './store.mjs';
+import { readSecret, saveSecret } from './store.mjs';
 
 let googleTokens = null;
 export function googleClient() { return new OAuth2Client(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, `${process.env.APP_URL || 'http://localhost:5173'}/auth/google/callback`); }
@@ -13,14 +11,11 @@ export async function saveGoogleTokens(tokens) {
  const iv = randomBytes(12), cipher = createCipheriv('aes-256-gcm', encryptionKey(), iv);
  const data = Buffer.concat([cipher.update(JSON.stringify(merged), 'utf8'), cipher.final()]);
  const encrypted = [iv, cipher.getAuthTag(), data].map(x => x.toString('base64')).join('.');
- if (supabase) { const { error } = await supabase.from('integration_secrets').upsert({ workspace_id: workspaceId, provider: 'google', encrypted }); if (error) throw new Error('No se pudieron guardar las credenciales.'); }
- else { await mkdir(dir, { recursive: true }); await writeFile(resolve(dir, 'google.enc'), encrypted, { mode: 0o600 }); }
+ await saveSecret('google', encrypted);
  googleTokens = merged;
 }
 export async function loadGoogleTokens() {
- let encrypted;
- if (supabase) { const { data, error } = await supabase.from('integration_secrets').select('encrypted').eq('workspace_id', workspaceId).eq('provider', 'google').maybeSingle(); if (error) throw new Error('No se pudieron consultar las integraciones.'); encrypted = data?.encrypted; }
- else { try { encrypted = await readFile(resolve(dir, 'google.enc'), 'utf8'); } catch (e) { if (e.code !== 'ENOENT') throw e; } }
+ const encrypted = await readSecret('google');
  if (!encrypted) return;
  const [iv, tag, data] = encrypted.split('.').map(x => Buffer.from(x, 'base64'));
  const cipher = createDecipheriv('aes-256-gcm', encryptionKey(), iv); cipher.setAuthTag(tag);

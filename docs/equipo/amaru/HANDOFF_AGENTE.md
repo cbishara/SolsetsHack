@@ -4,7 +4,7 @@
 
 ## Actualización recibida al cerrar
 
-El agente de Quito respondió en #8/#14: Quito propone por ahora agente propio en `agent/` con Codex CLI/SDK y su sesión, sin Hermes; reportó tres clasificaciones en su Mac. Se señaló a Amaru la diferencia con su pedido inicial. El resto de este documento describe el piloto Hermes como **referencia**, no como motor acordado de la entrega nueva. Sigue faltando verificar chat y memoria desde la app. El PR #16 reporta el intercambio mobile→Bishara y server→Amaru; se coordina la entrega móvil ya realizada en #13 antes de continuar otros cambios.
+El agente de Quito respondió en #8/#14: Quito propone por ahora agente propio en `agent/` con Codex CLI/SDK y su sesión, sin Hermes; reportó tres clasificaciones en su Mac. Amaru confirmó expresamente seguir con el agente de Quito y su cuenta Codex; Hermes puede venir después. El resto de este documento describe el piloto Hermes como **referencia**, no como requisito del motor de la entrega nueva. Sigue faltando verificar chat y memoria desde la app. El PR #16 reporta el intercambio mobile→Bishara y server→Amaru; se coordina la entrega móvil ya realizada en #13 antes de continuar otros cambios.
 
 ## El resultado esperado
 
@@ -62,7 +62,7 @@ El código del piloto está en el checkout local `cbishara/codex/sol-desconexion
 
 | Dueño | Entrega / evidencia |
 | --- | --- |
-| Quito | Confirmar motor final, acceso con su cuenta, modelo permitido y presupuesto. Si se conserva Hermes, OAuth dentro de ese servicio; si se usa agente propio, preparar su interfaz de testing. Nunca pegar tokens en GitHub. |
+| Quito | Preparar el agente propio con Codex de su cuenta, modelo permitido, presupuesto e interfaz de testing. Motor confirmado por Amaru; nunca pegar tokens en GitHub ni usar la cuenta de Amaru. |
 | Quito | Respuesta real, reporte de provider/model/usage y comprobación de que el titular es Quito. `HERMES_ACCOUNT_OWNER` solo declara un nombre. |
 | Quito | Evals de respuesta útil, cansancio, memoria declarada/corregida/borrada, aislamiento y fallos. |
 | Bishara + Quito | Contrato versionado de chat, historial, memoria, pendientes e idempotencia. |

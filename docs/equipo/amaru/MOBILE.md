@@ -16,10 +16,10 @@ La portada anterior «Mi noche», sus métricas ficticias y los votos de guardia
 | Pantallas y componentes | Sesión local de Amaru «Crea rama demo WhatsApp» | Reconstrucción de Mi espacio, chat, pendiente y memoria |
 | Cliente y almacenamiento | Subagente local `mobile_client` | Borrador persistente, recuperación de lectura, protección ante respuestas viejas, validación y reintentos |
 | Diez skills y revisión | Subagente local `ios_skills` | Exactamente diez instaladas de fuentes fijadas; checklist y revisión de aplicación |
-| Cerebro, memoria, evals, cuenta | Quito, solicitado en #14/#8 | Pedido recibido por su agente; propone Codex propio sin Hermes por ahora; chat integrado pendiente |
+| Cerebro, memoria, evals, cuenta | Quito, solicitado en #14/#8 | Pedido recibido por su agente; Codex propio con su cuenta, confirmado por Amaru; chat integrado pendiente |
 | API, identidad, WhatsApp, testing | Bishara, coordinación en #7 | Base TS/Express en PR #15; propone traspaso a Amaru en PR #16; contrato de chat/URL pendientes |
 
-El agente de Quito respondió en #14 y #8. Confirmó recepción y explicó que Quito propone por ahora un agente propio con Codex CLI/SDK y la sesión de su plan; reporta tres clasificaciones ficticias en su Mac. No hay una respuesta de chat integrada a la app verificada. Amaru había pedido Hermes: se le señaló esa diferencia, sin cambiar el adaptador móvil por cuenta propia. No se delegó diseño a Quito.
+El agente de Quito respondió en #14 y #8. Confirmó recepción y explicó que Quito propone por ahora un agente propio con Codex CLI/SDK y la sesión de su plan; reporta tres clasificaciones ficticias en su Mac. No hay una respuesta de chat integrada a la app verificada. Amaru confirmó después: «Seguir con el agente de Quito y su cuenta Codex; Hermes puede venir después». Codex propio es la dirección de esta entrega; el adaptador móvil aún requiere el contrato de ese agente. No se delegó diseño a Quito.
 
 Durante esta sesión apareció el PR #16, que reporta un acuerdo de intercambio de carriles: mobile pasa a Bishara y server a Amaru. Se avisó que esta reconstrucción, ya solicitada directamente por Amaru y en curso, se cierra en #13 como entrega revisable para continuar desde ella. No se modificaron server ni las ramas de Bishara. El PR #15 contiene una base del servidor, no un chat real ya integrado.
 
@@ -41,7 +41,7 @@ El contrato temporal sigue siendo `GET /api/disconnect` y `POST /api/disconnect/
 | Cliente TypeScript y pruebas | TypeScript y 12 pruebas aprobados tras validación y recuperación de datos |
 | Adaptador HTTP con almacenamiento aislado | Escritura, UUID, deduplicación y recuperación tras reiniciar aprobados con `SOL_ENGINE=demo` |
 | Interfaz nueva | Exportación iOS/Android/web aprobada; Safari a 320/390/430, navegación, chat, memoria, ajustes, error de URL y borrador tras recarga comprobados |
-| IA con la cuenta de Quito | Quito propone Codex propio sin Hermes; sin respuesta de chat real verificada en esta app ni contrato de integración cerrado |
+| IA con la cuenta de Quito | Codex propio con la cuenta de Quito confirmado; sin respuesta de chat real verificada en esta app ni contrato de integración cerrado |
 | Continuidad app–WhatsApp | Objetivo acordado con Amaru, sin vinculación implementada/verificada |
 | Prueba física iPhone | Pendiente; la preview web no demuestra teclado/VoiceOver/permisos nativos |
 | Screen Time | Experimento secundario heredado, requiere build propia y prueba física; no parte del recorrido central |

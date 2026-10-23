@@ -57,7 +57,7 @@ flowchart LR
   W[WhatsApp vinculado] --> S
   S --> I[Identidad canónica y autorización]
   I --> C[Conversación y memoria por usuario]
-  C --> A[Agente de Quito: motor por confirmar]
+  C --> A[Agente propio de Quito con Codex]
   A --> S
 ```
 
@@ -83,4 +83,4 @@ Estado de implementación y comprobaciones: [MOBILE.md](MOBILE.md). Fuentes y ap
 
 ## Novedades de coordinación al cerrar
 
-Quito recibió #14 y propuso Codex CLI/SDK con su cuenta, sin Hermes por ahora (#8). Se informó a Amaru de la diferencia con el pedido inicial. Las capacidades del chat y la identidad compartida aún necesitan contrato/prueba. El PR #16 reporta el intercambio de carriles; la UI que Amaru pidió durante esta sesión se entrega terminada y revisable en #13 para evitar reconstrucciones paralelas. El diseño confirmado Mi espacio sigue siendo la fuente de esta entrega.
+Quito recibió #14 y propuso Codex CLI/SDK con su cuenta, sin Hermes por ahora (#8). Amaru confirmó seguir con ese agente y la cuenta de Quito; Hermes puede venir después. La dirección está confirmada para esta entrega. Las capacidades del chat y la identidad compartida aún necesitan contrato/prueba. El PR #16 reporta el intercambio de carriles; la UI que Amaru pidió durante esta sesión se entrega terminada y revisable en #13 para evitar reconstrucciones paralelas. El diseño confirmado Mi espacio sigue siendo la fuente de esta entrega.

@@ -24,6 +24,8 @@ export type AppState = {
   chats: typeof fx.watchedChats;
   connections: typeof fx.connections;
   sleepCheck: Record<string, 'bien' | 'regular' | 'mal'>; // optional one-tap check, by date
+  lastNight: Handled[]; // what the agent handled last night (from server/ when connected)
+  remoteFeedbackIds: string[]; // message ids that exist on the server, so feedback is sent there
 };
 
 export function initialAppState(onboarded = true): AppState {
@@ -42,6 +44,8 @@ export function initialAppState(onboarded = true): AppState {
     chats: fx.watchedChats,
     connections: fx.connections,
     sleepCheck: {},
+    lastNight: fx.lastNight,
+    remoteFeedbackIds: [],
   };
 }
 
@@ -65,6 +69,9 @@ type Action =
   | { type: 'toggleChat'; id: string }
   | { type: 'setConnection'; id: ConnectionId; status: 'connected' | 'needs_attention' | 'off' }
   | { type: 'sleepCheck'; date: string; value: 'bien' | 'regular' | 'mal' }
+  | { type: 'setLastNight'; items: Handled[]; remote: boolean }
+  | { type: 'setConnections'; connections: AppState['connections'] }
+  | { type: 'setChats'; chats: AppState['chats'] }
   | { type: 'finishOnboarding' }
   | { type: 'reset'; onboarded: boolean };
 
@@ -89,6 +96,9 @@ function reducer(s: AppState, a: Action): AppState {
     case 'toggleChat': return { ...s, chats: s.chats.map((c) => (c.id === a.id ? { ...c, on: !c.on } : c)) };
     case 'setConnection': return { ...s, connections: s.connections.map((c) => (c.id === a.id ? { ...c, status: a.status } : c)) };
     case 'sleepCheck': return { ...s, sleepCheck: { ...(s.sleepCheck ?? {}), [a.date]: a.value } };
+    case 'setLastNight': return { ...s, lastNight: a.items, remoteFeedbackIds: a.remote ? a.items.map((i) => i.id) : [] };
+    case 'setConnections': return { ...s, connections: a.connections };
+    case 'setChats': return { ...s, chats: a.chats };
     case 'finishOnboarding': return { ...s, onboarded: true };
     case 'reset': return initialAppState(a.onboarded);
   }
@@ -129,7 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             // Sources are checked continuously: refresh the demo's "last check" on every launch.
             const fresh = fx.connections;
             const connections = parsed.connections.map((c) => ({ ...c, lastCheck: fresh.find((f) => f.id === c.id)?.lastCheck ?? c.lastCheck }));
-            dispatch({ type: 'hydrate', state: { ...initialAppState(parsed.onboarded), ...parsed, connections } });
+            dispatch({ type: 'hydrate', state: { ...initialAppState(parsed.onboarded), ...parsed, connections, lastNight: parsed.remoteFeedbackIds?.length ? parsed.lastNight : fx.lastNight } });
           }
         }
       })
@@ -150,7 +160,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Store>(
     () => ({
       state, ready, dispatch,
-      lastNight: fx.lastNight, events: fx.events, shifts: fx.shifts, sleep: fx.sleep, training: fx.training,
+      lastNight: state.lastNight ?? fx.lastNight, events: fx.events, shifts: fx.shifts, sleep: fx.sleep, training: fx.training,
       toggleTask, addTasks, rate, setGoals, setNightStyle,
     }),
     [state, ready, toggleTask, addTasks, rate, setGoals, setNightStyle],

@@ -1,3 +1,4 @@
+import { DataBadge } from '../../features/backend/data-badge';
 import { View } from 'react-native';
 import { Wordmark } from '../../components/brand';
 import { Badge, Screen, T } from '../../components/ui';
@@ -26,7 +27,7 @@ export default function Hoy() {
     <Screen>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Wordmark size={22} />
-        <Badge label="Datos de ejemplo" tone="neutral" />
+        <DataBadge />
       </View>
 
       {moment === 'night' ? (

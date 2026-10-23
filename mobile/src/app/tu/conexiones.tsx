@@ -1,6 +1,7 @@
 import { Calendar, CircleCheck, CircleAlert, CirclePause, Hash, Mail, MessageCircle, MessagesSquare, ShieldCheck } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Header } from '../../components/header';
+import { ServerCard } from '../../features/backend/server-card';
 import { Badge, Button, Card, List, Screen, Section, T, tap, ToggleRow } from '../../components/ui';
 import { useStore } from '../../data/store';
 import type { Connection, ConnectionId } from '../../data/types';
@@ -40,6 +41,8 @@ export default function Conexiones() {
             : 'Conecta al menos una fuente para que Sol pueda ordenar tus cosas.'}
         </T>
       </Card>
+
+      <ServerCard />
 
       <Section eyebrow="Fuentes">
         <View style={{ gap: space.md }}>

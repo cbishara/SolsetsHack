@@ -37,7 +37,11 @@ export interface ServerClassification {
 }
 export interface ClassifyResult extends ServerClassification {
   kind: 'classify'; engine: 'codex' | 'rules'; model: string | null; fallbackReason: string | null;
+  /** App v2 (#61). Always present from /v1/app/classify; the v0/v1 queues do not send them yet. */
+  categoryId?: string | null; summary?: string; context?: string;
 }
+/** /v1/app/classify result: category (or null), one-line headline and 2-3 lines of context. */
+export type AppClassifyResult = ClassifyResult & { categoryId: string | null; summary: string; context: string };
 export interface ChatResult {
   kind: 'chat'; reply: ChatMessage; concern: string; plan: ChatPlan | null;
   memoryUpdates: ContextMemory[]; forgetKeys: string[]; clearHistory: boolean;

@@ -22,7 +22,9 @@ const history = () => [
   { id: 'vague', userId: 'owner-A', text: 'Hay un problema con eso', decision: 'wake' },
 ];
 const trainingOut = () => ({ rules: [{ text: 'Dejar para la mañana las revisiones de impresora pedidas para mañana.', kind: 'wait', evidenceIds: ['printer'] }],
-  questions: [{ text: '¿Qué problema debería despertarte?', context: 'El aviso no dice qué está fallando.', options: ['Caída del servicio', 'Revisión para mañana'], evidenceIds: ['vague'] }] });
+  questions: [{ text: '¿Qué problema debería despertarte?', context: 'El aviso no dice qué está fallando.', options: ['Caída del servicio', 'Revisión para mañana'],
+    effects: ['Te despierto cuando se caiga un servicio.', 'Lo dejo para el resumen de la mañana.'], actions: ['alert', 'digest'], evidenceIds: ['vague'] }],
+  categories: [] as Array<{ name: string; description: string; action: string; wakeAtNight: boolean; evidenceIds: string[] }> });
 
 test('dump splits the Bishara example with inherited dates and next Friday, without claiming persistence', async () => {
   const result = await createAppCapabilities({ runner: async () => extracted() }).dump(dumpInput());
@@ -122,7 +124,8 @@ test('training rejects cross-user and duplicate history before inference; empty 
 });
 
 const classifyInput = () => ({ ...base(), message: { id: 'portal-1', externalId: 'external-1', source: 'simulated', sender: 'Compañero ficticio', group: 'Guardia demo', text: 'Se cayó el portal de clientes', receivedAt: '2026-10-23T23:00:00-03:00' }, recent: [] as Array<{ userId: string; incidentKey: string; text: string; group: string; receivedAt: string }> });
-const classificationOut = () => ({ decision: 'DESPERTAR', reason: 'El portal de clientes está caído.', is_new: false, confidence: 0.95, matchedIncidentKey: '', matchConfidence: 0 });
+const classificationOut = () => ({ decision: 'DESPERTAR', reason: 'El portal de clientes está caído.', is_new: false, confidence: 0.95, matchedIncidentKey: '', matchConfidence: 0,
+  categoryId: '', summary: 'Portal de clientes caído', context: 'Los clientes no pueden entrar desde las 23:00.\nRevisa el estado del portal.' });
 
 test('server policy wakes for an outage then suppresses a paraphrase of the same confirmed incident', async () => {
   const store = new MemoryStore(); let out = classificationOut();

@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-categorias-v2",
+  "title": "Clasificar con las categorías de la persona, con titular y contexto",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "El agente ya recibe las categorías activas de la persona y devuelve en cuál cae cada mensaje, un titular de una línea y dos o tres líneas de contexto. Propone categorías nuevas sin activarlas y sus preguntas dicen qué hará Sol con cada respuesta. Responde la tarea #61 de Bishara.",
+  "before": "La clasificación devolvía solo despertar, parte o ruido con un motivo. La app adivinaba la categoría comparando palabras. Las preguntas traían opciones sin decir qué pasaba al elegirlas.",
+  "after": "Clasificar acepta hasta 30 categorías y devuelve categoryId, summary y context. Un id inventado queda en null. Ejemplo: con la categoría «Caída de servicio», el aviso «Se cayó el portal de clientes» vuelve con esa categoría y el titular «Portal de clientes caído». La política en código suma una regla: si la categoría puede despertar y los avisos de la noche están activos, despierta. Siguen las reglas oficiales: nuevo o confianza bajo 0,7 despierta, un duplicado de menos de 30 minutos no re-despierta y el modo sombra no silencia. Una categoría solo agrega despertares, nunca los quita. El entrenamiento propone hasta 3 categorías sugeridas cuando ve al menos dos mensajes del mismo tipo, sin repetir las que ya existen. Cada pregunta trae kind «question», un efecto por opción y una acción del mismo catálogo de las categorías más «none».",
+  "reason": "La app nueva ordena todo por categorías de la persona (ADR por confirmar del 2026-10-24 y CONTRATO_APP_V2, puntos 2, 3 y 7). Que una categoría no pueda apagar un despertar es la opción conservadora: el ADR no dice que pueda silenciar, y la regla del producto es «ante la duda, despierta».",
+  "checked": "npm run check en agent/ aprobado: TypeScript sin errores, 119 pruebas aprobadas (19 nuevas, todas con un motor falso) y la evaluación de reglas sin cambios (22 de 39 propuestos y 2 de 2 confirmados). Las pruebas cubren categorías inválidas o de más, id inventado, recortes de titular y contexto, respaldo de reglas, propuestas sin patrón o repetidas, preguntas con efectos o acciones que no calzan, y la política con y sin categoría. No se corrió scripts/verify-app.ts con Codex real después del cambio: no hay evidencia de que el modelo real elija bien la categoría.",
+  "availability": "Código en la rama de Quito, sin publicar ni desplegar. server/ todavía no guarda categorías, no las manda al clasificar ni resuelve la categoría para la política: eso es de Amaru. La app de Bishara aún no lee estos campos del servidor. Los nombres kind, effects y actions dependen de dos ADR por confirmar.",
+  "featureIds": [
+    "feat-quito-contrato-noche"
+  ],
+  "flowIds": [
+    "flujo-quito-atender-alerta"
+  ]
+}

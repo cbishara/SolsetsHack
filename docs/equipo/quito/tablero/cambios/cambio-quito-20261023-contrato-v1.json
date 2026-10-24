@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-contrato-v1",
+  "title": "Acordar qué contexto elegido puede recibir SOL",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Contrato separado para sugerir chats por metadatos y recibir evidencia seleccionada con identidad y permisos versionados.",
+  "before": "El contrato v0 solo admitía clasificación y chat de demostración sin evidencia de chats elegidos.",
+  "after": "El contrato v1 distingue recomendaciones de selección; exige dueño verificado, vínculo y contexto versionados y generaciones de selección para cada mensaje de evidencia. Datos reales requieren una activación explícita del operador. El módulo solo valida entradas; no conversa, lee chats ni envía.",
+  "reason": "Quito autorizó y ratificó como oficial procesar nombres/tipos reales y contenido solo tras selección explícita. Amaru aceptó los campos y requiere un contrato pequeño antes del acoplamiento.",
+  "checked": "Validación de versión/procedencia, metadatos sin previews/contenido, límites del lote, snapshot y rechazo de campos/IDs duplicados. Se ejecutan TypeScript y la batería del agente sobre main más este contrato; procesamiento e inferencia pertenecen al PR siguiente.",
+  "availability": "Tipos y validador importables en agent/src/integration/contract-v1.ts. No activa v1 ni sustituye v0.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

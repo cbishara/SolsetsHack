@@ -68,6 +68,12 @@ export function parseJob(value: unknown): AgentJob {
   const v = record(value);
   if (v.synthetic !== true) throw new IntegrationError('non_synthetic_job');
   if (v.version !== 'v0' || (v.kind !== 'chat' && v.kind !== 'classify')) throw new IntegrationError('invalid_job');
+  validateLease(v);
+  return v as unknown as AgentJob;
+}
+
+/** Shared structural validation only; callers enforce version and data provenance separately. */
+export function validateLease(v: Record<string, unknown>): void {
   for (const key of ['id', 'userId', 'leaseId', 'contextVersion']) {
     const id = string(v[key]);
     if (['__proto__', 'constructor', 'prototype'].includes(id)) throw new IntegrationError('invalid_job');
@@ -75,5 +81,4 @@ export function parseJob(value: unknown): AgentJob {
   if (!UUID.test(string(v.requestId))) throw new IntegrationError('invalid_job');
   timestamp(v.deadlineAt); timestamp(v.leaseExpiresAt); record(v.payload);
   if (JSON.stringify(v).length > 128_000) throw new IntegrationError('invalid_job');
-  return v as unknown as AgentJob;
 }

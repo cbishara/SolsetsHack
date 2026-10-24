@@ -126,3 +126,12 @@ test('empty training history returns empty categories; dump date questions carry
   const q = r.questions[0];
   assert.equal(q.kind, 'question'); assert.equal(q.effects.length, q.options.length); assert.deepEqual(q.actions, ['task', 'task', 'task']);
 });
+
+test('whatsapp is rejected by default and accepted only with allowWhatsApp', async () => {
+  const wa = () => { const i = input(); i.message.source = 'whatsapp'; return i; };
+  await assert.rejects(classifier(out())(wa()), InputError);
+  const r = await createAppClassifier({ store: new MemoryStore(), runner: async () => out(), allowWhatsApp: true })(wa());
+  assert.equal(r.categoryId, 'c-outage');
+  const mail = input(); mail.message.source = 'email';
+  await assert.rejects(createAppClassifier({ store: new MemoryStore(), runner: async () => out(), allowWhatsApp: true })(mail), InputError);
+});

@@ -18,7 +18,7 @@ export const SUMMARY_MAX = 120, CONTEXT_LINES = 3, CONTEXT_LINE_MAX = 200;
 const normalized = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
 
 /** Classifies with a server-scoped incident snapshot. Policy still runs on server's current state. */
-export function createAppClassifier({ runner, model = null, store }: CapabilityOptions & { store: AgentStore }) {
+export function createAppClassifier({ runner, model = null, store, allowWhatsApp = false }: CapabilityOptions & { store: AgentStore; allowWhatsApp?: boolean }) {
   return async (input: unknown): Promise<AppClassifyResult> => {
     const v = request(input);
     keys(v, ['userId', 'requestId', 'ownerVerified', 'synthetic', 'message', 'recent', 'categories']);
@@ -30,7 +30,8 @@ export function createAppClassifier({ runner, model = null, store }: CapabilityO
     if (!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(text(m.receivedAt, 64))) throw new InputError('receivedAt debe incluir zona horaria.');
     const message = parseMessage({ id: m.id, user_id: v.userId, source: m.source === 'email' ? 'gmail' : m.source,
       sender: m.sender, chat: m.group, text: m.text, received_at: m.receivedAt });
-    if (m.source !== 'simulated') throw new InputError('Esta aceptación de #41 admite mensajes simulated. WhatsApp usa el puente autorizado.');
+    // WhatsApp only from the team's demo number, written with invented messages (opt-in per deploy).
+    if (m.source !== 'simulated' && !(allowWhatsApp && m.source === 'whatsapp')) throw new InputError('Esta ruta admite mensajes simulated, y whatsapp solo con AGENT_APP_ALLOW_WHATSAPP=true.');
     if (!Array.isArray(v.recent) || v.recent.length > 30) throw new InputError('Máximo 30 incidentes recientes.');
     const seen = new Set<string>();
     const candidates = v.recent.map(raw => {

@@ -40,9 +40,9 @@ const classified = (patch: Record<string, unknown> = {}) => ({
   categoryId: null, summary: 'Portal de clientes caído', context: 'Clientes sin acceso.\nRevisa el balanceador.', ...patch,
 });
 
-async function start(reply: Reply, { timeoutMs = 2000 } = {}) {
+async function start(reply: Reply, { timeoutMs = 2000, allowWhatsApp = false } = {}) {
   const agent = await fakeAgent(reply);
-  const guard = new Guard(new MemoryStore(), createHttpAgent({ url: `${agent.url}/`, token: 'agent-secret', userId: 'rodrigo-demo', timeoutMs }));
+  const guard = new Guard(new MemoryStore(), createHttpAgent({ url: `${agent.url}/`, token: 'agent-secret', userId: 'rodrigo-demo', timeoutMs, allowWhatsApp }));
   const server = createApp(guard, { apiToken: 'app-token', twoChat: {}, allowSimulate: true }).listen(0);
   await new Promise((r) => server.once('listening', r));
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -165,6 +165,19 @@ test('http agent: real sources (whatsapp, email) never reach the agent', async (
     // A later simulated message does not carry the real ones in `recent`.
     await s.send('Se cayó el portal');
     assert.deepEqual(s.agent.seen[0].body.recent, []);
+  } finally {
+    s.close();
+  }
+});
+
+test('http agent: with AGENT_WHATSAPP, demo WhatsApp reaches the agent and email still does not', async () => {
+  const s = await start(() => ({ body: classified({ decision: 'wake', categoryId: null }) }), { allowWhatsApp: true });
+  try {
+    const now = new Date().toISOString();
+    await s.guard.ingest({ externalId: 'W1', source: 'whatsapp', sender: 'a', group: 'g', text: 'producción caída', receivedAt: now });
+    await s.guard.ingest({ externalId: 'E1', source: 'email', sender: 'b', text: 'Ticket #1: reseteo de clave', receivedAt: now });
+    assert.equal(s.agent.seen.length, 1);
+    assert.equal(s.agent.seen[0].body.message.source, 'whatsapp');
   } finally {
     s.close();
   }

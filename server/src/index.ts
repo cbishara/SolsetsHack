@@ -23,7 +23,7 @@ const server = createApp(guard, config, whatsapp).listen(config.port, '0.0.0.0',
   console.log(
     `solsets-server · puerto ${config.port} · base ${config.databaseUrl ? 'postgres' : config.localDataFile ? 'archivo local' : 'memoria'} · ` +
       `whatsapp ${whatsapp ? 'Unipile configurado (verificar /api/whatsapp/status)' : config.twoChat.webhookToken ? '2Chat' : 'apagado'} · correo ${config.email ? 'activo' : 'apagado'} · ` +
-      `agente ${config.agent ? `HTTP ${new URL(config.agent.url).host} (solo mensajes simulated)` : 'reemplazo local'}`,
+      `agente ${config.agent ? `HTTP ${new URL(config.agent.url).host} (${config.agent.allowWhatsApp ? 'simulated y whatsapp' : 'solo mensajes simulated'})` : 'reemplazo local'}`,
   );
 });
 for (const signal of ['SIGTERM', 'SIGINT'] as const) process.once(signal, () => {

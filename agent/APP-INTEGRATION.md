@@ -102,6 +102,10 @@ Propuesta por confirmar: `docs/equipo/adr/por-confirmar/2026-10-24-categorias-de
 
 Pruebas: `src/app-categories.test.ts` y `src/integration/server-policy.test.ts`, con runner falso. `scripts/verify-app.ts` ya pide categoría, titular y contexto, pero no se ha corrido con Codex real tras este cambio.
 
+## WhatsApp del número de demo
+
+`/v1/app/classify` acepta `source: whatsapp` solo si el servicio arranca con `AGENT_APP_ALLOW_WHATSAPP=true`. Es para el número de demo del equipo, donde se escriben solo mensajes inventados, y sigue exigiendo `synthetic: true`. El correo y cualquier otro origen se rechazan. Decidido por Quito el 2026-10-24 para probar la demo desde WhatsApp.
+
 ## Persistencia y reintentos
 
 Las funciones son puras respecto del almacenamiento: preparan resultados sin crear tareas, cambiar memoria ni enviar mensajes. IDs derivados del usuario, requestId y contenido evitan colisiones entre usuarios. Esto **no es una caché de inferencia**: repetir HTTP puede gastar otra llamada y variar el texto del modelo. El servidor debe reservar la operación con UUID, persistir y devolver su resultado aceptado, aplicar altas atómicamente y no reintentar inferencias inciertas. El trabajador v0/v1 conserva sus garantías previas; esta entrega no añade estos tipos de trabajo a su cola.

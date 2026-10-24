@@ -77,8 +77,8 @@ function SolButton() {
       scaleTo={0.92}
       style={[styles.fab, { borderColor: p.glassLine }]}
     >
-      <BlurView intensity={Platform.OS === 'ios' ? 40 : 0} tint="dark" style={StyleSheet.absoluteFill} />
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: Platform.OS === 'ios' ? p.tabBar : p.surface }]} />
+      <BlurView intensity={Platform.OS === 'ios' ? 40 : 0} tint="dark" style={[StyleSheet.absoluteFill, { zIndex: -1 }]} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: Platform.OS === 'ios' ? p.tabBar : p.surface, zIndex: -1 }]} />
       <SolOrb size={30} state="watching" />
     </PressScale>
   );

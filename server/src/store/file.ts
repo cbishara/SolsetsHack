@@ -31,8 +31,9 @@ export class FileStore implements Store {
       try {
         for (const line of content.split('\n')) {
           if (!line) continue;
-          const row = JSON.parse(line) as { collection: Collection; id: string; data: unknown };
-          await store.memory.put(row.collection, row.id, row.data);
+          const row = JSON.parse(line) as { collection: Collection; id: string; data?: unknown; deleted?: true };
+          if (row.deleted) await store.memory.remove(row.collection, row.id);
+          else await store.memory.put(row.collection, row.id, row.data);
         }
       } catch { await file.close(); throw new Error('La base local no se pudo leer. Conserva el archivo para recuperarlo.'); }
       return store;
@@ -56,6 +57,15 @@ export class FileStore implements Store {
     });
   }
   put<T>(collection: Collection, id: string, data: T) { return this.mutate(() => this.write(collection, id, data)); }
+  remove(collection: Collection, id: string) {
+    return this.mutate(async () => {
+      if (await this.memory.get(collection, id) === undefined) return false;
+      // Tombstone line: replaying the journal deletes it again.
+      await this.file.appendFile(JSON.stringify({ collection, id, deleted: true }) + '\n');
+      await this.file.sync();
+      return this.memory.remove(collection, id);
+    });
+  }
   async get<T>(collection: Collection, id: string) { await this.queue; return this.memory.get<T>(collection, id); }
   async list<T>(collection: Collection, limit?: number, idPrefix?: string, orderBy?: 'sentAt') { await this.queue; return this.memory.list<T>(collection, limit, idPrefix, orderBy); }
   async close() { await this.queue; await this.file.close(); await unlink(`${this.path}.lock`); }

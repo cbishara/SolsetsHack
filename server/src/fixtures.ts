@@ -1,5 +1,6 @@
 // Synthetic test night for local work without keys. Invented messages only.
 // The full simulated week (with expected decisions) belongs to agent/ (Quito).
+import type { Category } from './contract.ts';
 import type { NewMessage } from './guard.ts';
 
 const night: [string, Omit<NewMessage, 'externalId' | 'receivedAt'>][] = [
@@ -25,3 +26,19 @@ export function syntheticNight(runId = Date.now().toString(36)): NewMessage[] {
     return { ...m, externalId: `sim-${runId}-${i}`, source: 'simulated', receivedAt: d.toISOString() };
   });
 }
+
+/** Synthetic demo categories (same ids as mobile/src/data/fixtures.ts). Seeded once when ALLOW_SIMULATE is on. */
+export const demoCategories: Omit<Category, 'createdAt'>[] = [
+  {
+    id: 'c-incident', name: 'Caída de servicio', color: 'red', icon: 'alert', action: 'alert', wakeAtNight: true, origin: 'sol', status: 'active',
+    description: 'Un sistema que usan clientes o sucursales deja de funcionar: portal, VPN, cajas o el correo de toda la empresa.',
+  },
+  {
+    id: 'c-security', name: 'Seguridad', color: 'pink', icon: 'shield', action: 'alert', wakeAtNight: true, origin: 'sol', status: 'active',
+    description: 'Accesos sospechosos, correos de phishing reportados o cuentas bloqueadas en masa.',
+  },
+  {
+    id: 'c-request', name: 'Solicitudes de usuarios', color: 'blue', icon: 'wrench', action: 'task', wakeAtNight: false, origin: 'sol', status: 'active',
+    description: 'Alguien pide ayuda con su clave, su equipo, una impresora o un acceso.',
+  },
+];

@@ -25,11 +25,11 @@ export function Welcome({ next }: { next: () => void }) {
           <SolOrb size={132} state="calm" />
         </View>
         <View style={{ gap: space.md }}>
-          <T v="eyebrow" tone="muted">Tu asistente para el día y la noche</T>
-          <T accessibilityRole="header" style={[w.big, { color: p.ink }]}>Suelta.</T>
-          <T v="h3" tone="muted">Sol lee tu correo y tu WhatsApp, te ordena el día y cuida tu noche.</T>
+          <T v="calloutStrong" tone="sol">Conoce a Sol, tu asistente</T>
+          <T accessibilityRole="header" style={[w.big, { color: p.ink }]}>Todo lo que te llega, ordenado.</T>
+          <T v="h3" tone="muted">Sol lee tu correo, tu WhatsApp y tu calendario, y lo convierte en un día claro.</T>
           <View style={w.points}>
-            {['Te avisa solo lo urgente', 'Convierte mensajes en tareas con fecha', 'Te deja todo listo antes de dormir'].map((t) => (
+            {['Ordena lo que llega en tus categorías', 'Te avisa solo lo urgente, también de noche', 'Te cierra el día para que puedas desconectarte'].map((t) => (
               <View key={t} style={w.point}>
                 <Check size={17} color={p.calm} strokeWidth={2.6} />
                 <T v="callout" tone="ink">{t}</T>
@@ -49,7 +49,7 @@ export function Welcome({ next }: { next: () => void }) {
 const w = StyleSheet.create({
   page: { flex: 1, paddingHorizontal: space.xl, paddingTop: space.md, paddingBottom: space.md, gap: space.xl, justifyContent: 'space-between', width: '100%', maxWidth: 640, alignSelf: 'center' },
   orb: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 200 },
-  big: { fontFamily: font.bold, fontSize: 64, lineHeight: 68, letterSpacing: -3 },
+  big: { fontFamily: font.bold, fontSize: 40, lineHeight: 44, letterSpacing: -1.6 },
   points: { gap: space.sm, marginTop: space.md },
   point: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
 });
@@ -63,7 +63,6 @@ export function Goals({ nav, draft, setDraft }: { nav: StepNav; draft: Draft; se
   return (
     <StepShell
       {...nav}
-      eyebrow="Lo primero"
       title="¿Qué quieres que Sol haga por ti?"
       lead="Elige todas las que quieras. Con esto ajusto lo que te pregunto y cómo trabajo."
       footer={<Button label={draft.goals.length ? 'Continuar' : 'Elige al menos una'} disabled={!draft.goals.length} onPress={nav.next} />}
@@ -80,7 +79,7 @@ export function Goals({ nav, draft, setDraft }: { nav: StepNav; draft: Draft; se
               onPress={() => { tap(); toggle(g.id); }}
               style={({ pressed }) => [
                 gs.option,
-                { backgroundColor: on ? p.accentSoft : p.card, borderColor: on ? p.accent : p.line },
+                { backgroundColor: on ? `${p.sol}14` : p.card, borderColor: on ? p.sol : p.line },
                 pressed && { opacity: 0.85 },
               ]}
             >
@@ -88,8 +87,8 @@ export function Goals({ nav, draft, setDraft }: { nav: StepNav; draft: Draft; se
                 <T v="bodyStrong">{g.title}</T>
                 <T v="callout" tone="muted">{g.detail}</T>
               </View>
-              <View style={[gs.box, { borderColor: on ? p.accent : p.line, backgroundColor: on ? p.accent : 'transparent' }]}>
-                {on ? <Check size={16} color={p.onAccent} strokeWidth={3} /> : null}
+              <View style={[gs.box, { borderColor: on ? p.sol : p.line, backgroundColor: on ? p.sol : 'transparent' }]}>
+                {on ? <Check size={16} color={p.onSol} strokeWidth={3} /> : null}
               </View>
             </Pressable>
           );
@@ -106,14 +105,10 @@ const gs = StyleSheet.create({
 
 // 3. About ----------------------------------------------------------------
 
-const SAMPLE_ABOUT =
-  'Trabajo en soporte TI con turnos que cambian cada semana. La guardia me llega por un grupo de WhatsApp. Vivo con mi pareja y mi hijo de 6 años. Me cuesta desconectarme en la noche.';
-
 export function About({ nav, draft }: { nav: StepNav; draft: Draft }) {
   const { p } = useTheme();
   const { state, dispatch } = useStore();
   const [text, setText] = useState(state.profile.about && state.onboarded ? state.profile.about : '');
-  const [dictated, setDictated] = useState(false);
 
   const save = () => {
     const about = text.trim();
@@ -140,16 +135,15 @@ export function About({ nav, draft }: { nav: StepNav; draft: Draft }) {
   };
 
   const hint = draft.goals.includes('guardia')
-    ? 'Por ejemplo: a qué te dedicas, cómo son tus turnos, quién te escribe de noche.'
-    : 'Por ejemplo: a qué te dedicas, con quién vives, qué te quita el sueño.';
+    ? 'Por ejemplo: a qué te dedicas, qué cosas no pueden esperar y quién te escribe de noche.'
+    : 'Por ejemplo: a qué te dedicas, quiénes son las personas importantes y qué te quita el sueño.';
 
   return (
     <StepShell
       {...nav}
       onSkip={nav.next}
-      eyebrow="Opcional, 30 segundos"
-      title="Cuéntame un poco de tu vida"
-      lead={`Así no parto de cero. ${hint}`}
+      title="Cuéntame un poco de ti"
+      lead={`Opcional, 30 segundos. Así no parto de cero. ${hint}`}
       footer={<Button label={text.trim() ? 'Guardar y seguir' : 'Seguir sin contar'} kind={text.trim() ? 'primary' : 'secondary'} onPress={save} />}
     >
       <View style={[ab.box, { backgroundColor: p.surface, borderColor: p.line }]}>
@@ -163,18 +157,8 @@ export function About({ nav, draft }: { nav: StepNav; draft: Draft }) {
           accessibilityLabel="Cuéntame de ti"
         />
         <View style={ab.row}>
-          <T v="caption" tone="muted" style={{ flex: 1 }}>
-            {dictated ? 'Transcripción de ejemplo. Puedes corregirla.' : 'Lo guardo en tu memoria. Puedes verla y borrarla cuando quieras.'}
-          </T>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Dictar"
-            onPress={() => { tap('light'); setText(SAMPLE_ABOUT); setDictated(true); }}
-            style={({ pressed }) => [ab.mic, { backgroundColor: p.sol, opacity: pressed ? 0.85 : 1 }]}
-          >
-            <Mic size={20} color={p.onSol} strokeWidth={2.4} />
-            <T v="calloutStrong" tone="onSol">Dictar</T>
-          </Pressable>
+          <Mic size={16} color={p.faint} />
+          <T v="caption" tone="muted" style={{ flex: 1 }}>Puedes dictarlo con el micrófono del teclado. Lo guardo en lo que Sol sabe de ti, y puedes verlo o borrarlo cuando quieras.</T>
         </View>
       </View>
     </StepShell>

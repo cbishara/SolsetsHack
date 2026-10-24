@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-nombre-soltra",
+  "title": "El agente y sus textos visibles dicen Soltra y Sol, no SOL",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "Los textos que el agente muestra o envía a la app dicen Soltra para la app y Sol para el agente. Los identificadores técnicos no cambian.",
+  "before": "El prompt del chat decía «Eres SOL» y la consola del piloto mostraba «SOL · Conversación» y «↗ SOL».",
+  "after": "El prompt dice «Eres Sol», la consola se titula «Soltra · Conversación» y las respuestas aparecen como de Sol. Las variables SOL_*, carpetas y servicios siguen igual.",
+  "reason": "ADR oficial 2026-10-24-la-app-se-llama-soltra y pedido de Bishara en #55.",
+  "checked": "2026-10-24: npm run check en agent/ en verde; tablero build y check en verde. Los registros de cambios anteriores y el traspaso de la voz quedan con SOL por ser históricos.",
+  "availability": "En main tras el PR. El servicio agent de Railway toma los textos en su próximo deploy.",
+  "featureIds": ["feat-quito-descarga"],
+  "flowIds": []
+}

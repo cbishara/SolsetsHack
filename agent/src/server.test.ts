@@ -90,7 +90,7 @@ test('the console and dev routes exist only in dev mode', async () => {
   try {
     const page = await fetch(`${dev.base}/`);
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /SOL · Conversación/);
+    assert.match(await page.text(), /Soltra · Conversación/);
     const tools = await fetch(`${dev.base}/tools`);
     assert.equal(tools.status, 200);
     assert.match(await tools.text(), /Consola del agente/);

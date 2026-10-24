@@ -1,4 +1,4 @@
-# Agente de SOL
+# Agente de Soltra
 
 **Pedido de Bishara #41:** [capacidades para la app y cómo probarlas](./APP-INTEGRATION.md). Incluye descarga a varias tareas, propuestas de reglas/preguntas y agrupación de incidentes para la aceptación sintética. El acoplamiento de estas funciones con las rutas de `server/` sigue a cargo de Amaru.
 
@@ -65,7 +65,7 @@ npm ci
 npm run web -- --port 8081
 ```
 
-Abrir http://localhost:8081. En Ajustes, conectar http://localhost:4181 sin contraseña y entrar a SOL. Es la interfaz del equipo publicada en `main`; este módulo no incluye otro diseño móvil.
+Abrir http://localhost:8081. En Ajustes, conectar http://localhost:4181 sin contraseña y entrar al chat con Sol. Es la interfaz del equipo publicada en `main`; este módulo no incluye otro diseño móvil.
 
 Ejemplo sintético: «Termino mi turno a las 18:00 y prefiero primeros pasos de dos minutos. Mañana debo revisar la impresora». Después: «Corrijo: termino a las 19:00». Revisar Memoria y preguntar otra vez por el horario. El caso queda aislado en una conversación compartida de testing, no en cuentas individuales.
 

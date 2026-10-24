@@ -15,6 +15,10 @@ import { createChat } from './chat.ts';
 import type { Chat } from './chat.ts';
 import { createCodexRunner } from './engines/codex.ts';
 import type { CodexOptions } from './engines/codex.ts';
+import { CapabilityUnavailable, createAppCapabilities } from './app-capabilities.ts';
+import type { AppCapabilities } from './app-capabilities.ts';
+import { createAppClassifier } from './app-classifier.ts';
+import type { AppClassifier } from './app-classifier.ts';
 
 /** Chat settings are independent of the guard classifier's model and effort. */
 export function chatCodexOptions(env: NodeJS.ProcessEnv): CodexOptions {
@@ -51,6 +55,8 @@ export interface ServerOptions {
   chatPassword?: string;
   /** Allowed browser origin for the app's web preview. '*' in dev. */
   corsOrigin?: string;
+  appCapabilities?: AppCapabilities;
+  appClassifier?: AppClassifier;
 }
 
 /** The pilot session the app reads (`sessions[id="demo:web"]`). */
@@ -97,7 +103,7 @@ function chatAuthorized(req: Req, password: string | undefined): boolean {
   return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
-export function createAgentServer({ store, agent, devAgents = {}, token, dev, chat, chatPassword, corsOrigin }: ServerOptions): Server {
+export function createAgentServer({ store, agent, devAgents = {}, token, dev, chat, chatPassword, corsOrigin, appCapabilities, appClassifier }: ServerOptions): Server {
   return createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const path = url.pathname;
@@ -120,6 +126,11 @@ export function createAgentServer({ store, agent, devAgents = {}, token, dev, ch
 
       if (path.startsWith('/v1/')) {
         if (!authorized(req, token)) return send(res, 401, { error: 'Falta el token del agente.' });
+        if (req.method === 'POST' && path.startsWith('/v1/app/')) {
+          if (path === '/v1/app/classify' && appClassifier) return send(res, 200, await appClassifier(await readJson(req)));
+          if (path === '/v1/app/dump' && appCapabilities) return send(res, 200, await appCapabilities.dump(await readJson(req)));
+          if (path === '/v1/app/training' && appCapabilities) return send(res, 200, await appCapabilities.training(await readJson(req)));
+        }
         if (req.method === 'POST' && path === '/v1/classify') {
           const body = (await readJson(req)) as Record<string, unknown>;
           return send(res, 200, await agent.classify(body.message, nightContext(body.context)));
@@ -182,6 +193,7 @@ export function createAgentServer({ store, agent, devAgents = {}, token, dev, ch
       }
       if (error instanceof InputError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
+      if (error instanceof CapabilityUnavailable) return send(res, 503, { error: 'engine_unavailable' });
       console.error(error);
       return send(res, 500, { error: 'Error interno del agente.' });
     }
@@ -222,6 +234,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const server = createAgentServer({
     store, agent: agents[engineName], devAgents: agents, token, dev,
     chat, chatPassword, corsOrigin: process.env.CHAT_CORS_ORIGIN,
+    appCapabilities: createAppCapabilities({ runner: engineName === 'codex' ? createCodexRunner(chatOptions) : null, model: chatOptions.model ?? null }),
+    appClassifier: createAppClassifier({ store, runner: engineName === 'codex' ? createCodexRunner({ bin: process.env.CODEX_BIN, model: process.env.CODEX_MODEL, timeoutMs: Number(process.env.CODEX_TIMEOUT_MS ?? 25_000) }) : null, model: process.env.CODEX_MODEL ?? null }),
   });
   const port = Number(process.env.PORT ?? 4180);
   const host = process.env.HOST ?? (production ? '0.0.0.0' : '127.0.0.1');

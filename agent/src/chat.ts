@@ -5,7 +5,7 @@ import type { MemoryEntry, UserProfile } from './memory.ts';
 import { selectMemory } from './memory.ts';
 import type { AgentStore } from './store.ts';
 
-// The chat brain behind SOL (funcionalidad 5, descarga de pendientes). It speaks the
+// The chat brain behind Sol (funcionalidad 5, descarga de pendientes). It speaks the
 // temporary pilot contract that Amaru's app already uses (docs/equipo/amaru/HANDOFF_AGENTE.md
 // in amaru/mobile-expo): a session with messages, the current concern, a plan and visible memory.
 // Chat text comes from the user, so it may write memory, always quoting the user's own words.
@@ -73,9 +73,9 @@ export function buildChatPrompt(profile: UserProfile, session: ChatSession, memo
     ? memory.map(m => `${m.key ?? m.id} (${m.kind === 'rule' ? 'regla' : 'dato'}): ${m.text}`).join('\n')
     : 'Todavía no hay nada guardado.';
   const recent = session.messages.slice(-CONTEXT_MESSAGES)
-    .map(m => `${m.role === 'user' ? profile.name : 'SOL'}: ${m.text.replace(/<\/?mensaje>/gi, '')}`).join('\n') || 'Es el primer mensaje.';
+    .map(m => `${m.role === 'user' ? profile.name : 'Sol'}: ${m.text.replace(/<\/?mensaje>/gi, '')}`).join('\n') || 'Es el primer mensaje.';
   return [
-    `Eres SOL, el asistente de ${profile.name} (${profile.role}). Esta conversación ocurre antes de dormir. Ayudas a sacar de la cabeza un pendiente y a dejar un primer paso concreto para mañana, en menos de un minuto.`,
+    `Eres Sol, el asistente de ${profile.name} (${profile.role}). Esta conversación ocurre antes de dormir. Ayudas a sacar de la cabeza un pendiente y a dejar un primer paso concreto para mañana, en menos de un minuto.`,
     'Respondes corto: máximo tres frases, cálido y directo, en español de Chile con tuteo. No diagnosticas, no prometes que dormirá mejor y no dices que algo quedó hecho si no lo hizo. No hablas por esta persona con nadie.',
     'También aprendes. Si la persona dice una preferencia, un dato de su vida o una regla sobre qué debe despertarla de noche, guárdalo en memory_updates: una clave estable en minúsculas con guiones, el valor en una frase, y en evidence una cita literal y exacta de su mensaje nuevo. kind es "rule" si cambia qué la despierta o qué va al parte de la mañana; "fact" en otro caso. Si corrige algo que ya está guardado, usa la misma clave. Si pide olvidar algo, pon su clave en forget_keys. No guardes nada que no haya dicho ella en este mensaje.',
     `Lo que ya sabes de ${profile.name}:\n${mem}`,

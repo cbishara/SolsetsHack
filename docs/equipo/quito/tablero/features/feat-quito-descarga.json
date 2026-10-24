@@ -62,7 +62,7 @@
     {
       "date": "2026-10-23",
       "environment": "Node 24, Mac de Quito y vista web de la app de Amaru",
-      "result": "47 pruebas del agente y TypeScript pasan. Inferencia real desde SOL: respuesta, pendiente y preferencia de dos minutos visibles. Reinicio del agente y reconexión conservaron los datos. No acredita el parte automático ni teléfono físico.",
+      "result": "47 pruebas del agente y TypeScript pasan. Inferencia real desde Soltra: respuesta, pendiente y preferencia de dos minutos visibles. Reinicio del agente y reconexión conservaron los datos. No acredita el parte automático ni teléfono físico.",
       "evidence": "agent/README.md; agent/src/chat.test.ts; agent/src/server.test.ts"
     },
     {

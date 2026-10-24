@@ -24,7 +24,7 @@ COPY src ./src
 COPY console ./console
 COPY cases ./cases
 COPY criteria ./criteria
-COPY scripts/start.sh ./scripts/start.sh
+COPY scripts/start.sh scripts/worker.ts ./scripts/
 
 EXPOSE 4180
 HEALTHCHECK --interval=30s --timeout=5s CMD node -e "fetch('http://localhost:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"

@@ -7,10 +7,10 @@
   "productStatus": "acordada",
   "buildStatus": "sin-verificar",
   "availability": "sin-verificar",
-  "updatedAt": "2026-10-23",
+  "updatedAt": "2026-10-24",
   "trigger": "Rodrigo prepara su descanso.",
-  "outcome": "Conoce si su guardia está activa y qué condiciones se aplican; los casos sin respuesta siguen por acordar.",
-  "example": "El calendario ficticio sugiere guardia. Rodrigo confirma sí y revisa qué lo despertaría. Si responde no, queda identificado como sin guardia; la excepción ante una caída grave sigue por confirmar.",
+  "outcome": "Conoce si su guardia está activa, qué lo interrumpiría y cómo preparar el iPhone para una llamada real. Construcción y ensayo físico de esta ampliación pendientes; los casos sin respuesta siguen por acordar.",
+  "example": "El calendario ficticio sugiere guardia. Rodrigo confirma sí y revisa las condiciones de urgencia y la guía para permitir el contacto de llamada durante Descanso. El objetivo acordado es una llamada real a los 3 minutos sin Lo vi; esta ficha no acredita que ya suene. Si responde no, la excepción por caída grave sigue por confirmar.",
   "featureIds": [
     "feat-bishara-calendario",
     "feat-quito-contrato-noche"
@@ -50,7 +50,7 @@
       "kind": "end",
       "actor": "Solsets",
       "title": "Explicar qué lo despertaría",
-      "detail": "Mostrar condiciones y canales acordados para la guardia.",
+      "detail": "Mostrar condiciones de guardia y explicar la preparación del iPhone: permitir contacto de llamada y comprobar sonido. Se acordó llamada real tras 3 minutos sin Lo vi; no afirmar protección sin ensayo. La construcción corresponde a Bishara y Amaru.",
       "x": 1320,
       "y": 0
     },
@@ -102,7 +102,8 @@
   ],
   "questions": [
     "Fallback cuando el turno no se puede leer.",
-    "Vencimiento y modificación de la confirmación."
+    "Vencimiento y modificación de la confirmación.",
+    "¿Qué proveedor y número se usarán y cómo se acreditará en el iPhone la configuración de Descanso y sonido? Coordinación pendiente con Amaru y Bishara."
   ],
   "verification": [],
   "evidence": [
@@ -113,6 +114,10 @@
     {
       "label": "Excepción pendiente: caída grave sin guardia",
       "path": "docs/equipo/adr/por-confirmar/2026-10-23-caida-grave-sin-guardia.md"
+    },
+    {
+      "label": "Acuerdo: llamada real y preparación del iPhone antes de dormir; pendiente de implementación",
+      "path": "docs/equipo/adr/oficiales/2026-10-24-llamada-real-para-despertar.md"
     }
   ]
 }

@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-voz-personaje-y-botones",
+  "title": "Darle personaje y fondo animado a la voz, con botones de la app",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "Quito pide un fondo animado, más personalidad con un animatrónico simple, después algo más neutro y de líneas, y botones planos con animaciones precisas. Elige la opción 05, forma que cambia, alineada a los colores de Bishara, y la confirma como oficial (docs/equipo/adr/oficiales/2026-10-24-controles-de-voz-forma-que-cambia.md). El personaje de líneas y el cielo quedan por confirmar.",
+  "before": "La revisión 02 tenía un círculo fluido sin rostro, un paisaje nocturno estático, iconos Phosphor Duotone y controles con relieve y degradado.",
+  "after": "El cielo se mueve: estrellas que titilan, estrella fugaz ocasional, aurora azul, luna, colinas que se mecen y luciérnagas que se aceleran con la voz. SOL tiene un rostro de líneas dentro del círculo: dos trazos que parpadean, siguen el cursor o el dedo, miran hacia arriba al pensar y quedan horizontales al silenciar, con una antena de trazo fino. Los iconos pasan a Phosphor Light. Los controles usan la opción 05: el botón pasa de círculo a cuadrado suave con un resorte al tocarlo o al silenciar, con los tokens de Soltra de mobile/src/theme/tokens.ts (PR #57): botones casi negros, silenciado en blanco, Terminar en coral, radio 22, tamaño 56, presión a 0,97 en 120 ms y resorte de 400 ms. El micrófono cambia a tachado con un barrido diagonal. Siguen disponibles para comparar los personajes A, B y C y los otros nueve estilos de botones.",
+  "reason": "Quito encontró la revisión 02 sin personalidad. Pidió opciones, eligió la dirección de líneas y la forma que cambia, y pidió alinearla con la app de Bishara para que no sea un sistema visual aparte.",
+  "checked": "33 comprobaciones en Chrome aprobadas sobre la copia local: las 20 de la revisión 02 (la de superficie quieta al silenciar ahora aísla la superficie WebGL, porque el personaje y el cielo siguen respirando a propósito), más rostro y antena, movimiento entre fotogramas, cielo dibujado y animado, gesto por estado, mirada que sigue el cursor, inclinación sin cambiar el tamaño del lienzo WebGL, selector de personaje, movimiento reducido quieto, vista de opciones, ojos de línea, barrido del icono, diez estilos sin cortes en 390 px y colores de la opción 05 iguales a los tokens de Soltra en noche y día. Sin errores JavaScript ni peticiones externas. No es una prueba en Expo, en un teléfono ni una medición de FPS.",
+  "availability": "Fuente en docs/equipo/quito/diseno/voz-sol/ (index.html, orb.tsx, build.mjs). Copia compilada, capturas, GIF y pruebas en .context/voz-sol/ y .context/voz-sol/revision-03/, solo en este Mac. Revisión 02 respaldada en .context/voz-sol/revision-02/. No se modificaron mobile/ ni server/ y no se publicó la rama. Llevarlo a Expo es trabajo de Bishara; los colores ya salen de sus tokens, pero el resorte de forma, el barrido del icono y el rostro animado requieren implementarse y medirse en el teléfono. El cielo y el círculo azules son anteriores a Soltra (negro siempre, color solo para Sol) y su adaptación está planteada en docs/equipo/adr/por-confirmar/2026-10-24-personaje-de-lineas-y-cielo-animado.md.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

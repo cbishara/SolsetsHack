@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-voz-fluida",
+  "title": "Dar movimiento y profundidad a la conversación de voz",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Quito mantiene la dirección azul sobre oscuro y pide una voz más viva, mejores iconos y un fondo temático. La segunda maqueta usa un círculo fluido, iconos Phosphor de dos tonos y un paisaje nocturno de SOL.",
+  "before": "La primera propuesta tenía un círculo dibujado en 2D, iconos básicos y un fondo uniforme. Quito la consideró demasiado plana.",
+  "after": "La maqueta usa ElevenLabs UI Orb adaptado sobre Three.js/React Three Fiber, transiciones Motion e iconos Phosphor Duotone. La superficie responde a la intensidad de voz y queda quieta al silenciar. El fondo incorpora bruma, horizonte y luz discreta; los controles conservan sus funciones con más profundidad visual.",
+  "reason": "Quito pidió mantener la idea y darle vida usando librerías más completas para ondas e iconos, con una ambientación más propia de SOL.",
+  "checked": "20 comprobaciones en Chrome aprobadas: se carga el componente WebGL real, cambia la superficie entre fotogramas y queda quieta al silenciar; siguen funcionando acceso central, interrupción por toque y señal de voz sintética, texto, salida, permiso rechazado, movimiento reducido y ancho 390 px. Sin errores JavaScript ni peticiones a proveedores desde la maqueta. No es una medición de FPS ni una prueba en Expo.",
+  "availability": "Fuente y dependencias aisladas en docs/equipo/quito/diseno/voz-sol/. Copia animada, capturas y GIF locales en .context/voz-sol/. Revisión visual pendiente; no se modificaron mobile/ ni server/, ni se publicó la rama. La adaptación nativa corresponde a Bishara. Continuidad guardada para Opus en docs/equipo/quito/diseno/voz-sol/TRASPASO-OPUS.md, con respaldo local; no cambia el comportamiento de la funcionalidad ni el flujo y no añade aprobación de diseño.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

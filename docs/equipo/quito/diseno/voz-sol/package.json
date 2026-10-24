@@ -1,0 +1,21 @@
+{
+  "name": "sol-voice-design-prototype",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Local voice design prototype; independent of mobile/ and the agent runtime",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@phosphor-icons/core": "2.1.1",
+    "@react-three/fiber": "9.8.2",
+    "motion": "14.6.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

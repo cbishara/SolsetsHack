@@ -22,4 +22,18 @@ fi
 
 "$CODEX_BIN" login status || echo "Codex sin sesión: el chat responderá 'unavailable' y la clasificación caerá a reglas."
 
+# The bridge worker (INTEGRATION.md) runs next to the HTTP agent when it is configured,
+# so server/ jobs reach this Codex session instead of a laptop. It stops on purpose on
+# bad config or auth, so wait before trying again instead of hammering the server.
+if [ -n "${AGENT_WORKER_URL:-}" ]; then
+  export AGENT_WORKER_STATE="${AGENT_WORKER_STATE:-$(dirname "$AGENT_DATA_FILE")/worker.json}"
+  (
+    while true; do
+      node scripts/worker.ts || true
+      echo "El trabajador se detuvo; se reintenta en 30 s."
+      sleep 30
+    done
+  ) &
+fi
+
 exec node src/server.ts

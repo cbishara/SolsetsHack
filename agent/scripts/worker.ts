@@ -15,7 +15,7 @@ try {
   const worker = createWorker({ url, token, workerId, journal, process: processor });
   const controller = new AbortController();
   for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => controller.abort());
-  console.log('Trabajador v0 listo para trabajos sintéticos. Codex permanece en el Mac.');
+  console.log(`Trabajador v0 ${workerId} listo para trabajos sintéticos. Codex corre en esta máquina.`);
   await runWorker(worker, controller.signal, status => console.log(`worker: ${status}`));
 } catch (e) {
   // These are configuration/transport codes only. Provider errors are mapped to fixed failure codes.

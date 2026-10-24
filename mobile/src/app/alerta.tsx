@@ -9,6 +9,7 @@ import { SolOrb } from '../components/sol-orb';
 import { CategoryTag, GlowBackdrop, PressScale, T, tap } from '../components/ui';
 import { cap, longDate, timeOf } from '../data/dates';
 import { categoryById } from '../data/select';
+import { useBackend } from '../api/backend';
 import { useStore } from '../data/store';
 import { alertPalette as a } from '../features/digest/palettes';
 import { font, radius, space } from '../theme/tokens';
@@ -19,8 +20,9 @@ import { font, radius, space } from '../theme/tokens';
  * what happens if they do not act. Always night-styled.
  */
 export default function Alerta() {
-  const { id, demo } = useLocalSearchParams<{ id?: string; demo?: string }>();
+  const { id, demo, alert: alertParam } = useLocalSearchParams<{ id?: string; demo?: string; alert?: string }>();
   const { state, dispatch } = useStore();
+  const backend = useBackend();
   const item = state.items.find((i) => i.id === id)
     ?? state.items.find((i) => i.outcome.kind === 'alerted')
     ?? state.items[0];
@@ -28,6 +30,8 @@ export default function Alerta() {
   const callAfter = state.nightAlerts.call ? state.nightAlerts.callAfterMin * 60 : 0;
   const [left, setLeft] = useState(callAfter);
   const [seen, setSeen] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!item) return;
@@ -40,7 +44,23 @@ export default function Alerta() {
   if (!item) return null;
 
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
-  const ack = () => {
+  const alertId = alertParam ?? item.alertId;
+  const ack = async () => {
+    if (sending) return;
+    setFailed(false);
+    // With a server alert, success shows only once server/ confirms; otherwise nothing escalates anyway.
+    if (alertId && !demo) {
+      setSending(true);
+      try {
+        await backend.alertSeen(alertId);
+      } catch {
+        setSending(false);
+        setFailed(true);
+        tap('warning');
+        return;
+      }
+      setSending(false);
+    }
     tap('success');
     setSeen(true);
     if (!demo) dispatch({ type: 'updateItem', id: item.id, patch: { read: true, outcome: { kind: 'alerted', seenAt: new Date().toISOString() } } });
@@ -92,10 +112,11 @@ export default function Alerta() {
         <View style={{ flex: 1, minHeight: space.xxl }} />
 
         <View style={{ gap: space.md }}>
-          <PressScale accessibilityRole="button" accessibilityLabel="Lo vi" onPress={ack}
-            style={[s.seen, { backgroundColor: seen ? a.calm : a.ink, transitionProperty: 'backgroundColor', transitionDuration: 200 } as ViewStyle]}>
-            <Text style={s.seenText}>{seen ? 'Listo, quedó registrado' : 'Lo vi'}</Text>
+          <PressScale accessibilityRole="button" accessibilityLabel={failed ? 'Reintentar' : 'Lo vi'} onPress={() => void ack()} disabled={sending}
+            style={[s.seen, { backgroundColor: seen ? a.calm : a.ink, opacity: sending ? 0.7 : 1, transitionProperty: 'backgroundColor', transitionDuration: 200 } as ViewStyle]}>
+            <Text style={s.seenText}>{seen ? 'Listo, quedó registrado' : sending ? 'Avisando a Sol…' : failed ? 'Reintentar' : 'Lo vi'}</Text>
           </PressScale>
+          {failed ? <T v="callout" style={{ color: a.urgent, textAlign: 'center' }}>No pude confirmarlo con el servidor. Si no se confirma, te voy a llamar. Toca de nuevo para reintentar.</T> : null}
           <Pressable accessibilityRole="button" onPress={() => { tap(); router.replace(`/entrada/${item.id}`); }}
             style={({ pressed }) => [s.secondary, { borderColor: a.line, opacity: pressed ? 0.7 : 1 }]}>
             <T v="bodyStrong" style={{ color: a.ink }}>Abrir el detalle</T>

@@ -64,6 +64,7 @@ export function toItem(v: ServerVerdict, categories: Category[] = []): Item {
     night: { decision: v.decision, wouldWake: v.wouldWake, reason: v.reason },
     read: false,
     remote: true,
+    alertId: v.alertId,
   };
 }
 

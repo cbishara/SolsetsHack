@@ -23,6 +23,8 @@ export type ServerVerdict = {
   confidence: number;
   incidentKey: string;
   wouldWake: boolean;
+  /** Present when server/ raised an alert for this verdict (requested in #60). */
+  alertId?: string;
   why: 'urgent' | 'new' | 'low_confidence' | 'duplicate' | 'off_duty' | 'not_urgent';
   message: ServerMessage;
 };

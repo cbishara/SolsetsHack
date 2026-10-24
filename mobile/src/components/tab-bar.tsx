@@ -1,11 +1,13 @@
 import { router, type Tabs } from 'expo-router';
-import { CalendarDays, CircleUserRound, House, ListChecks, Sun, type LucideIcon } from 'lucide-react-native';
+import { CalendarDays, CircleUserRound, House, ListChecks, type LucideIcon } from 'lucide-react-native';
+import { BlurView } from 'expo-blur';
 import type { ComponentProps } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/theme';
 import { radius, size, space } from '../theme/tokens';
-import { tap, T } from './ui';
+import { SolOrb } from './sol-orb';
+import { PressScale, tap, T } from './ui';
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -21,10 +23,12 @@ export function TabBar({ state, navigateToTab }: TabBarProps) {
   const insets = useSafeAreaInsets();
   const current = state.routes[state.index]?.name;
 
+  // Floating glass capsule, as in Opal. Tabs switch instantly: they are peers.
   return (
-    <View pointerEvents="box-none">
-      <SolButton bottom={size.tabBar + Math.max(insets.bottom, space.sm) + space.md} />
-      <View style={[styles.bar, { backgroundColor: p.tabBar, borderTopColor: p.line, paddingBottom: Math.max(insets.bottom, space.sm) }]}>
+    <View pointerEvents="box-none" style={[styles.wrap, { paddingBottom: Math.max(insets.bottom - space.xs, space.md) }]}>
+      <View style={[styles.bar, { borderColor: p.line }]}>
+        <BlurView intensity={Platform.OS === 'ios' ? 40 : 0} tint="dark" style={StyleSheet.absoluteFill} />
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: Platform.OS === 'ios' ? p.tabBar : p.surface }]} />
         {TABS.map(({ name, label, icon: Icon }) => {
           const active = current === name;
           return (
@@ -34,56 +38,55 @@ export function TabBar({ state, navigateToTab }: TabBarProps) {
               accessibilityLabel={label}
               accessibilityState={{ selected: active }}
               onPress={() => {
-                tap();
                 const route = state.routes.find((r) => r.name === name);
-                if (route && !active) navigateToTab(route.key);
+                if (route && !active) { tap(); navigateToTab(route.key); }
               }}
-              style={styles.tab}
+              style={[styles.tab, active && { backgroundColor: p.accentSoft }]}
             >
-              <View style={[styles.pill, active && { backgroundColor: p.accentSoft }]}>
-                <Icon size={22} color={active ? p.accent : p.muted} strokeWidth={active ? 2.4 : 2} />
-              </View>
-              <T v="caption" style={{ color: active ? p.accent : p.muted }}>{label}</T>
+              <Icon size={21} color={active ? p.ink : p.faint} strokeWidth={active ? 2.3 : 2} />
+              <T v="caption" style={{ color: active ? p.ink : p.faint, fontSize: 11, lineHeight: 14 }}>{label}</T>
             </Pressable>
           );
         })}
       </View>
+      <SolButton />
     </View>
   );
 }
 
 /**
- * Sol, the agent. Always one tap away, bottom right. Tap to talk or write;
+ * Sol, the agent. Always one tap away, next to the tabs. Tap to talk or write;
  * hold to dictate right away: the lowest-friction way to drop a to-do.
  */
-function SolButton({ bottom }: { bottom: number }) {
+function SolButton() {
   const { p } = useTheme();
   return (
-    <Pressable
+    <PressScale
       accessibilityRole="button"
       accessibilityLabel="Hablar con Sol"
       accessibilityHint="Mantén presionado para dictar"
       onPress={() => { tap('light'); router.push('/sol'); }}
       onLongPress={() => { tap('success'); router.push({ pathname: '/sol', params: { voice: '1' } }); }}
       delayLongPress={300}
-      style={({ pressed }) => [
-        styles.fab,
-        { bottom, backgroundColor: p.lime, shadowColor: p.scheme === 'night' ? '#000' : '#1B3FB8' },
-        pressed && { transform: [{ scale: 0.94 }] },
-      ]}
+      scaleTo={0.92}
+      style={[styles.fab, { borderColor: p.line, backgroundColor: p.surface }]}
     >
-      <Sun size={26} color={p.onLime} strokeWidth={2.4} />
-    </Pressable>
+      <SolOrb size={26} state="watching" />
+    </PressScale>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth, paddingTop: space.sm },
-  tab: { flex: 1, alignItems: 'center', gap: 2, minHeight: size.target },
-  pill: { width: 56, height: 30, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
+  wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', gap: space.sm, paddingHorizontal: space.lg },
+  bar: {
+    flex: 1, flexDirection: 'row', height: size.tabBar, borderRadius: radius.pill, borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden', padding: 5, gap: 2,
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+  },
+  tab: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 2, borderRadius: radius.pill },
   fab: {
-    position: 'absolute', right: space.xl, width: size.fab, height: size.fab, borderRadius: radius.pill,
-    alignItems: 'center', justifyContent: 'center', zIndex: 10,
-    shadowOpacity: 0.22, shadowRadius: 14, shadowOffset: { width: 0, height: 6 }, elevation: 6,
+    width: size.tabBar, height: size.tabBar, borderRadius: radius.pill, borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
   },
 });

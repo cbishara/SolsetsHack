@@ -65,7 +65,7 @@ export default function ResumenNoche() {
         <Card>
           <WeekStrip selected={keyOf(new Date())} onSelect={() => router.navigate('/agenda')} shifts={shifts} busy={busy} />
           <View style={s.legend}>
-            <View style={[s.dot, { backgroundColor: p.lime }]} />
+            <View style={[s.dot, { backgroundColor: p.sol }]} />
             <T v="caption" tone="muted">Guardia de noche</T>
             <View style={[s.dot, { backgroundColor: p.accent, marginLeft: space.md }]} />
             <T v="caption" tone="muted">Eventos</T>
@@ -84,7 +84,7 @@ export default function ResumenNoche() {
       <Hero>
         {guard ? (
           <>
-            <View style={s.inline}><ShieldCheck size={20} color={p.lime} /><T v="eyebrow" tone="onHeroMuted">Esta noche estoy de guardia</T></View>
+            <View style={s.inline}><ShieldCheck size={20} color={p.sol} /><T v="eyebrow" tone="onHeroMuted">Esta noche estoy de guardia</T></View>
             <T v="h2" tone="onHero">
               Vigilo tus {watched.length} chats de guardia y tu correo. Te despierto solo si:
             </T>
@@ -92,7 +92,7 @@ export default function ResumenNoche() {
             <View style={{ gap: space.sm }}>
               {wakeRules.map((r) => (
                 <View key={r.id} style={s.inline}>
-                  <View style={[s.bullet, { backgroundColor: p.lime }]} />
+                  <View style={[s.bullet, { backgroundColor: p.sol }]} />
                   <T v="callout" tone="onHero" style={{ flex: 1 }}>{r.text}</T>
                 </View>
               ))}
@@ -111,7 +111,7 @@ export default function ResumenNoche() {
           </>
         ) : (
           <>
-            <View style={s.inline}><MoonStar size={20} color={p.lime} /><T v="eyebrow" tone="onHeroMuted">Esta noche</T></View>
+            <View style={s.inline}><MoonStar size={20} color={p.sol} /><T v="eyebrow" tone="onHeroMuted">Esta noche</T></View>
             <T v="h2" tone="onHero">No te voy a despertar.</T>
             <T tone="onHeroMuted">Sigo leyendo lo que llega y lo ordeno. Mañana a las {state.profile.morningAt} te dejo el resumen.</T>
           </>
@@ -119,7 +119,7 @@ export default function ResumenNoche() {
       </Hero>
 
       <View style={{ gap: space.md }}>
-        <Button kind="lime" label="Listo, a descansar" onPress={() => router.back()} />
+        <Button kind="primary" label="Listo, a descansar" onPress={() => router.back()} />
         {!guard && onCall ? null : (
           <Button kind="ghost" label={onCall ? 'Cambiar: esta noche no me toca' : '¿Te toca guardia? Confírmalo'} onPress={() => router.push('/guardia')} />
         )}

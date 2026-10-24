@@ -57,8 +57,8 @@ export default function Guardia() {
       </View>
 
       <View style={{ gap: space.md }}>
-        <Button kind={suggested === false ? 'secondary' : 'lime'} label="Sí, me toca" onPress={() => answer(true)} />
-        <Button kind={suggested === false ? 'lime' : 'secondary'} label="No, esta noche no" onPress={() => answer(false)} />
+        <Button kind={suggested === false ? 'secondary' : 'primary'} label="Sí, me toca" onPress={() => answer(true)} />
+        <Button kind={suggested === false ? 'primary' : 'secondary'} label="No, esta noche no" onPress={() => answer(false)} />
       </View>
 
       <Section eyebrow="Si dices que sí" title="Te despierto solo por esto">

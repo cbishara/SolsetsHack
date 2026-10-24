@@ -22,7 +22,7 @@ function TimelineRow({ item, last }: { item: DayItem; last: boolean }) {
   const { p } = useTheme();
   const time = item.kind === 'task' ? item.time : item.start;
   const end = item.kind === 'task' ? undefined : item.end;
-  const nodeColor = item.kind === 'shift' && item.onCall ? p.lime : item.kind === 'task' ? p.faint : p.accent;
+  const nodeColor = item.kind === 'shift' && item.onCall ? p.sol : item.kind === 'task' ? p.faint : p.accent;
 
   return (
     <View style={s.row}>
@@ -48,8 +48,8 @@ function ShiftBlock({ item }: { item: Extract<DayItem, { kind: 'shift' }> }) {
     <View style={[s.block, { backgroundColor: item.onCall ? p.surface : p.card, borderColor: p.line }]}
       accessibilityLabel={`${item.title}, de ${item.start} a ${item.end}. ${item.detail}`}>
       <View style={s.blockHead}>
-        <View style={[s.icon, { backgroundColor: item.onCall ? p.lime : p.accentSoft }]}>
-          <Icon size={16} color={item.onCall ? p.onLime : p.accent} strokeWidth={2.4} />
+        <View style={[s.icon, { backgroundColor: item.onCall ? p.sol : p.accentSoft }]}>
+          <Icon size={16} color={item.onCall ? p.onSol : p.accent} strokeWidth={2.4} />
         </View>
         <View style={{ flex: 1, gap: 2 }}>
           <T v="bodyStrong">{item.title}</T>

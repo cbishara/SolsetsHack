@@ -1,4 +1,4 @@
-# SOL en el teléfono
+# Soltra en el teléfono
 
 > Diseño y evolución móvil transferidos a Bishara por instrucción expresa de Amaru. [Traspaso completo](../docs/equipo/amaru/TRASPASO_BISHARA.md). Esta rama conserva la base que entregaron los agentes locales de Amaru.
 
@@ -14,7 +14,7 @@ npm start
 
 Mac y iPhone en la misma Wi-Fi. Escanear el QR con la cámara del iPhone y abrir Expo Go. Si Expo Go pide iniciar sesión, usar la misma cuenta Expo en el CLI y el teléfono. El SDK de Expo Go debe coincidir con 58. La app arranca sin claves con ejemplos locales.
 
-Dirección vigente: **Mi espacio `/demo?caso=personal`**, blanco, azul y amarillo lima. Amaru pidió reemplazar la interpretación Ocaso. Pantallas y criterios en [DISENO_MOBILE.md](../docs/equipo/amaru/DISENO_MOBILE.md).
+Dirección vigente: **negro siempre, inspirada en Opal** (ADR `2026-10-24-soltra-negro-inspirado-en-opal`). Interfaz monocroma, botones blancos, color solo para Sol y para los estados tranquilo y urgente. Tokens en `src/theme/tokens.ts`; Sol (el avatar) en `src/components/sol-orb.tsx`. Mi espacio de Amaru (blanco, azul y lima) quedó reemplazado.
 
 Recorrido: **Mi espacio** → **Hablemos** → escribir un pendiente ficticio → revisar el primer paso en **Pendientes** → guardar una preferencia en **Memoria** → volver al chat. Cerrar/reabrir conserva la información local y el borrador. El piloto muestra un pendiente actual; no afirmar que existe una lista de tareas sincronizada.
 
@@ -92,7 +92,7 @@ SOL_SCREEN_TIME=1 npm run start:native
 
 El operador debe completar firma, registro del iPhone y Developer Mode. Para distribución/TestFlight se debe solicitar la aprobación Family Controls de Apple para la app y cada extensión. La existencia de código o un prebuild correcto no demuestra aprobación ni funcionamiento.
 
-Prueba física pendiente: elegir una app de ocio → iniciar pausa → comprobar su pantalla bloqueada → cerrar SOL → comprobar que continúa → esperar el fin y comprobar desbloqueo → probar finalización manual y revocar permiso. Mantener disponibles SOL y los canales de guardia. Android puede ejecutar la interfaz y el chat; no tiene bloqueo de apps implementado.
+Prueba física pendiente: elegir una app de ocio → iniciar pausa → comprobar su pantalla bloqueada → cerrar Soltra → comprobar que continúa → esperar el fin y comprobar desbloqueo → probar finalización manual y revocar permiso. Mantener disponibles Soltra y los canales de guardia. Android puede ejecutar la interfaz y el chat; no tiene bloqueo de apps implementado.
 
 ## Verificación reproducible
 

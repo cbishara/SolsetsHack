@@ -41,7 +41,7 @@ export function WeekStrip({ selected, onSelect, shifts, busy = {} }: {
               <T v="bodyStrong" style={{ color: isSel ? p.onAccent : p.ink, fontVariant: ['tabular-nums'] }}>{d.getDate()}</T>
             </View>
             <View style={s.dots}>
-              {shift?.onCall ? <View style={[s.dot, { backgroundColor: p.lime, borderColor: p.scheme === 'day' ? '#C8D600' : 'transparent', borderWidth: p.scheme === 'day' ? 1 : 0 }]} /> : null}
+              {shift?.onCall ? <View style={[s.dot, { backgroundColor: p.sol, borderColor: "transparent", borderWidth: p.scheme === 'day' ? 1 : 0 }]} /> : null}
               {busy[key] ? <View style={[s.dot, { backgroundColor: p.accent }]} /> : null}
             </View>
           </Pressable>

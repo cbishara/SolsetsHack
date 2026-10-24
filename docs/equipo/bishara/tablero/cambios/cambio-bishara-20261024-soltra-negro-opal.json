@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-soltra-negro-opal",
+  "title": "La app pasa a llamarse Soltra y a verse negra, inspirada en Opal, con Sol como avatar",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "Refresh visual completo de mobile/ sin tocar pantallas una por una: tokens nuevos, componentes base con presión animada, barra de pestañas flotante y Sol como una luz que muestra el estado de la guardia.",
+  "before": "La app se llamaba SOL, su logo decía solsets y usaba el sistema Mi espacio: fondo blanco de día, azul saturado y lima eléctrico.",
+  "after": "La app se llama Soltra y es negra siempre: interfaz monocroma, botones blancos en cápsula, color solo para Sol, tranquilo y urgente. Sol aparece en la bienvenida, el inicio, la barra, el chat, la alerta y WhatsApp.",
+  "reason": "La primera versión no se sentía nativa ni transmitía calma. El producto vende tranquilidad, y de noche una pantalla blanca encandila.",
+  "checked": "TypeScript y 19 pruebas pasan. Export web revisado en 9 pantallas a 390 pt de ancho. Falta probar en un iPhone la sensación de la presión, la barra con desenfoque y la respiración de Sol.",
+  "availability": "Rama bishara/soltra-diseno. ADR oficiales: 2026-10-24-la-app-se-llama-soltra y 2026-10-24-soltra-negro-inspirado-en-opal.",
+  "featureIds": [],
+  "flowIds": []
+}

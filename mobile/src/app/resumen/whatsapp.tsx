@@ -1,8 +1,9 @@
-import { CheckCheck, Mic, Play, Reply, Sun } from 'lucide-react-native';
+import { CheckCheck, Mic, Play, Reply } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Header } from '../../components/header';
+import { SolOrb } from '../../components/sol-orb';
 import { Chip, T } from '../../components/ui';
 import { keyOf } from '../../components/week-strip';
 import { dumpToTasks } from '../../data/dump';
@@ -81,7 +82,8 @@ export default function WhatsAppPreview() {
       </View>
 
       <View style={[s.chatBar, { backgroundColor: w.bar, borderBottomColor: w.divider }]}>
-        <View style={[s.avatar, { backgroundColor: '#E4F51A' }]}><Sun size={20} color="#151B2E" strokeWidth={2.4} /></View>
+        {/* Sol's WhatsApp profile photo: the avatar on black. */}
+        <View style={[s.avatar, { backgroundColor: '#000000', overflow: 'hidden' }]}><SolOrb size={20} state="watching" /></View>
         <View style={{ flex: 1 }}>
           <Text style={[s.chatName, { color: w.barInk }]}>Sol</Text>
           <Text style={[s.chatSub, { color: w.barMuted }]}>tu asistente · cuenta de empresa</Text>

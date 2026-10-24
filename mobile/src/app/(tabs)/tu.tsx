@@ -29,8 +29,8 @@ export default function Tu() {
 
       <Hero>
         <View style={s.profileHead}>
-          <View style={[s.avatar, { backgroundColor: p.lime }]}>
-            <T v="h2" tone="onLime">{profile.name.charAt(0)}</T>
+          <View style={[s.avatar, { backgroundColor: p.surface, borderColor: p.line, borderWidth: StyleSheet.hairlineWidth }]}>
+            <T v="h2" tone="ink">{profile.name.charAt(0)}</T>
           </View>
           <View style={{ flex: 1 }}>
             <T v="h2" tone="onHero">{profile.name}</T>

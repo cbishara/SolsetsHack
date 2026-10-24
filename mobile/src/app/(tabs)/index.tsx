@@ -1,6 +1,7 @@
 import { DataBadge } from '../../features/backend/data-badge';
 import { View } from 'react-native';
 import { Wordmark } from '../../components/brand';
+import { SolOrb } from '../../components/sol-orb';
 import { Badge, Screen, T } from '../../components/ui';
 import { useStore } from '../../data/store';
 import { EveningCard, Important, MorningHero, Watching, Week } from '../../features/today/day-sections';
@@ -24,7 +25,7 @@ export default function Hoy() {
   const need = state.tasks.filter((t) => t.important && !t.done).length;
 
   return (
-    <Screen>
+    <Screen glow={moment === 'night' ? 'sol' : 'neutral'}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Wordmark size={22} />
         <DataBadge />
@@ -34,7 +35,8 @@ export default function Hoy() {
         <NightView name={state.profile.name} />
       ) : (
         <>
-          <View style={{ gap: space.xs }}>
+          <SolOrb size={64} state="watching" style={{ alignSelf: 'flex-start', marginLeft: -30, marginVertical: -30 }} />
+          <View style={{ gap: space.xs, marginTop: -space.lg }}>
             <T v="title" accessibilityRole="header">{greeting()}, {state.profile.name}</T>
             <T tone="muted">
               Revisé {REVIEWED_TODAY} mensajes hoy.{' '}

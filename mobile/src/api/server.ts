@@ -1,4 +1,4 @@
-// Typed client for the SOL server (server/, contract v0 in issue #7 and the
+// Typed client for the Soltra server (server/, contract v0 in issue #7 and the
 // WhatsApp routes of PR #23). The app talks only to server/, never directly to
 // agent/ (agreement in issue #30).
 

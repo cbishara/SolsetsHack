@@ -27,7 +27,7 @@ export default function SolWhatsapp() {
 
       <Card tone="surface">
         <View style={s.contact}>
-          <View style={[s.icon, { backgroundColor: p.lime }]}><Smartphone size={20} color={p.onLime} strokeWidth={2.2} /></View>
+          <View style={[s.icon, { backgroundColor: p.sol }]}><Smartphone size={20} color={p.onSol} strokeWidth={2.2} /></View>
           <View style={{ flex: 1, gap: 2 }}>
             <T v="bodyStrong">Sol</T>
             <T v="callout" tone="muted">+56 9 0000 0000 · número de demo</T>

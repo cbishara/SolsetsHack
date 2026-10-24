@@ -1,18 +1,15 @@
-import { ArrowUpRight } from 'lucide-react-native';
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Defs, G, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import Svg, { Defs, G, LinearGradient, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useTheme } from '../theme/theme';
 import { font, radius, space } from '../theme/tokens';
 import { T } from './ui';
 
-/** "solsets ↗" wordmark, as in Amaru's prototype. */
+/** "Soltra" wordmark: bold, tight, white. The name is the mark; no icon beside it. */
 export function Wordmark({ size = 24 }: { size?: number }) {
-  const { p } = useTheme();
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }} accessibilityRole="header" accessibilityLabel="Solsets">
-      <T v="h2" style={{ fontFamily: font.semibold, fontSize: size, lineHeight: size * 1.15, letterSpacing: -size * 0.055 }}>solsets</T>
-      <ArrowUpRight size={size * 0.95} color={p.accent} strokeWidth={2.4} />
+    <View accessibilityRole="header" accessibilityLabel="Soltra">
+      <T v="h2" style={{ fontFamily: font.bold, fontSize: size, lineHeight: size * 1.15, letterSpacing: -size * 0.045 }}>Soltra</T>
     </View>
   );
 }
@@ -43,26 +40,34 @@ export function ArrowField({ color, opacity = 0.18, cell = 22, rows, cols }: { c
   );
 }
 
-/** The blue hero card. In night mode it becomes deep blue and quieter. */
+/**
+ * The hero card: barely lifted off black, a hairline edge and a faint warm
+ * light in the corner where Sol would be. Quieter still at night.
+ */
 export function Hero({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const { p } = useTheme();
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, ''); // SVG ids are global on web
   return (
-    <View style={[styles.hero, style]}>
+    <View style={[styles.hero, { borderColor: p.line }, style]}>
       <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" preserveAspectRatio="none">
         <Defs>
-          <LinearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+          <LinearGradient id={`hero${uid}`} x1="0" y1="0" x2="1" y2="1">
             <Stop offset="0" stopColor={p.hero[0]} />
             <Stop offset="1" stopColor={p.hero[1]} />
           </LinearGradient>
+          <RadialGradient id={`heroLight${uid}`} cx="100%" cy="0%" rx="70%" ry="80%">
+            <Stop offset="0" stopColor={p.sol} stopOpacity={p.scheme === 'night' ? 0.1 : 0.14} />
+            <Stop offset="1" stopColor={p.sol} stopOpacity={0} />
+          </RadialGradient>
         </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#hero)" />
+        <Rect x="0" y="0" width="100%" height="100%" fill={`url(#hero${uid})`} />
+        <Rect x="0" y="0" width="100%" height="100%" fill={`url(#heroLight${uid})`} />
       </Svg>
-      <ArrowField color={p.onHero} opacity={p.scheme === 'night' ? 0.06 : 0.13} />
       <View style={{ gap: space.md }}>{children}</View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: { borderRadius: radius.xl, borderCurve: 'continuous', padding: space.xxl, overflow: 'hidden', gap: space.md },
+  hero: { borderRadius: radius.xl, borderCurve: 'continuous', padding: space.xxl, overflow: 'hidden', gap: space.md, borderWidth: StyleSheet.hairlineWidth },
 });

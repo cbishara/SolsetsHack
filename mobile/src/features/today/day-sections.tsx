@@ -11,7 +11,7 @@ import { space } from '../../theme/tokens';
 import { TaskRow } from '../tasks/task-row';
 import { ago, hhmm } from './moment';
 
-/** Morning: the summary is ready. The one lime action of the screen. */
+/** Morning: the summary is ready. The one primary action of the screen. */
 export function MorningHero() {
   const { lastNight } = useStore();
   const woke = lastNight.filter((h) => h.wouldWake).length;
@@ -23,7 +23,7 @@ export function MorningHero() {
       <T tone="onHeroMuted">
         Anoche te desperté {woke === 1 ? '1 vez' : `${woke} veces`}. Lo demás te esperó: {waited} cosas quedaron como tareas.
       </T>
-      <Button kind="lime" label="Ver el resumen" onPress={() => router.push('/resumen/manana')} style={{ alignSelf: 'flex-start', marginTop: space.xs }} />
+      <Button kind="primary" label="Ver el resumen" onPress={() => router.push('/resumen/manana')} style={{ alignSelf: 'flex-start', marginTop: space.xs }} />
     </Hero>
   );
 }

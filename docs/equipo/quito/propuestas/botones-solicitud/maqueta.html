@@ -1,0 +1,27 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0}body{font-family:"Inter Tight",system-ui,sans-serif;background:#000;padding:30px 26px;display:grid;grid-template-columns:repeat(3,330px);gap:22px}
+.card{position:relative;background:rgba(30,30,33,.56);border:1px solid rgba(255,255,255,.10);border-radius:22px;padding:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.card.sol{background:radial-gradient(120% 90% at 0% 0%,rgba(255,149,72,.22),rgba(59,20,7,.35) 45%,rgba(13,13,15,.9) 80%);border-color:rgba(255,149,72,.35)}
+.hd{display:flex;align-items:center;gap:10px}.av{width:34px;height:34px;border-radius:999px;display:grid;place-items:center;background:#161618}
+.sol .av{background:radial-gradient(circle at 40% 35%,#FFD3A1,#FF9548 55%,#D9531C)}
+.k{font-size:11.5px;font-weight:600;letter-spacing:1px;color:#BCBBC0;text-transform:uppercase}.h{margin-left:auto;font-size:12px;color:#7A7980}
+.t{color:#fff;font-size:15px;line-height:21px;margin:10px 2px 14px;font-weight:500}
+.pri{height:52px;border-radius:999px;background:#fff;color:#000;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;animation:breathe 2.8s ease-in-out infinite}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(255,149,72,.55),0 0 18px 0 rgba(255,149,72,.0)}50%{box-shadow:0 0 0 8px rgba(255,149,72,0),0 0 26px 2px rgba(255,149,72,.35)}}
+.sol .pri{background:#FF9548;color:#1F0B02}
+.two{display:flex;gap:8px;margin-top:9px}.two div{flex:1;height:44px;border-radius:999px;background:#161618;border:1px solid rgba(255,255,255,.08);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;gap:7px}
+.two .neg{background:rgba(255,123,114,.14);border-color:transparent;color:#FF7B72}
+svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.av svg{stroke:#fff}.sol .av svg{stroke:#1F0B02}
+</style><body><script>
+const I={check:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',x:'<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 10h18"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',play:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z"/>',min:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',bell:'<path d="M6 9a6 6 0 0 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10 20h4"/>',moon:'<path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"/>',trash:'<path d="M6 7l1 13h10l1-13z"/><path d="M4 7h16M9 7V4h6v3"/>',siren:'<path d="M7 18v-6a5 5 0 0 1 10 0v6M5 21h14M12 3v2"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',list:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/>',flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',ask:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/>',star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'};
+const s=n=>`<svg viewBox="0 0 24 24">${I[n]}</svg>`;
+const T=[['sol','siren','Solicitud urgente','02:14','Se cayó el servidor de facturación. Es nuevo y nadie lo ha tomado.',['check','Atender ahora'],[['clock','En 10 min'],['x','Falsa alarma','neg']]],
+['','sun','Parte de la mañana','07:30','3 avisos quedaron para hoy. El primero es la impresora del 2º piso.',['play','Resolver ahora'],[['cal','Reprogramar'],['user','Delegar']]],
+['','list','Pendientes anotados','Ahora','Dentista el martes 10:00, pagar la luz el viernes y comprar pan hoy.',['check','Confirmar 3 tareas'],[['edit','Editar fechas'],['trash','Descartar','neg']]],
+['','flag','Primer paso','5 min','Revisa si la impresora muestra un error y prueba imprimir una página.',['play','Comenzar'],[['min','Reducir el paso'],['clock','Posponer']]],
+['','ask','Soltra pregunta','Ahora','Los avisos de la VPN siempre se resuelven solos. Los dejo para el parte de la mañana?',['check','Confirmar'],[['edit','Corregir'],['x','Rechazar','neg']]],
+['','star','Evalúa la decisión','03:12','Anoche te desperté por la caída del portal.',['check','Decisión correcta'],[['bell','Debió despertarme'],['moon','No debió']]]];
+document.body.innerHTML=T.map(([cl,ic,k,h,t,p,two])=>`<div class="card ${cl}"><div class="hd"><div class="av">${s(ic)}</div><div class="k">${k}</div><div class="h">${h}</div></div><div class="t">${t}</div><div class="pri">${s(p[0])}${p[1]}</div><div class="two">${two.map(([i,l,n])=>`<div class="${n||''}">${s(i)}${l}</div>`).join('')}</div></div>`).join('');
+const tt=+new URLSearchParams(location.search).get('t')||0;document.getAnimations().forEach(a=>{a.pause();a.currentTime=tt});
+</script></body></html>

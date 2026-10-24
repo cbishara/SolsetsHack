@@ -29,6 +29,9 @@ if [ -n "${AGENT_WORKER_URL:-}" ]; then
   # Each protocol version keeps its own outbox, as scripts/worker.ts does locally.
   case "${AGENT_WORKER_VERSION:-v0}" in v1) outbox=worker-v1.json ;; *) outbox=worker.json ;; esac
   export AGENT_WORKER_STATE="${AGENT_WORKER_STATE:-$(dirname "$AGENT_DATA_FILE")/$outbox}"
+  # Railway never mounts a volume in two deployments at once, so a lock found at boot
+  # is from the previous container. Its PID means nothing here and can collide with ours.
+  rm -f "$AGENT_WORKER_STATE.lock"
   (
     while true; do
       node scripts/worker.ts || true

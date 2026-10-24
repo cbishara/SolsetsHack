@@ -9,7 +9,7 @@
   "availability": "main",
   "updatedAt": "2026-10-23",
   "trigger": "Rodrigo quiere dejar de repasar algo que teme olvidar.",
-  "outcome": "En el piloto se recupera un pendiente y un primer paso, incluso tras reiniciar el agente. Llevarlo al parte automático de la mañana sigue pendiente.",
+  "outcome": "El piloto recupera un pendiente y primer paso; el extractor de #41 prepara varias tareas para revisión. La persistencia de esas tareas desde la app y el parte automático siguen pendientes del backend.",
   "example": "Rodrigo escribe «Revisar el turno de la próxima semana». Al despertar, ese mismo pendiente debe poder reconocerse en el parte, sin aparecer como ejecutado.",
   "featureIds": [
     "feat-quito-descarga"
@@ -69,6 +69,42 @@
       "detail": "Falta integrar este pendiente con el parte y definir su horario.",
       "x": 1750,
       "y": 80
+    },
+    {
+      "id": "extraer-tareas",
+      "kind": "action",
+      "actor": "Solsets",
+      "title": "Preparar varias tareas",
+      "detail": "Capacidad interna de agent/ para texto o transcripción sintéticos. Separa acciones y calcula fechas en la zona del usuario. No guarda tareas en el servidor.",
+      "x": 430,
+      "y": 780
+    },
+    {
+      "id": "preguntar-fecha",
+      "kind": "action",
+      "actor": "Rodrigo",
+      "title": "Aclarar una fecha ambigua",
+      "detail": "Si la expresión no se reconoce, la tarea queda sin fecha y aparece una pregunta; el agente no inventa el día.",
+      "x": 860,
+      "y": 1030
+    },
+    {
+      "id": "revisar-tareas",
+      "kind": "action",
+      "actor": "Rodrigo",
+      "title": "Revisar las tareas preparadas",
+      "detail": "Revisa títulos y fechas antes de dar por guardado el resultado. La aceptación local del agente usa el ejemplo de dentista, pan y luz de Bishara.",
+      "x": 1320,
+      "y": 780
+    },
+    {
+      "id": "conectar-tareas",
+      "kind": "pending",
+      "actor": "Amaru y Bishara",
+      "title": "Guardar desde la app y recuperar después",
+      "detail": "Dependencia #40: server/ debe conectar el extractor, persistir y resolver reintentos por UUID; mobile/ presenta y verifica el resultado. Este recorrido completo aún no está conectado.",
+      "x": 1750,
+      "y": 780
     }
   ],
   "connections": [
@@ -101,6 +137,31 @@
       "from": "manana",
       "to": "parte-pendiente",
       "label": "Integración pendiente"
+    },
+    {
+      "from": "chat",
+      "to": "extraer-tareas",
+      "label": "Recorrido adicional: varias acciones"
+    },
+    {
+      "from": "extraer-tareas",
+      "to": "revisar-tareas",
+      "label": "Fechas reconocidas"
+    },
+    {
+      "from": "extraer-tareas",
+      "to": "preguntar-fecha",
+      "label": "Fecha no resuelta"
+    },
+    {
+      "from": "preguntar-fecha",
+      "to": "revisar-tareas",
+      "label": "Pendiente de aclaración humana"
+    },
+    {
+      "from": "revisar-tareas",
+      "to": "conectar-tareas",
+      "label": "Persistencia pendiente de integrar"
     }
   ],
   "questions": [
@@ -169,6 +230,18 @@
       "environment": "Cierre de sesión, origin/main y piloto local del Mac en localhost:4181",
       "result": "Se confirmó la integración del chat web y Luna en #42 (717148e). Los registros conservan por separado las 66 pruebas de la entrega sobre main, las 49 de la copia local y las diez comprobaciones previas en Chrome/Codex. En la revisión de las 21:08 Santiago, el piloto estaba detenido: se arrancó la misma copia aprobada y health respondió correctamente; el hash del archivo de estado permaneció idéntico. No se repitió la evaluación del modelo ni se acredita el recorrido móvil/servidor/WhatsApp. Las entregas posteriores #44 y #45 y la tarea de Bishara #41 se distinguen de este piloto.",
       "evidence": "agent/README.md; docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json; PR #42, merge 717148e"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Node 24, HTTP loopback y Codex real; casos ficticios de #41",
+      "result": "Capacidades de agent/ para descarga en varias tareas, reglas pendientes y preguntas, y clasificación que conserva la clave de un incidente reformulado. Aceptación real: ocho casos con ocho inferencias; 100 pruebas y TypeScript pasan; pruebas unitarias/HTTP verifican fechas, feedback, usuarios y salidas inválidas. El servidor y Expo siguen pendientes de acoplamiento; no acredita Railway ni teléfono físico.",
+      "evidence": "agent/APP-INTEGRATION.md; agent/scripts/verify-app.ts; agent/src/app-capabilities.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "HTTP local aislado con agent 2a171bf y server 7703ab7; proceso v1 independiente en el Mac",
+      "result": "Cotejo exacto aprobado: acuse perdido y reinicio sin reinferencia, memoria 2→5, A/B aislados, 51 metadatos sin lecturas adicionales, revocación y borrado de A. Dos inferencias reales de Codex con evidencia ficticia fueron aceptadas por el servidor local. Trabajador v1 arrancado contra el candidato; al arrancar el gate del servidor seguía apagado y devolvía 503, así que el proceso espera sin inferir. Falta activación de Amaru y prueba compartida; no acredita móvil, OTP ni WhatsApp real.",
+      "evidence": "agent/INTEGRATION-V1.md; https://github.com/cbishara/SolsetsHack/issues/30#issuecomment-6377357142"
     }
   ],
   "evidence": [
@@ -211,6 +284,10 @@
     {
       "label": "Cierre del chat web, merge y estado del piloto",
       "path": "docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json"
+    },
+    {
+      "label": "Contrato candidato, límites y aceptación de las capacidades #41",
+      "path": "agent/APP-INTEGRATION.md"
     }
   ]
 }

@@ -4,37 +4,43 @@
   "title": "Confirmar si esta noche estoy de guardia",
   "owner": "Quito",
   "collaborators": [
-    "Amaru: pantalla y explicación",
+    "Bishara: pantalla, descanso y guía de configuración del iPhone",
+    "Amaru: telefonía, temporizador y confirmación persistida",
     "Quito: regla de guardia"
   ],
   "moment": "preparar",
   "productStatus": "acordada",
   "buildStatus": "sin-verificar",
   "availability": "sin-verificar",
-  "updatedAt": "2026-10-23",
+  "updatedAt": "2026-10-24",
   "summary": "Rodrigo confirma si está de guardia y entiende qué podría despertarlo esa noche.",
   "need": "Poder dejar el teléfono sin quedarse pensando qué mensajes debe seguir vigilando.",
   "userActions": [
     "Responde sí o no a «¿Te toca guardia esta noche?».",
-    "Si responde sí, revisa qué situaciones lo despertarían y por qué canal."
+    "Si responde sí, revisa qué situaciones lo despertarían y por qué canal.",
+    "Antes de descansar, revisa cómo permitir el contacto que llamará y comprueba si el teléfono está preparado; la guía y la prueba física siguen pendientes."
   ],
   "systemActions": [
     "Usa la confirmación para distinguir una noche con guardia de una noche de descanso.",
-    "Muestra las condiciones y canales acordados antes de que Rodrigo se desconecte."
+    "Muestra las condiciones y canales acordados antes de que Rodrigo se desconecte.",
+    "Explica el objetivo acordado: si una alerta no se reconoce en 3 minutos, iniciar una llamada real. No dice que el iPhone está protegido por tener un switch activado."
   ],
   "example": "Ejemplo de lo acordado: Rodrigo confirma que esta noche sí tiene guardia. La app le explica qué incidentes requieren su intervención y cómo intentará avisarle. Esta ficha todavía no acredita que ese recorrido esté construido o probado.",
   "rules": [
     "La noche sin guardia busca evitar interrupciones; el caso de una caída grave sigue abierto en un ADR por confirmar.",
     "La interpretación del calendario puede sugerir una respuesta; la confirmación de Rodrigo sigue visible.",
-    "El ADR oficial fija que este recorrido tome menos de un minuto y ocurra antes de acostarse."
+    "El ADR oficial fija que este recorrido tome menos de un minuto y ocurra antes de acostarse.",
+    "Desde el 24 de octubre, la llamada real es parte del objetivo de la demo; el push puede seguir simulado. La llamada no se ejecuta en modo sombra."
   ],
   "limits": [
-    "La pregunta y la explicación son parte de la app de Amaru; la regla corresponde a Quito.",
-    "No se afirma que un dispositivo permita atravesar el modo concentración sin una prueba concreta."
+    "La pantalla y la guía corresponden a Bishara; la regla a Quito; la llamada y el temporizador a Amaru. La coordinación de alerta/Lo vi sigue pendiente en las fichas compartidas.",
+    "No se afirma que un dispositivo permita atravesar el modo concentración sin una prueba concreta.",
+    "iPhone con iOS 27 declarado por Quito; no probado físicamente. AlarmKit es una alternativa por validar y no acredita despertar remoto."
   ],
   "acceptance": [
     "Rodrigo puede explicar si la guardia está activa y qué lo interrumpiría.",
-    "El recorrido distingue claramente sus respuestas sí y no."
+    "El recorrido distingue claramente sus respuestas sí y no.",
+    "Con guardia activa, un urgente ficticio sin Lo vi durante 3 minutos hace sonar una llamada real en el iPhone bloqueado; confirmar antes cancela el escalamiento. Pendiente de construir y probar."
   ],
   "questions": [
     "¿Qué ocurre si no responde a la pregunta?",
@@ -58,6 +64,10 @@
     {
       "label": "Pregunta abierta: caída grave sin guardia",
       "path": "docs/equipo/adr/por-confirmar/2026-10-23-caida-grave-sin-guardia.md"
+    },
+    {
+      "label": "Acuerdo de producto: llamada real para despertar; implementación y coordinación pendientes",
+      "path": "docs/equipo/adr/oficiales/2026-10-24-llamada-real-para-despertar.md"
     }
   ]
 }

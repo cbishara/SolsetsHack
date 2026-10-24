@@ -1,0 +1,21 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-llamada-real",
+  "title": "Acordar una llamada real que pueda despertar al iPhone",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "Quito oficializó que la llamada de respaldo sea real. La prueba debe hacer sonar el iPhone bloqueado; mostrar una llamada simulada ya no cierra esa parte de la entrega.",
+  "before": "El acuerdo del 23 de octubre permitía mostrar push y llamada simulados, disparados por una alerta real del servidor.",
+  "after": "El nuevo ADR conserva el push simulado y el plazo de 3 minutos sin Lo vi, y exige una llamada real. El recorrido de descanso incluye explicar cómo permitir el contacto en el iPhone. AlarmKit queda como alternativa por validar, sin reemplazar automáticamente la llamada.",
+  "reason": "Quito priorizó que Soltra pueda despertarlo con el teléfono bloqueado y confirmó la decisión como oficial. Indicó un iPhone con iOS 27 para el ensayo.",
+  "checked": "Se registró el acuerdo y sus límites. No se implementó ni probó telefonía, AlarmKit o el modo descanso; no se enviaron llamadas ni se verificó físicamente el iPhone. La aceptación exige sonido real, ack y cancelación con el mismo alertId.",
+  "availability": "Registro de producto y fichas de Quito; no acredita telefonía implementada o desplegada. Depende de Amaru para telefonía/temporizador y de Bishara para descanso/permisos/Lo vi. La ficha compartida feat-bishara-alerta-respaldo y el flujo de alerta requieren coordinación con su responsable; no se editaron.",
+  "featureIds": [
+    "feat-quito-contrato-noche",
+    "feat-bishara-alerta-respaldo"
+  ],
+  "flowIds": [
+    "flujo-quito-preparar-noche",
+    "flujo-quito-atender-alerta"
+  ]
+}

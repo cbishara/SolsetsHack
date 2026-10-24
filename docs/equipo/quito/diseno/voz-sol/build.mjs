@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url"
 
 const directory = dirname(fileURLToPath(import.meta.url))
 const destination = resolve(directory, "../../../../..", ".context/voz-sol")
-const iconWeight = "light"
+const iconWeight = "regular"
 const iconNames = {
   mic: "microphone",
   "mic-off": "microphone-slash",
@@ -17,11 +17,12 @@ const iconNames = {
   list: "list-checks",
   pause: "pause",
   replay: "arrow-counter-clockwise",
+  hangup: "phone-slash",
 }
 const icons = {}
 for (const [id, name] of Object.entries(iconNames)) {
   const asset = await readFile(
-    resolve(directory, "node_modules/@phosphor-icons/core/assets/" + iconWeight + "/" + name + "-" + iconWeight + ".svg"),
+    resolve(directory, "node_modules/@phosphor-icons/core/assets/" + iconWeight + "/" + name + (iconWeight === "regular" ? "" : "-" + iconWeight) + ".svg"),
     "utf8"
   )
   icons[id] = asset

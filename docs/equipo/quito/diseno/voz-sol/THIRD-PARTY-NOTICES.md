@@ -30,7 +30,7 @@ SOFTWARE.
 
 ## Installed packages
 
-Three.js, React Three Fiber, React, Motion and Phosphor retain their MIT notices in their installed packages and generated bundle notices. Exact versions are recorded in package-lock.json. The Phosphor icons used by the prototype are built from their original light-weight SVG assets (duotone until revision 02).
+Three.js, React Three Fiber, React, Motion and Phosphor retain their MIT notices in their installed packages and generated bundle notices. Exact versions are recorded in package-lock.json. The Phosphor icons used by the prototype are built from their original regular-weight SVG assets (light in revision 03, duotone in revision 02).
 
 ## Phosphor Icons license
 

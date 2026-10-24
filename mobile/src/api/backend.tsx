@@ -32,6 +32,8 @@ type Backend = {
   /** Sends a recording to server/ for transcription. Null while the server has no transcription. */
   transcribe: (uri: string, mime: string) => Promise<string | null>;
   simulateNight: () => Promise<void>;
+  /** "Lo vi": tells server/ the alert was seen so it does not escalate to a call. */
+  alertSeen: (alertId: string) => Promise<void>;
   sendTestMessage: (text: string) => Promise<void>;
 };
 
@@ -61,6 +63,8 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   // What was last synced from the server, so local changes can be told apart.
   const synced = useRef({ feedback: {} as Record<string, string>, onCall: null as boolean | null, mode: '' as string, chats: {} as Record<string, boolean> });
   const tonightKey = () => nightKey(stateRef.current.nightAlerts);
+  // Alert ids the server returned when a message was sent from the app (until /api/feed carries them, #60).
+  const alertIds = useRef<Record<string, string>>({});
   const overrideOn = (st: typeof state) => (st.nightAlerts.override?.date === nightKey(st.nightAlerts) ? st.nightAlerts.override.on : null);
 
   const pull = useCallback(async () => {
@@ -72,7 +76,8 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     const known = new Map(s.items.map((i) => [i.id, i]));
     const items = itemsFrom(feed, s.categories).map((i) => {
       const k = known.get(i.id);
-      return k ? { ...i, read: k.read, categoryId: k.categoryId, review: k.review, feedback: k.feedback, outcome: k.outcome } : i;
+      const alertId = i.alertId ?? alertIds.current[serverMessageId(i.id)] ?? k?.alertId;
+      return k ? { ...i, alertId, read: k.read, categoryId: k.categoryId, review: k.review, feedback: k.feedback, outcome: k.outcome } : { ...i, alertId };
     });
     // The inbox follows the server only when the person chose its data (Perfil > Datos de la app).
     if (s.dataSource === 'server') {
@@ -212,6 +217,12 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const alertSeen = useCallback(async (alertId: string) => {
+    const c = client.current;
+    if (!c) throw new ServerError(0, 'network', 'No hay conexión con el servidor.');
+    await c.alertSeen(alertId);
+  }, []);
+
   const simulateNight = useCallback(async () => {
     if (!client.current) return;
     await client.current.simulateNight();
@@ -220,7 +231,8 @@ export function BackendProvider({ children }: { children: ReactNode }) {
 
   const sendTestMessage = useCallback(async (text: string) => {
     if (!client.current) return;
-    await client.current.message(text, 'Consola de la app', 'Prueba desde la app');
+    const res = await client.current.message(text, 'Consola de la app', 'Prueba desde la app') as { item?: { messageId?: string }; alert?: { id: string; messageId: string } };
+    if (res?.alert) alertIds.current[res.alert.messageId] = res.alert.id;
     await pull();
   }, [pull]);
 
@@ -234,8 +246,8 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   }, [pull]);
 
   const value = useMemo<Backend>(
-    () => ({ status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, transcribe, simulateNight, sendTestMessage }),
-    [status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, transcribe, simulateNight, sendTestMessage],
+    () => ({ status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, transcribe, simulateNight, sendTestMessage, alertSeen }),
+    [status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, transcribe, simulateNight, sendTestMessage, alertSeen],
   );
   return <BackendContext.Provider value={value}>{children}</BackendContext.Provider>;
 }

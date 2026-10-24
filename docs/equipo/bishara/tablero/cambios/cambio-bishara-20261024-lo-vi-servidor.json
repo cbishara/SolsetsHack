@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-lo-vi-servidor",
+  "title": "«Lo vi» confirma la alerta en el servidor, y hay referencia visual del chat para agent/console",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "Responde a #54. Tocar «Lo vi» ahora hace POST /api/alerts/:id/seen. El éxito aparece solo cuando el servidor confirma, y si falla se puede reintentar. Quito recibe los tokens y criterios para alinear su chat web.",
+  "before": "«Lo vi» solo cambiaba el estado en el teléfono, así que la alerta seguía en 'sent' y podía escalar a llamada.",
+  "after": "Si la alerta tiene id del servidor, «Lo vi» lo confirma ahí antes de mostrar 'Listo'. Si falla, dice que puede llamar y ofrece reintentar. El id llega de la respuesta de POST /api/messages, como parámetro 'alert' de la ruta o, cuando server/ lo agregue (#60), en el feed. REFERENCIA_VISUAL_CHAT.md describe los colores, la tipografía, las piezas, los estados y el movimiento del chat.",
+  "reason": "Quito detectó en su prueba que la alerta no se confirmaba en el servidor y pidió una referencia para el chat web.",
+  "checked": "Contra el servidor local, con un aviso sintético en modo real: la app hizo POST /api/alerts/<id>/seen al tocar «Lo vi» y el servidor quedó en status 'seen' con seenAt de ese momento. El servidor volvió después a modo prueba. TypeScript y 28 pruebas en verde.",
+  "availability": "Rama bishara/lo-vi-servidor.",
+  "featureIds": [],
+  "flowIds": []
+}

@@ -80,6 +80,8 @@ export type Item = {
   read: boolean;
   /** Came from server/ (feedback goes there). */
   remote?: boolean;
+  /** server/'s alert id when Sol woke the person for this item ("Lo vi" confirms it there). */
+  alertId?: string;
   /** Example data, hidden when the app shows the server's data. */
   example?: boolean;
 };

@@ -113,6 +113,12 @@
       "environment": "Cierre de sesión, origin/main y piloto local del Mac en localhost:4181",
       "result": "Se confirmó la integración del chat web y Luna en #42 (717148e). Los registros conservan por separado las 66 pruebas de la entrega sobre main, las 49 de la copia local y las diez comprobaciones previas en Chrome/Codex. En la revisión de las 21:08 Santiago, el piloto estaba detenido: se arrancó la misma copia aprobada y health respondió correctamente; el hash del archivo de estado permaneció idéntico. No se repitió la evaluación del modelo ni se acredita el recorrido móvil/servidor/WhatsApp. Las entregas posteriores #44 y #45 y la tarea de Bishara #41 se distinguen de este piloto.",
       "evidence": "agent/README.md; docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json; PR #42, merge 717148e"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "HTTP local aislado con agent 2a171bf y server 7703ab7; proceso v1 independiente en el Mac",
+      "result": "Cotejo exacto aprobado: acuse perdido y reinicio sin reinferencia, memoria 2→5, A/B aislados, 51 metadatos sin lecturas adicionales, revocación y borrado de A. Dos inferencias reales de Codex con evidencia ficticia fueron aceptadas por el servidor local. Trabajador v1 arrancado contra el candidato; al arrancar el gate del servidor seguía apagado y devolvía 503, así que el proceso espera sin inferir. Falta activación de Amaru y prueba compartida; no acredita móvil, OTP ni WhatsApp real.",
+      "evidence": "agent/INTEGRATION-V1.md; https://github.com/cbishara/SolsetsHack/issues/30#issuecomment-6377357142"
     }
   ],
   "evidence": [

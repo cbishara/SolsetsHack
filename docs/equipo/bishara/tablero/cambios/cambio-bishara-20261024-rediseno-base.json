@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-rediseno-base",
+  "title": "La app deja de ser una maqueta: modelo general, Inicio, Bandeja con categorías, Tareas y Agenda completas",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "Rediseño desde el feedback de Bishara. Cambian el modelo de datos, la navegación y las pantallas principales. Todo lo que se ve sale de datos que la persona puede cambiar, sin textos hechos a la medida de Rodrigo.",
+  "before": "Hoy mostraba una frase ('Esta noche no te voy a despertar') y una lista corta. La pestaña Tú juntaba todo. Las tareas solo tenían Hoy, Mañana o Esta semana. No había bandeja ni categorías, y la guardia estaba escrita para Rodrigo.",
+  "after": "El Inicio muestra a Sol con lo que revisó hoy y las fuentes al día, las preguntas de Sol para responder ahí mismo, lo de hoy, la agenda de hoy y de los próximos días, la bandeja por categoría y cómo funcionan los avisos esta noche. La Bandeja trae cada mensaje con su original. Las categorías deciden qué hace Sol. Las tareas tienen fecha, hora, aviso real en el teléfono, repetición, prioridad y subtareas. La agenda tiene vista de día, semana y mes con calendarios de colores. El perfil se abre desde la foto. La guardia pasó a ser avisos nocturnos configurables por cualquiera.",
+  "reason": "Bishara pidió una app profesional, comercializable y universal, con el diseño a nivel de Opal y funcionalidades reales.",
+  "checked": "TypeScript sin errores y 21 pruebas en verde. Capturas en web a 390 pt de las pantallas nuevas, simulando las 9:10. Probado crear una tarea escribiendo 'mañana a las 10'. Falta probar en un iPhone: el desenfoque, los avisos locales y la presión de los botones.",
+  "availability": "Rama bishara/feedback-hoy. ADR por confirmar: luz-de-sol-y-vidrio, navegacion-bandeja-y-perfil-arriba, categorias-deciden-que-hace-sol y avisos-nocturnos-genericos.",
+  "featureIds": ["feat-bishara-bandeja-categorias"],
+  "flowIds": []
+}

@@ -9,7 +9,7 @@ export function DataBadge() {
   const live = status === 'connected';
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={live ? 'Conectado al servidor. Ver conexiones' : 'Datos de ejemplo. Ver conexiones'}
-      onPress={() => router.push('/tu/conexiones')} hitSlop={8}>
+      onPress={() => router.push('/perfil/conexiones')} hitSlop={8}>
       <Badge label={live ? 'En vivo' : status === 'error' ? 'Sin servidor' : 'Datos de ejemplo'} tone={live ? 'calm' : status === 'error' ? 'urgent' : 'neutral'} />
     </Pressable>
   );

@@ -10,6 +10,7 @@ import { DecisionCard } from '../../features/digest/decision-card';
 import { byTime, partition, plural, sleepLine, topTasks, wokeSentence } from '../../features/digest/format';
 import { useTheme } from '../../theme/theme';
 import { space } from '../../theme/tokens';
+import { dueText, feedbackOf } from '../../data/compat';
 
 // Morning summary: read in under a minute. The order answers, in turn:
 // did anything happen, how did I sleep, what did Sol decide (and was it
@@ -22,7 +23,7 @@ export default function ResumenManana() {
   const slept = sleepLine(sleep);
   const today = topTasks(state.tasks);
   const shadow = state.profile.agentMode === 'shadow';
-  const rated = lastNight.filter((i) => state.feedback[i.id]).length;
+  const rated = lastNight.filter((i) => feedbackOf(state)[i.id]).length;
   const toRate = woke.length + waited.length;
 
   return (
@@ -103,7 +104,7 @@ export default function ResumenManana() {
               <View style={[s.check, { borderColor: p.accent, backgroundColor: t.done ? p.accent : 'transparent' }]} />
               <View style={{ flex: 1, gap: 2 }}>
                 <T v="body" style={t.done ? { textDecorationLine: 'line-through', opacity: 0.55 } : undefined}>{t.title}</T>
-                <T v="caption" tone="muted">{t.due.label} · {t.sourceLabel}</T>
+                <T v="caption" tone="muted">{dueText(t)} · {t.sourceLabel}</T>
               </View>
             </Pressable>
           ))}

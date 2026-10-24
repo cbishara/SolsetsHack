@@ -47,7 +47,7 @@ export default function Conexiones() {
       <Section eyebrow="Fuentes">
         <View style={{ gap: space.md }}>
           {connections.map((c, i) => (
-            <SourceCard key={c.id} c={c} minutesAgo={i + 1} onToggle={() => dispatch({ type: 'setConnection', id: c.id, status: c.status === 'connected' ? 'off' : 'connected' })} />
+            <SourceCard key={c.id} c={c} minutesAgo={i + 1} onToggle={() => dispatch({ type: 'setConnection', id: c.id, patch: { status: c.status === 'connected' ? 'off' : 'connected' } })} />
           ))}
         </View>
         <T v="caption" tone="faint">En esta demo, conectar y desconectar es simulado.</T>

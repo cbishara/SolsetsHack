@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BackendProvider } from '../api/backend';
 import { StoreProvider, useStore } from '../data/store';
+import { useReminders } from '../features/tasks/reminders';
 import { ThemeProvider, useTheme } from '../theme/theme';
 
 void SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -18,9 +19,13 @@ function Navigator() {
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" options={{ gestureEnabled: false, animation: 'fade' }} />
-        <Stack.Screen name="sol" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="sol" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
+        <Stack.Screen name="perfil" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="categorias" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="entrada/[id]" />
+        <Stack.Screen name="tarea/[id]" />
+        <Stack.Screen name="evento/[id]" />
         <Stack.Screen name="alerta" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
-        <Stack.Screen name="guardia" options={{ presentation: 'modal' }} />
         <Stack.Screen name="resumen/manana" options={{ presentation: 'modal' }} />
         <Stack.Screen name="resumen/noche" options={{ presentation: 'modal' }} />
       </Stack>

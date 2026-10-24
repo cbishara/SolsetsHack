@@ -2,15 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Platform } from 'react-native';
-import { lastNight as demoLastNight } from '../data/fixtures';
+import { nightKey } from '../data/select';
 import { useStore } from '../data/store';
-import { lastNightFrom, mergeSources, tasksFromNight, toChats } from './map';
+import { itemsFrom, mergeSources, serverMessageId, tasksFromItems, toChats } from './map';
 import { createServerClient, ServerError, type ServerClient, type ServerMetrics } from './server';
 
-// Bridge between the app's store and server/. When connected, the guard,
-// last night, shadow mode, sources and WhatsApp chats come from the server and
-// what Rodrigo marks goes back to it. What server/ does not have yet (tasks,
-// calendar, rules, memory, training) stays local and the UI says so.
+// Bridge between the app's store and server/. When connected, what the server
+// classified becomes inbox items (with the original message), tonight's alerts,
+// shadow mode, sources and WhatsApp chats come from it, and what the person
+// marks goes back. What server/ does not have yet (categories, tasks, calendar,
+// memory) works locally and moves there route by route (CONTRATO_APP_V2.md).
 
 export type BackendStatus = 'demo' | 'connecting' | 'connected' | 'error';
 
@@ -28,6 +29,8 @@ type Backend = {
   chat: (text: string) => Promise<string | null>;
   /** Saves dumped to-dos as worries on the server (contract v0 "descarga"). */
   saveWorries: (texts: string[]) => void;
+  /** Sends a recording to server/ for transcription. Null while the server has no transcription. */
+  transcribe: (uri: string, mime: string) => Promise<string | null>;
   simulateNight: () => Promise<void>;
   sendTestMessage: (text: string) => Promise<void>;
 };
@@ -57,21 +60,31 @@ export function BackendProvider({ children }: { children: ReactNode }) {
 
   // What was last synced from the server, so local changes can be told apart.
   const synced = useRef({ feedback: {} as Record<string, string>, onCall: null as boolean | null, mode: '' as string, chats: {} as Record<string, boolean> });
+  const tonightKey = () => nightKey(stateRef.current.nightAlerts);
+  const overrideOn = (st: typeof state) => (st.nightAlerts.override?.date === nightKey(st.nightAlerts) ? st.nightAlerts.override.on : null);
 
   const pull = useCallback(async () => {
     const c = client.current;
     if (!c) return;
     const [night, settings, feed, sources, m] = await Promise.all([c.night(), c.settings(), c.feed(), c.sources(), c.metrics()]);
     const s = stateRef.current;
-    const items = lastNightFrom(feed);
-    const newTasks = tasksFromNight(items, s.tasks);
-    if (newTasks.length) dispatch({ type: 'addTasks', tasks: newTasks });
-    const linked = items.map((h) => (h.decision === 'report' ? { ...h, taskId: `srv-${h.id}` } : h));
-    dispatch({ type: 'setLastNight', items: linked, remote: true });
+    // Keep what the person already did with an item (read, recategorized, rated).
+    const known = new Map(s.items.map((i) => [i.id, i]));
+    const items = itemsFrom(feed, s.categories).map((i) => {
+      const k = known.get(i.id);
+      return k ? { ...i, read: k.read, categoryId: k.categoryId, review: k.review, feedback: k.feedback, outcome: k.outcome } : i;
+    });
+    // The inbox follows the server only when the person chose its data (Perfil > Datos de la app).
+    if (s.dataSource === 'server') {
+      if (items.length) dispatch({ type: 'upsertItems', items });
+      const newTasks = tasksFromItems(items, s.tasks);
+      if (newTasks.length) dispatch({ type: 'addTasks', tasks: newTasks });
+    }
     dispatch({ type: 'setConnections', connections: mergeSources(s.connections, sources) });
-    if (night.onCall !== null && night.onCall !== s.onCallTonight) dispatch({ type: 'setOnCall', value: night.onCall });
+    const local = overrideOn(s);
+    if (night.onCall !== null && night.onCall !== local) dispatch({ type: 'setNightAlerts', patch: { override: { date: tonightKey(), on: night.onCall } } });
     if (settings.mode !== s.profile.agentMode) dispatch({ type: 'setProfile', patch: { agentMode: settings.mode } });
-    synced.current.onCall = night.onCall ?? s.onCallTonight;
+    synced.current.onCall = night.onCall ?? local;
     synced.current.mode = settings.mode;
     setMetrics(m);
     if (waChecked.current) { setLastSync(new Date().toISOString()); return; }
@@ -116,7 +129,6 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     client.current = null;
     setStatus('demo');
     setError(null);
-    dispatch({ type: 'setLastNight', items: demoLastNight, remote: false }); // back to the example night
     AsyncStorage.setItem(KEY, JSON.stringify({ url, on: false })).catch(() => {});
   }, [dispatch, url]);
 
@@ -149,14 +161,15 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const c = client.current;
     if (status !== 'connected' || !c) return;
-    for (const [id, value] of Object.entries(state.feedback)) {
-      if (synced.current.feedback[id] === value || !state.remoteFeedbackIds.includes(id)) continue;
-      synced.current.feedback[id] = value;
-      c.feedback(id, value).catch(() => {});
+    for (const item of state.items) {
+      if (!item.remote || !item.feedback || synced.current.feedback[item.id] === item.feedback) continue;
+      synced.current.feedback[item.id] = item.feedback;
+      c.feedback(serverMessageId(item.id), item.feedback).catch(() => {});
     }
-    if (state.onCallTonight !== null && state.onCallTonight !== synced.current.onCall) {
-      synced.current.onCall = state.onCallTonight;
-      c.setNight(state.onCallTonight).catch(() => {});
+    const on = overrideOn(state);
+    if (on !== null && on !== synced.current.onCall) {
+      synced.current.onCall = on;
+      c.setNight(on).catch(() => {});
     }
     if (state.profile.agentMode !== synced.current.mode) {
       synced.current.mode = state.profile.agentMode;
@@ -169,7 +182,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
         c.selectChat(chat.id, chat.on).catch(() => {});
       }
     }
-  }, [status, whatsappLive, state.feedback, state.remoteFeedbackIds, state.onCallTonight, state.profile.agentMode, state.chats]);
+  }, [status, whatsappLive, state.items, state.nightAlerts, state.profile.agentMode, state.chats]);
 
   const chat = useCallback(async (text: string) => {
     const c = client.current;
@@ -188,6 +201,17 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     texts.forEach((t) => c.worry(t).catch(() => {}));
   }, []);
 
+  const transcribe = useCallback(async (uri: string, mime: string) => {
+    const c = client.current;
+    if (!c) return null;
+    try {
+      return (await c.transcribe(uri, mime)).text;
+    } catch (e) {
+      if (e instanceof ServerError && (e.status === 503 || e.status === 404 || e.status === 501)) return null; // no transcription on server/ yet
+      throw e;
+    }
+  }, []);
+
   const simulateNight = useCallback(async () => {
     if (!client.current) return;
     await client.current.simulateNight();
@@ -196,7 +220,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
 
   const sendTestMessage = useCallback(async (text: string) => {
     if (!client.current) return;
-    await client.current.message(text, 'Consola de la app', 'Guardia TI');
+    await client.current.message(text, 'Consola de la app', 'Prueba desde la app');
     await pull();
   }, [pull]);
 
@@ -210,8 +234,8 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   }, [pull]);
 
   const value = useMemo<Backend>(
-    () => ({ status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, simulateNight, sendTestMessage }),
-    [status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, simulateNight, sendTestMessage],
+    () => ({ status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, transcribe, simulateNight, sendTestMessage }),
+    [status, error, url, lastSync, metrics, whatsappLive, connect, disconnect, refresh, chat, saveWorries, transcribe, simulateNight, sendTestMessage],
   );
   return <BackendContext.Provider value={value}>{children}</BackendContext.Provider>;
 }

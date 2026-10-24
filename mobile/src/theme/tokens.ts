@@ -1,7 +1,9 @@
 // Soltra design tokens. Dark always, inspired by Opal: pure black, white type,
-// warm greys, cards barely lifted off the background. The interface stays
-// monochrome; color belongs to Sol (the agent) and to two states: calm and
-// urgent. "day" and "night" are both dark; night is dimmer, for 3 a.m. eyes.
+// warm greys, glass surfaces barely lifted off the background. The interface
+// stays monochrome; color belongs to Sol (a warm amber light that tints the
+// screens where Sol is present), to two states (calm, urgent) and to the
+// person's categories, shown only as small dots and tags.
+// "day" and "night" are both dark; night is dimmer, for 3 a.m. eyes.
 
 export type Scheme = 'day' | 'night';
 
@@ -17,8 +19,15 @@ export type Palette = {
   accent: string; // primary buttons, selected, links: white, Opal style
   onAccent: string;
   accentSoft: string; // selected backgrounds, neutral badges
-  sol: string; // Sol's own light: the avatar, the Sol button, on-call marks
+  sol: string; // Sol's own light: the avatar, the Sol button, its accents
+  solHi: string; // the hot center of Sol's light
+  solDeep: string; // the far edge of Sol's light, for gradients
+  ember: string; // Sol's light at its faintest, where it meets black
   onSol: string;
+  glass: string; // translucent fill over a blur: cards and bars that float
+  glassStrong: string; // sheets, the composer
+  glassLine: string; // the 1 px edge of glass
+  glassHi: string; // top highlight on glass
   hero: [string, string]; // hero card gradient, top-left → bottom-right
   onHero: string;
   onHeroMuted: string;
@@ -43,8 +52,15 @@ export const day: Palette = {
   accent: '#FFFFFF',
   onAccent: '#000000',
   accentSoft: 'rgba(255,255,255,0.10)',
-  sol: '#F2CF8C',
-  onSol: '#1C1407',
+  sol: '#FF9548',
+  solHi: '#FFD3A1',
+  solDeep: '#D9531C',
+  ember: '#3B1407',
+  onSol: '#1F0B02',
+  glass: 'rgba(30,30,33,0.56)',
+  glassStrong: 'rgba(38,38,42,0.82)',
+  glassLine: 'rgba(255,255,255,0.10)',
+  glassHi: 'rgba(255,255,255,0.18)',
   hero: ['#1A1A1D', '#0A0A0B'],
   onHero: '#FFFFFF',
   onHeroMuted: '#BCBBC0',
@@ -70,8 +86,15 @@ export const night: Palette = {
   accent: '#E6E6E9',
   onAccent: '#000000',
   accentSoft: 'rgba(255,255,255,0.08)',
-  sol: '#E3BE7E',
-  onSol: '#1C1407',
+  sol: '#E3823F',
+  solHi: '#EDBF8E',
+  solDeep: '#B04419',
+  ember: '#2A0E05',
+  onSol: '#1F0B02',
+  glass: 'rgba(24,24,26,0.56)',
+  glassStrong: 'rgba(30,30,33,0.84)',
+  glassLine: 'rgba(255,255,255,0.08)',
+  glassHi: 'rgba(255,255,255,0.12)',
   hero: ['#141416', '#080809'],
   onHero: '#E6E6E9',
   onHeroMuted: '#A09FA5',
@@ -83,6 +106,24 @@ export const night: Palette = {
   tabBar: 'rgba(24,24,26,0.55)',
   overlay: 'rgba(0,0,0,0.65)',
 };
+
+/**
+ * Category colors. The person's categories are the only other color in the app,
+ * and only as a dot, a tag or a small icon tile: never a background.
+ * Tuned to read on black at AA for 13 px text.
+ */
+export const categoryColors = {
+  red: '#FF6B5E',
+  orange: '#FF9F45',
+  yellow: '#F2C94C',
+  green: '#5FD39B',
+  teal: '#4CC9C9',
+  blue: '#5E9EFF',
+  indigo: '#8F84FF',
+  pink: '#F273B0',
+  gray: '#9A9AA1',
+} as const;
+export type CategoryColor = keyof typeof categoryColors;
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, xxxl: 32, section: 40 } as const;
 
@@ -107,7 +148,11 @@ export const type = {
   callout: { fontFamily: font.regular, fontSize: 15, lineHeight: 21, letterSpacing: -0.1 },
   calloutStrong: { fontFamily: font.semibold, fontSize: 15, lineHeight: 21, letterSpacing: -0.1 },
   caption: { fontFamily: font.medium, fontSize: 13, lineHeight: 18, letterSpacing: 0 },
-  eyebrow: { fontFamily: font.semibold, fontSize: 12, lineHeight: 16, letterSpacing: 1.2, textTransform: 'uppercase' as const },
+  captionStrong: { fontFamily: font.semibold, fontSize: 13, lineHeight: 18, letterSpacing: 0 },
+  // Section label: sentence case, never all caps (all-caps micro labels read as generated UI).
+  eyebrow: { fontFamily: font.semibold, fontSize: 15, lineHeight: 20, letterSpacing: -0.1 },
+  micro: { fontFamily: font.medium, fontSize: 11, lineHeight: 14, letterSpacing: 0 },
+  largeTitle: { fontFamily: font.bold, fontSize: 32, lineHeight: 38, letterSpacing: -1.2 },
   numeral: { fontFamily: font.semibold, fontSize: 56, lineHeight: 60, letterSpacing: -2.4, fontVariant: ['tabular-nums' as const] },
 } as const;
 

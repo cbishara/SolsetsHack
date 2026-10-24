@@ -13,6 +13,8 @@ import { whatsappPalette } from '../../features/digest/palettes';
 import { morningSummary, nightClose, urgentAlert, voiceDump, type WaMessage } from '../../features/digest/whatsapp-copy';
 import { useTheme } from '../../theme/theme';
 import { font, space } from '../../theme/tokens';
+import { dueText as compatDue } from '../../data/compat';
+import { tonight } from '../../data/select';
 
 type Scenario = 'manana' | 'noche' | 'alerta' | 'audio';
 const SCENARIOS: { id: Scenario; label: string; note: string }[] = [
@@ -39,7 +41,7 @@ export default function WhatsAppPreview() {
       return morningSummary({
         name: state.profile.name,
         woke: woke.map((i) => ({ time: hhmm(i.at), text: i.text, seenAt: i.seenAt ? hhmm(i.seenAt) : undefined, reason: i.reason })),
-        waited: waited.map((i) => ({ text: taskOf(i.taskId)?.title ?? i.text, due: dueText(taskOf(i.taskId)?.due.label ?? 'Hoy') })),
+        waited: waited.map((i) => ({ text: taskOf(i.taskId)?.title ?? i.text, due: dueText(taskOf(i.taskId) ? compatDue(taskOf(i.taskId)!) : 'Hoy') })),
         noiseCount: noise.length,
         totalRead: lastNight.length,
         sleep: sleepLine(sleep)?.text,
@@ -49,15 +51,15 @@ export default function WhatsAppPreview() {
       });
     }
     if (scenario === 'noche') {
-      const onCall = state.onCallTonight ?? shifts.find((s) => s.date === keyOf(new Date()))?.onCall ?? false;
+      const onCall = tonight(state).on || (shifts.find((s) => s.date === keyOf(new Date()))?.onCall ?? false);
       return nightClose({
         name: state.profile.name,
         open: state.tasks.filter((t) => !t.done).length,
         tomorrow: eventsOn(events, 1).map((e) => `${hhmm(e.start)} ${e.title}`),
-        guard: onCall && state.profile.nightStyle === 'wake_if_urgent',
+        guard: onCall && state.nightAlerts.mode === 'urgent',
         watched: state.chats.filter((c) => c.on).map((c) => c.name),
         wakeRules: state.rules.filter((r) => r.kind === 'wake' && r.confirmed).slice(0, 3).map((r) => r.text),
-        morningAt: state.profile.morningAt,
+        morningAt: state.summaries.morning.at,
       });
     }
     if (scenario === 'alerta') {
@@ -66,7 +68,7 @@ export default function WhatsAppPreview() {
       return urgentAlert({ time: hhmm(item.at), text: item.text, who: item.group ? `${item.from}, en ${item.group}` : item.from, rule: rule?.text ?? 'algo nuevo que no reconozco' });
     }
     const { tasks } = dumpToTasks(DUMP, 'voice');
-    return voiceDump({ transcript: DUMP, seconds: 14, tasks: tasks.map((t) => ({ title: t.title, due: dueText(t.due.label) })) });
+    return voiceDump({ transcript: DUMP, seconds: 14, tasks: tasks.map((t) => ({ title: t.title, due: dueText(compatDue(t)) })) });
   }, [scenario, state, lastNight, sleep, events, shifts]);
 
   const current = SCENARIOS.find((x) => x.id === scenario)!;

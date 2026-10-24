@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Hero } from '../../components/brand';
 import { Button, Card, Chip, List, ListRow, T, tap, ToggleRow } from '../../components/ui';
 import { useStore } from '../../data/store';
-import type { NightStyle } from '../../data/types';
+type NightStyle = 'wake_if_urgent' | 'summary_only';
 import { useTheme } from '../../theme/theme';
 import { radius, space } from '../../theme/tokens';
 import { StepShell } from './shell';
@@ -25,11 +25,12 @@ const MORNINGS = ['06:30', '07:00', '07:30', '08:00'];
 export function Night({ nav, draft }: { nav: StepNav; draft: Draft }) {
   const { p, night, setNight } = useTheme();
   const { state, dispatch } = useStore();
-  const [style, setStyle] = useState<NightStyle>(draft.goals.includes('guardia') ? 'wake_if_urgent' : state.profile.nightStyle);
-  const { morningAt, whatsappDigest } = state.profile;
+  const [style, setStyle] = useState<NightStyle>(draft.goals.includes('guardia') ? 'wake_if_urgent' : state.nightAlerts.mode === 'urgent' ? 'wake_if_urgent' : 'summary_only');
+  const morningAt = state.summaries.morning.at;
+  const whatsappDigest = state.summaries.morning.channels.includes('whatsapp');
 
   const save = () => {
-    dispatch({ type: 'setProfile', patch: { nightStyle: style } });
+    dispatch({ type: 'setNightAlerts', patch: { mode: style === 'wake_if_urgent' ? 'urgent' : 'quiet' } });
     nav.next();
   };
 
@@ -85,14 +86,14 @@ export function Night({ nav, draft }: { nav: StepNav; draft: Draft }) {
         detail="Lo que pasó de noche y lo importante del día."
         options={MORNINGS}
         value={morningAt}
-        onChange={(m) => dispatch({ type: 'setProfile', patch: { morningAt: m } })}
+        onChange={(m) => dispatch({ type: 'setSummaries', patch: { morning: { ...state.summaries.morning, at: m } } })}
       />
       <List>
         <ToggleRow
           title="También por WhatsApp"
           detail="Te mando los resúmenes al chat, sin abrir la app."
           value={whatsappDigest}
-          onChange={(v) => dispatch({ type: 'setProfile', patch: { whatsappDigest: v } })}
+          onChange={(v) => dispatch({ type: 'setSummaries', patch: { morning: { ...state.summaries.morning, channels: v ? ['app', 'whatsapp'] : ['app'] }, evening: { ...state.summaries.evening, channels: v ? ['app', 'whatsapp'] : ['app'] } } })}
           last
         />
       </List>
@@ -131,7 +132,7 @@ const ns = StyleSheet.create({
 
 export function Permissions({ nav, draft, setDraft }: { nav: StepNav; draft: Draft; setDraft: (d: Draft) => void }) {
   const { state } = useStore();
-  const wakes = state.profile.nightStyle === 'wake_if_urgent';
+  const wakes = state.nightAlerts.mode === 'urgent';
   const items: { key: 'notifications' | 'call'; icon: LucideIcon; title: string; why: string }[] = [
     {
       key: 'notifications', icon: Bell, title: 'Notificaciones',
@@ -261,11 +262,11 @@ export function Done({ nav, draft }: { nav: StepNav; draft: Draft }) {
       <Hero>
         <T v="eyebrow" tone="onHeroMuted">Esta noche empieza la prueba</T>
         <T v="h2" tone="onHero">
-          {state.profile.nightStyle === 'wake_if_urgent'
+          {state.nightAlerts.mode === 'urgent'
             ? `De ${night.start} a ${night.end} vigilo tus chats y tu correo. Si algo es urgente, te despierto.`
             : `A las ${night.start} te dejo todo ordenado para mañana. No te despierto.`}
         </T>
-        <T v="callout" tone="onHeroMuted">Resumen de la mañana a las {state.profile.morningAt}{state.profile.whatsappDigest ? ', también por WhatsApp' : ''}.</T>
+        <T v="callout" tone="onHeroMuted">Resumen de la mañana a las {state.summaries.morning.at}{state.summaries.morning.channels.includes('whatsapp') ? ', también por WhatsApp' : ''}.</T>
       </Hero>
       <List>
         <ListRow title="Lo que quieres lograr" detail={goals.join(' · ') || 'Sin elegir'} />

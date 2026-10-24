@@ -13,6 +13,7 @@ import { radius, space } from '../../theme/tokens';
 export default function SolWhatsapp() {
   const { p } = useTheme();
   const { state, dispatch } = useStore();
+  const sum = state.summaries;
   const { profile } = state;
   const set = (patch: Partial<typeof profile>) => dispatch({ type: 'setProfile', patch });
 
@@ -40,12 +41,12 @@ export default function SolWhatsapp() {
         <List>
           <ToggleRow
             title="Recibir los resúmenes por WhatsApp"
-            detail={profile.whatsappDigest ? 'Llegan a WhatsApp y quedan en la app' : 'Solo en la app'}
-            value={profile.whatsappDigest}
-            onChange={(v) => set({ whatsappDigest: v })}
+            detail={sum.morning.channels.includes('whatsapp') ? 'Llegan a WhatsApp y quedan en la app' : 'Solo en la app'}
+            value={sum.morning.channels.includes('whatsapp')}
+            onChange={(v) => dispatch({ type: 'setSummaries', patch: { morning: { ...sum.morning, channels: v ? ['app', 'whatsapp'] : ['app'] }, evening: { ...sum.evening, channels: v ? ['app', 'whatsapp'] : ['app'] } } })}
           />
-          <TimeStepper label="Resumen de la mañana" detail="Qué pasó anoche y qué tienes hoy" value={profile.morningAt} onChange={(morningAt) => set({ morningAt })} />
-          <TimeStepper label="Resumen de la noche" detail="Lo pendiente y cómo queda mañana" value={profile.eveningAt} onChange={(eveningAt) => set({ eveningAt })} last />
+          <TimeStepper label="Resumen de la mañana" detail="Qué pasó anoche y qué tienes hoy" value={sum.morning.at} onChange={(at) => dispatch({ type: 'setSummaries', patch: { morning: { ...sum.morning, at } } })} />
+          <TimeStepper label="Resumen del día" detail="Lo pendiente y cómo queda mañana" value={sum.evening.at} onChange={(at) => dispatch({ type: 'setSummaries', patch: { evening: { ...sum.evening, at } } })} last />
         </List>
         <Button kind="secondary" icon={Send} label="Ver cómo llegan los mensajes" onPress={() => router.push('/resumen/whatsapp')} />
       </Section>

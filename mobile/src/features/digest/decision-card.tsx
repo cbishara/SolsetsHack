@@ -7,6 +7,7 @@ import type { FeedbackValue, Handled } from '../../data/types';
 import { useTheme } from '../../theme/theme';
 import { space } from '../../theme/tokens';
 import { dueText, hhmm } from './format';
+import { dueText as compatDue, feedbackOf } from '../../data/compat';
 
 const WHY_WAKE = ['Era un sistema crítico', 'Es fin de mes', 'Lo pidió mi jefa', 'Otro motivo'];
 const WHY_WAIT = ['Podía esperar', 'Ya lo veía otra persona', 'No es mi área', 'Otro motivo'];
@@ -22,7 +23,7 @@ export function DecisionCard({ item }: { item: Handled }) {
   const [askWhy, setAskWhy] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const woke = item.wouldWake;
-  const value = state.feedback[item.id];
+  const value = feedbackOf(state)[item.id];
   const wrong: FeedbackValue = woke ? 'should_not_have_woken' : 'should_have_woken';
   const task = item.taskId ? state.tasks.find((t) => t.id === item.taskId) : undefined;
 
@@ -72,7 +73,7 @@ export function DecisionCard({ item }: { item: Handled }) {
       {task ? (
         <View style={s.inline}>
           <CalendarClock size={14} color={p.accent} />
-          <T v="caption" tone="accent">Quedó como tarea para {dueText(task.due.label)}</T>
+          <T v="caption" tone="accent">Quedó como tarea para {dueText(compatDue(task))}</T>
         </View>
       ) : null}
 

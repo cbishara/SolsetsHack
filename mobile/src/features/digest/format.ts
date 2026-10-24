@@ -1,5 +1,7 @@
 // Small formatting helpers shared by the digest screens.
 import type { CalendarEvent, Handled, SleepNight, Task } from '../../data/types';
+import { isImportant } from '../../data/compat';
+import { addDays, todayKey } from '../../data/dates';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -47,7 +49,7 @@ export const openTasks = (tasks: Task[]) => tasks.filter((t) => !t.done);
 /** Top 3: important first, then today. */
 export function topTasks(tasks: Task[], n = 3) {
   const open = openTasks(tasks);
-  const score = (t: Task) => (t.important ? 0 : 1) * 10 + (t.due.kind === 'today' ? 0 : t.due.kind === 'tomorrow' ? 1 : 2);
+  const score = (t: Task) => (isImportant(t) ? 0 : 1) * 10 + (t.date === todayKey() ? 0 : t.date === addDays(todayKey(), 1) ? 1 : 2);
   return [...open].sort((a, b) => score(a) - score(b)).slice(0, n);
 }
 

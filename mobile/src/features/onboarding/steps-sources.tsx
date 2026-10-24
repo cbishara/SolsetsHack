@@ -27,7 +27,7 @@ export function Connect({ nav }: { nav: StepNav }) {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => {
     // Start from zero: only what gets connected here counts as connected.
-    SOURCES.forEach((src) => dispatch({ type: 'setConnection', id: src.id, status: 'off' }));
+    SOURCES.forEach((src) => dispatch({ type: 'setConnection', id: src.id, patch: { status: 'off' } }));
     const pending = timers.current;
     return () => pending.forEach(clearTimeout);
   }, [dispatch]);
@@ -37,7 +37,7 @@ export function Connect({ nav }: { nav: StepNav }) {
     timers.current.push(
       setTimeout(() => {
         setPhase((s) => ({ ...s, [id]: 'on' }));
-        dispatch({ type: 'setConnection', id, status: 'connected' });
+        dispatch({ type: 'setConnection', id, patch: { status: 'connected' } });
         tap('success');
       }, 1100),
     );

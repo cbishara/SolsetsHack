@@ -119,7 +119,7 @@ export function Watching() {
         iconTone={attention ? 'urgent' : 'calm'}
         title={attention ? 'Una conexión necesita atención' : 'Sol está atento'}
         detail={`${on.map((c) => c.name).join(', ')} · revisé ${ago(latest)}`}
-        onPress={() => router.push('/tu/conexiones')}
+        onPress={() => router.push('/perfil/conexiones')}
         last
       />
     </List>

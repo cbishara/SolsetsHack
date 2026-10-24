@@ -11,6 +11,7 @@ import { useStore } from '../data/store';
 import type { Task } from '../data/types';
 import { useTheme } from '../theme/theme';
 import { radius, space } from '../theme/tokens';
+import { dueText, isImportant } from '../data/compat';
 
 type Msg =
   | { id: string; from: 'sol' | 'me'; text: string; voice?: boolean }
@@ -61,7 +62,7 @@ export default function Sol() {
       const day = new Date(); if (tomorrow) day.setDate(day.getDate() + 1);
       const same = (iso: string) => new Date(iso).toDateString() === day.toDateString();
       const list = events.filter((e) => same(e.start)).map((e) => `${new Date(e.start).toTimeString().slice(0, 5)} ${e.title}`);
-      const open = state.tasks.filter((x) => !x.done && x.important).map((x) => x.title);
+      const open = state.tasks.filter((x) => !x.done && isImportant(x)).map((x) => x.title);
       const reply = `${tomorrow ? 'Mañana' : 'Hoy'} tienes ${list.length ? list.join(', ') : 'el día libre de eventos'}.${open.length ? ` Lo importante: ${open.slice(0, 3).join('; ')}.` : ''}`;
       setMessages((m) => [...m, me, { id: uid(), from: 'sol', text: reply }]);
     } else {
@@ -188,7 +189,7 @@ function TaskCards({ tasks, undone, onUndo }: { tasks: Task[]; undone?: boolean;
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <CalendarClock size={13} color={p.accent} />
-                <T v="caption" tone="accent">{t.due.label}</T>
+                <T v="caption" tone="accent">{dueText(t)}</T>
               </View>
               <SourceTag source={t.source} label={t.sourceLabel} />
             </View>

@@ -1,0 +1,20 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-auditoria-y-demo-simulada",
+  "title": "Auditoría del repo y push y llamada simulados en la demo",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Una auditoría encontró que el servidor no llama al agente y que no hay push ni llamada en ninguna capa. Los tres acordaron simular el push y la llamada en la demo y concentrar el esfuerzo en conectar la cadena real.",
+  "before": "Las tres piezas pasaban sus pruebas por separado, pero el servidor clasificaba con expresiones regulares, el contrato del agente no coincidía con el del servidor y la alerta de la app era una maqueta con datos locales.",
+  "after": "Queda registrado en docs/equipo/quito/auditoria-2026-10-23.md qué falta, qué documentos se contradicen y qué ramas e issues se pueden cerrar. El ADR oficial 2026-10-23-push-y-llamada-simulados-en-la-demo fija que la demo muestra el push y la llamada simulados, pero disparados por una alerta real del servidor.",
+  "reason": "Quedan pocas horas para la entrega. Conectar servidor y agente prueba que el producto funciona; el push real exige un build propio de Expo y un proveedor de llamadas que no se alcanzan a probar.",
+  "checked": "2026-10-23: tsc y pruebas en verde en agent (85/85), server (21/21) y mobile (19/19). No se corrió el build de mobile. La auditoría es de solo lectura y no cambió código.",
+  "availability": "Acuerdo de producto. La conexión servidor-agente y la alerta simulada disparada por el servidor siguen sin construir.",
+  "featureIds": [
+    "feat-bishara-alerta-respaldo",
+    "feat-quito-contrato-noche"
+  ],
+  "flowIds": [
+    "flujo-quito-atender-alerta"
+  ]
+}

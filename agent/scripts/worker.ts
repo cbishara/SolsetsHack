@@ -31,7 +31,7 @@ try {
   })();
   const controller = new AbortController();
   for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => controller.abort());
-  console.log(`Trabajador ${version} listo; datos reales ${allowReal ? 'habilitados por operador' : 'deshabilitados'}. Codex permanece en el Mac.`);
+  console.log(`Trabajador ${version} ${workerId} listo; datos reales ${allowReal ? 'habilitados por operador' : 'deshabilitados'}. Codex corre en esta máquina.`);
   await runWorker(worker, controller.signal, status => console.log(`worker: ${status}`));
 } catch (e) {
   // These are configuration/transport codes only. Provider errors are mapped to fixed failure codes.

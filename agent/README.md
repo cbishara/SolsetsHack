@@ -75,6 +75,8 @@ El equipo puede usar el chat con Codex sin levantar nada en su equipo. El servic
 
 La sesión de Codex del servidor es aparte de la del Mac de Quito: se creó con `codex login --device-auth`, como recomienda la documentación de Codex para máquinas sin navegador. Entra por la variable `CODEX_AUTH_JSON_B64` y [scripts/start.sh](./scripts/start.sh) la copia al disco `/data` la primera vez. Codex renueva el token en ese archivo, así que el disco manda sobre la variable; si se carga una sesión nueva en la variable, el arranque la reemplaza. El estado del piloto también vive en `/data`.
 
+Si el servicio tiene `AGENT_WORKER_URL` y `AGENT_WORKER_TOKEN`, el arranque levanta también el [trabajador del puente](./INTEGRATION.md) con la misma sesión de Codex, así los trabajos de `server/` no dependen de un Mac encendido. Su bandeja queda en `/data/worker.json` y `AGENT_WORKER_ID` lo distingue del trabajador del Mac. Si se detiene por configuración o autorización, se reintenta cada 30 s.
+
 Una sola réplica: el almacenamiento es un archivo y el chat ordena las peticiones dentro de un proceso. La conversación `demo:web` es compartida por todo el equipo. Para desplegar cambios de `agent/`, desde esta carpeta: `railway up --service agent`.
 
 ## API del piloto

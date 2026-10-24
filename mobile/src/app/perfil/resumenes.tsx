@@ -53,7 +53,7 @@ export default function Resumenes() {
       <Header title="Resúmenes" />
       <T tone="muted">Sol te deja todo ordenado dos veces al día. Elige a qué hora y dónde llegan.</T>
       {block('morning', 'Resumen de la mañana', 'Qué pasó de noche y qué tienes hoy', Sunrise, p.sol, () => router.push('/resumen/manana'))}
-      {block('evening', 'Resumen del día', 'Qué se hizo, qué queda para mañana y un momento para soltar lo que tengas en la cabeza', FileText, categoryColors.indigo, () => router.push('/resumen/noche'))}
+      {block('evening', 'Resumen del día', 'Qué se hizo, qué queda para mañana y un momento para soltar lo que tengas en la cabeza', FileText, categoryColors.indigo, () => router.push('/resumen/dia'))}
       <Section title="Por WhatsApp">
         <List>
           <ListRow icon={MessageCircle} iconColor={categoryColors.green} title="Ver cómo llegan los mensajes" detail="Puedes responderle a Sol ahí mismo: corregir, agregar o descargar lo que falte" onPress={() => router.push('/resumen/whatsapp')} last />

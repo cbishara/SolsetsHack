@@ -157,7 +157,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(t);
   }, [status, pull]);
 
-  // Push what Rodrigo marks: feedback, tonight's answer, shadow mode, watched chats.
+  // Push what the person marks: feedback, tonight's answer, shadow mode, watched chats.
   useEffect(() => {
     const c = client.current;
     if (status !== 'connected' || !c) return;

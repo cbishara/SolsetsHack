@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-perfil-whatsapp",
+  "title": "Perfil completo: conectar WhatsApp con código y elegir chats, lo que Sol sabe de ti, aprendizaje y conexiones",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "WhatsApp se conecta como una integración real contra las rutas multiusuario de Amaru (#36). El perfil muestra lo que Sol sabe de la persona y cómo va su entrenamiento.",
+  "before": "WhatsApp era una tarjeta con un número de demo y la lista de chats vivía dentro de Conexiones. La memoria era una lista suelta, el entrenamiento usaba la tarjeta destacada vieja, y Conexiones mezclaba fuentes y servidor.",
+  "after": "WhatsApp: estado de la conexión, los tres pasos (vincular, código de 6 dígitos que manda Sol, elegir chats), los chats que lee Sol, Sol en WhatsApp y la opción de pausar o desconectar. La pantalla para elegir chats tiene las sugerencias con su motivo, todos los chats y búsqueda; parte con todo sin marcar. 'Lo que sabe de ti' muestra cómo te entiende Sol, las personas con su importancia y lo aprendido con su origen; todo se edita y se puede enseñarle algo nuevo. Aprendizaje muestra el modo prueba con números (coincidencia, urgencias sin avisar, avisos de más), las preguntas, lo último aprendido y el paso al modo real. Conexiones muestra el estado y qué lee cada fuente.",
+  "reason": "Bishara pidió que la conexión de WhatsApp se vea nativa y real, y que el perfil explique quién es la persona para la app.",
+  "checked": "TypeScript sin errores y 25 pruebas en verde. Flujo de WhatsApp probado en web en modo demostración: conectar, vincular, código, elegir chats. Con el servidor en vivo usa /api/v1 de #36; falta probarlo contra el candidato de Railway desde un iPhone, porque desde el navegador el servidor rechaza el origen.",
+  "availability": "Rama bishara/perfil-whatsapp.",
+  "featureIds": [],
+  "flowIds": []
+}

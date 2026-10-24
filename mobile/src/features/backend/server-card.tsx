@@ -6,8 +6,8 @@ import { Badge, Button, Card, Chip, Section, T } from '../../components/ui';
 import { useTheme } from '../../theme/theme';
 import { radius, space } from '../../theme/tokens';
 
-const FROM_SERVER = ['La guardia de esta noche', 'Lo que pasó anoche y el resumen', 'Tu feedback', 'Modo prueba o real', 'Estado de WhatsApp y correo'];
-const STILL_LOCAL = ['Tareas y agenda', 'Reglas, memoria y entrenamiento', 'Sueño estimado'];
+const FROM_SERVER = ['Los avisos de esta noche', 'Lo que clasificó (con Datos: Servidor en vivo)', 'Tu feedback', 'Modo prueba o real', 'Estado de WhatsApp y correo'];
+const STILL_LOCAL = ['Categorías y tareas', 'Agenda', 'Memoria, reglas y aprendizaje', 'Sueño estimado'];
 
 /** "Is this real?" in one card: where the data comes from, and how to connect server/. */
 export function ServerCard() {
@@ -37,7 +37,7 @@ export function ServerCard() {
             <T v="callout" tone="muted" numberOfLines={2}>
               {connected
                 ? `${b.url.replace(/^https?:\/\//, '')}${b.lastSync ? ` · actualizado ${new Date(b.lastSync).toTimeString().slice(0, 5)}` : ''}`
-                : b.status === 'error' ? b.error ?? 'El servidor no respondió.' : 'La app muestra datos de ejemplo de Rodrigo.'}
+                : b.status === 'error' ? b.error ?? 'El servidor no respondió.' : 'La app muestra datos de ejemplo.'}
             </T>
           </View>
           {connected ? <Badge label={b.whatsappLive ? 'WhatsApp en vivo' : 'WhatsApp sin conectar'} tone={b.whatsappLive ? 'calm' : 'neutral'} /> : null}
@@ -81,7 +81,7 @@ export function ServerCard() {
       {connected ? (
         <Card tone="surface">
           <T v="bodyStrong">Probar el recorrido</T>
-          <T v="callout" tone="muted">Manda un aviso inventado como si llegara al grupo de guardia y mira cómo lo decide Sol en el resumen.</T>
+          <T v="callout" tone="muted">Manda un aviso inventado como si llegara a un chat vigilado y mira cómo lo decide Sol.</T>
           <TextInput value={test} onChangeText={setTest} placeholder="Ej: se cayó el portal de clientes" placeholderTextColor={p.faint}
             style={[s.input, { color: p.ink, borderColor: p.line, backgroundColor: p.card }]} accessibilityLabel="Aviso de prueba" />
           <View style={s.actions}>

@@ -1,7 +1,7 @@
 import type { Goal, RuleKind } from '../../data/types';
 
 export const GOAL_LABEL: Record<Goal, string> = {
-  guardia: 'Dormir tranquilo en guardia',
+  guardia: 'Que me avisen solo si es urgente',
   orden: 'Tener todo ordenado',
   descargar: 'Sacarme cosas de la cabeza',
   dormir_mas: 'Dormir más',

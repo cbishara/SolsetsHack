@@ -1,173 +1,116 @@
 import { router } from 'expo-router';
-import { CircleHelp, Mail, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react-native';
-import { View } from 'react-native';
-import { Hero } from '../../components/brand';
+import { BookOpen, Brain, ListFilter, Mail, MessageCircle, Tags, ThumbsUp } from 'lucide-react-native';
+import { StyleSheet, View } from 'react-native';
 import { Header } from '../../components/header';
-import { Button, Card, Chip, Divider, List, ListRow, Progress, RowView, Screen, Section, Stack, T } from '../../components/ui';
+import { SolOrb } from '../../components/sol-orb';
+import { Badge, Button, Glass, IconTile, List, ListRow, Screen, Section, Stat, T, tap } from '../../components/ui';
+import { relative } from '../../data/dates';
 import { useStore } from '../../data/store';
-import { PHASES, SOURCE_LABEL, shortDate, StageLine, Stat, st } from '../../features/learning/parts';
+import { QuestionCard } from '../../features/home/question-card';
+import { confirm } from '../../features/settings/confirm';
 import { useTheme } from '../../theme/theme';
-import { space } from '../../theme/tokens';
+import { categoryColors, radius, space } from '../../theme/tokens';
 
 const fmt = (n: number) => n.toLocaleString('es-CL');
 
-// Entrenamiento: how Sol learns and how far it can be trusted. Trust is earned
-// with visible numbers, the one that matters most being urgencies missed.
-export default function Entrenamiento() {
+/**
+ * Aprendizaje: how far Sol can be trusted, with the numbers that matter
+ * (urgencies it would have missed first), what it learned and from where,
+ * and the switch to real mode once the person trusts it.
+ */
+export default function Aprendizaje() {
   const { p } = useTheme();
   const { state, dispatch, training } = useStore();
-  const { pilot, read, categories } = training;
-  const active = state.profile.agentMode === 'active';
-  const phase = active ? 'trusted' : training.phase;
-  const ready = pilot.nights >= pilot.target && pilot.missed === 0;
+  const { pilot, read } = training;
+  const { profile } = state;
+  const active = profile.agentMode === 'active';
+  const day = Math.min(profile.pilot.days, Math.max(1, Math.ceil((Date.now() - new Date(profile.pilot.startedAt).getTime()) / 86_400_000)));
+  const rated = state.items.filter((i) => i.feedback).length + pilot.rated;
   const open = state.questions.filter((q) => !q.answer);
-  const answered = state.questions.filter((q) => q.answer);
-  const learnedRules = state.rules.filter((r) => r.origin === 'feedback');
-  const recentMemory = [...state.memory].sort((a, b) => b.learnedAt.localeCompare(a.learnedAt)).slice(0, 3);
-  const left = Math.max(0, pilot.target - pilot.nights);
+  const ready = day >= profile.pilot.days && pilot.missed === 0;
 
-  const headline = active
-    ? 'Estoy en modo real. Solo te despierto por lo urgente y, ante la duda, igual te despierto.'
-    : ready
-      ? 'Pasé la prueba. Cuando quieras, me dejas a cargo.'
-      : `Estoy aprendiendo contigo. Me faltan ${left} ${left === 1 ? 'noche' : 'noches'} de prueba.`;
+  const learned = [
+    ...state.categories.filter((c) => c.origin === 'you' || (c.status === 'active' && c.createdAt > profile.pilot.startedAt)).map((c) => ({ id: c.id, icon: Tags, color: categoryColors[c.color], text: `Categoría "${c.name}"`, detail: c.origin === 'you' ? 'La creaste tú' : 'La aceptaste', at: c.createdAt })),
+    ...state.rules.filter((r) => r.origin === 'feedback').map((r) => ({ id: r.id, icon: ThumbsUp, color: p.calm, text: r.text, detail: 'Aprendido de tu corrección', at: profile.pilot.startedAt })),
+    ...state.memory.slice(0, 4).map((m) => ({ id: m.id, icon: Brain, color: categoryColors.pink, text: m.text, detail: 'Lo que sé de ti', at: m.learnedAt })),
+    ...state.questions.filter((q) => q.answer && q.answeredAt).map((q) => ({ id: q.id, icon: BookOpen, color: p.sol, text: q.text, detail: `Respondiste: ${q.answer}`, at: q.answeredAt! })),
+  ].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8);
+
+  const goLive = () => confirm('Pasar al modo real', 'Desde ahora silencio lo que no es urgente. Igual te aviso si no estoy seguro, y puedes volver al modo prueba cuando quieras.', () => {
+    tap('success');
+    dispatch({ type: 'setProfile', patch: { agentMode: 'active' } });
+  }, 'Pasar a modo real');
 
   return (
-    <Screen edges={['top']}>
-      <Header title="Entrenamiento" />
+    <Screen padBottom={false} glow="sol">
+      <Header title="Aprendizaje" />
 
-      <Stack gap="lg">
-        <Stack gap="xs">
-          <T v="eyebrow" tone="muted">{PHASES.find((x) => x.id === phase)?.label}</T>
-          <T v="title" accessibilityRole="header">{headline}</T>
-        </Stack>
-        <StageLine phase={phase} />
-      </Stack>
-
-      <Hero>
-        <RowView gap="sm">
-          <ShieldCheck size={18} color={p.sol} />
-          <T v="eyebrow" tone="onHeroMuted">Modo prueba</T>
-        </RowView>
-        <T v="h2" tone="onHero">Noche {Math.min(pilot.nights, pilot.target)} de {pilot.target}</T>
-        <T v="callout" tone="onHeroMuted">
-          Mientras dura la prueba no silencio nada. Te muestro qué habría hecho y tú me corriges.
-        </T>
-        <View style={{ flexDirection: 'row', gap: 6 }} accessibilityLabel={`${pilot.nights} de ${pilot.target} noches completas`}>
-          {Array.from({ length: pilot.target }, (_, i) => (
-            <View key={i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: i < pilot.nights ? p.sol : 'rgba(255,255,255,0.22)' }} />
-          ))}
+      <Glass style={s.hero}>
+        <View style={s.head}>
+          <SolOrb size={22} state={active ? 'watching' : 'shadow'} style={{ margin: -10 }} />
+          <View style={{ flex: 1 }}>
+            <T v="h3">{active ? 'Modo real' : `Modo prueba · día ${day} de ${profile.pilot.days}`}</T>
+            <T v="caption" tone="muted">{active ? 'Silencio lo que no es urgente. Ante la duda, te aviso.' : 'No silencio nada: te muestro qué habría hecho y tú me corriges.'}</T>
+          </View>
+          <Badge label={active ? 'Activo' : 'Prueba'} tone={active ? 'calm' : 'sol'} />
         </View>
-      </Hero>
-
-      <Section eyebrow="Cómo voy" title="Lo que me dice tu feedback">
-        <Card>
-          <View style={st.stats}>
-            <Stat lead value={String(pilot.missed)} label="Urgencias que dejé pasar" tone={pilot.missed ? 'urgent' : 'calm'} />
-            <Stat value={`${Math.round(pilot.agreement * 100)}%`} label={`De acuerdo contigo, en ${pilot.rated} decisiones`} />
+        {!active ? (
+          <View style={s.days} accessibilityLabel={`Día ${day} de ${profile.pilot.days}`}>
+            {Array.from({ length: profile.pilot.days }, (_, i) => (
+              <View key={i} style={[s.dayDot, { backgroundColor: i < day ? p.sol : p.surface }]} />
+            ))}
           </View>
-          <Divider />
-          <View style={st.stats}>
-            <Stat value={String(pilot.tooMany)} label="Te habría despertado de más" />
-            <Stat value={String(pilot.nights)} label="Noches revisadas" />
-          </View>
-          <T v="callout" tone="muted">
-            Lo que manda es la primera cifra. Para dejarme a cargo necesito {pilot.target} noches seguidas sin dejar pasar nada urgente.
-          </T>
-        </Card>
-
-        {active ? (
-          <Card tone="calmSoft">
-            <T v="bodyStrong">Estás en modo real</T>
-            <T v="callout" tone="muted">Si algo no te convence, vuelve al modo prueba. No pierdes nada de lo aprendido.</T>
-            <Button kind="secondary" label="Volver al modo prueba" onPress={() => dispatch({ type: 'setProfile', patch: { agentMode: 'shadow' } })} />
-          </Card>
-        ) : ready ? (
-          <Card tone="accentSoft">
-            <T v="bodyStrong">¿Me dejas a cargo?</T>
-            <T v="callout" tone="muted">
-              En modo real silencio lo que puede esperar y solo te despierto por lo urgente. Ante la duda, igual te despierto.
-            </T>
-            <Button label="Pasar a modo real" onPress={() => dispatch({ type: 'setProfile', patch: { agentMode: 'active' } })} />
-          </Card>
-        ) : (
-          <Card tone="surface">
-            <T v="bodyStrong">Todavía no te propongo el modo real</T>
-            <T v="callout" tone="muted">
-              {pilot.missed
-                ? 'Hace poco dejé pasar algo que debió despertarte. Vuelvo a contar desde cero.'
-                : `Faltan ${left} ${left === 1 ? 'noche' : 'noches'}. Cada mañana, marca en el resumen si acerté. Toma menos de un minuto.`}
-            </T>
-            <Progress value={pilot.nights / pilot.target} />
-          </Card>
-        )}
-      </Section>
-
-      <Section eyebrow="Preguntas para ti" title={open.length ? `Tengo ${open.length} ${open.length === 1 ? 'duda' : 'dudas'}` : 'No tengo dudas por ahora'}>
-        {open.length ? (
-          <T v="callout" tone="muted">Cuando no entiendo algo, te pregunto en vez de adivinar.</T>
         ) : null}
-        {open.map((q) => (
-          <Card key={q.id}>
-            <RowView gap="sm">
-              <CircleHelp size={18} color={p.accent} />
-              <T v="bodyStrong" style={{ flex: 1 }}>{q.text}</T>
-            </RowView>
-            {q.context ? <T v="callout" tone="muted">{q.context}</T> : null}
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-              {q.options.map((o) => (
-                <Chip key={o} label={o} onPress={() => dispatch({ type: 'answer', id: q.id, index: q.options.indexOf(o) })} />
-              ))}
-            </View>
-          </Card>
-        ))}
-        {answered.length ? (
+        <View style={[s.stats, { borderTopColor: p.glassLine }]}>
+          <Stat value={`${Math.round(pilot.agreement * 100)}%`} label="Coincido contigo" tone="calm" />
+          <Stat value={pilot.missed} label="Urgencias sin avisar" tone={pilot.missed ? 'urgent' : 'ink'} />
+          <Stat value={pilot.tooMany} label="Avisos de más" />
+        </View>
+        <T v="caption" tone="faint">{`Con ${rated} decisiones que revisaste. Lo más importante: que no se me pase ninguna urgencia.`}</T>
+        {!active ? (
+          <Button kind={ready ? 'sol' : 'secondary'} label={ready ? 'Pasar al modo real' : 'Pasar al modo real antes'} onPress={goLive} />
+        ) : (
+          <Button kind="ghost" label="Volver al modo prueba" onPress={() => { tap(); dispatch({ type: 'setProfile', patch: { agentMode: 'shadow' } }); }} />
+        )}
+      </Glass>
+
+      {open.length ? (
+        <Section title="Me ayudarías respondiendo" count={open.length}>
+          <QuestionCard questions={open} />
+        </Section>
+      ) : null}
+
+      {learned.length ? (
+        <Section title="Lo último que aprendí">
           <List>
-            {answered.map((q, i) => (
-              <ListRow key={q.id} title={q.text} detail={`Ya me lo dijiste: ${q.answer}`} last={i === answered.length - 1} />
+            {learned.map((l, i) => (
+              <ListRow key={l.id} title={l.text} numberOfLines={2} detail={`${l.detail} · ${relative(l.at)}`} leading={<IconTile icon={l.icon} color={l.color} size={32} />} last={i === learned.length - 1} />
             ))}
           </List>
-        ) : null}
+        </Section>
+      ) : null}
+
+      <Section title="Para empezar, leí">
+        <List>
+          <ListRow icon={MessageCircle} iconColor="#25D366" title={`${fmt(read.messages)} mensajes de WhatsApp`} detail={`De los chats que elegiste, últimos ${read.months} meses`} />
+          <ListRow icon={Mail} iconColor={categoryColors.blue} title={`${fmt(read.emails)} correos`} detail="Para reconocer remitentes, plazos y avisos automáticos" last />
+        </List>
+        <T v="caption" tone="faint">De ahí salieron tus categorías iniciales. No guardo los mensajes completos: solo lo que me sirve para clasificar.</T>
       </Section>
 
-      <Section eyebrow="Lo último que aprendí" title="Aprendo de tus correcciones">
-        <List>
-          {learnedRules.map((r) => (
-            <ListRow key={r.id} icon={Sparkles} title={r.text} detail="Regla nueva, salió de tu feedback" onPress={() => router.push('/perfil/reglas')} />
-          ))}
-          {recentMemory.map((m, i) => (
-            <ListRow key={m.id} title={m.text} detail={`${SOURCE_LABEL[m.source]}, ${shortDate(m.learnedAt)}`} last={i === recentMemory.length - 1} />
-          ))}
-        </List>
-        {!learnedRules.length ? (
-          <T v="callout" tone="muted">Cuando me corrijas en el resumen de la mañana, la corrección aparece aquí como regla.</T>
-        ) : null}
-        <Button kind="ghost" label="Ver todo lo que sé de ti" onPress={() => router.push('/perfil/memoria')} />
-      </Section>
-
-      <Section eyebrow="Lo que leí al empezar" title={`Tus últimos ${read.months} meses`}>
-        <Card>
-          <View style={st.stats}>
-            <View style={{ flex: 1, gap: 4 }}>
-              <RowView gap="xs"><MessageCircle size={15} color={p.muted} /><T v="caption" tone="muted">WhatsApp</T></RowView>
-              <T v="h2" style={{ fontVariant: ['tabular-nums'] }}>{fmt(read.messages)}</T>
-              <T v="caption" tone="muted">mensajes</T>
-            </View>
-            <View style={{ flex: 1, gap: 4 }}>
-              <RowView gap="xs"><Mail size={15} color={p.muted} /><T v="caption" tone="muted">Correo</T></RowView>
-              <T v="h2" style={{ fontVariant: ['tabular-nums'] }}>{fmt(read.emails)}</T>
-              <T v="caption" tone="muted">correos</T>
-            </View>
-          </View>
-        </Card>
-        <List>
-          {categories.map((c, i) => (
-            <ListRow key={c.id} title={c.label} detail={c.example} value={fmt(c.count)} last={i === categories.length - 1} />
-          ))}
-        </List>
-        <T v="caption" tone="faint">Datos de ejemplo. Con eso propuse tus primeras reglas y tú las confirmaste.</T>
-        <Button kind="secondary" label="Ver y editar tus reglas" onPress={() => router.push('/perfil/reglas')} />
-      </Section>
+      <List>
+        <ListRow icon={Tags} iconColor={categoryColors.orange} title="Categorías" onPress={() => router.push('/categorias')} />
+        <ListRow icon={ListFilter} iconColor={categoryColors.indigo} title="Reglas" value={`${state.rules.length}`} onPress={() => router.push('/perfil/reglas')} last />
+      </List>
+      <View style={{ height: space.xxxl }} />
     </Screen>
   );
 }
+
+const s = StyleSheet.create({
+  hero: { padding: space.xl, gap: space.lg, borderRadius: radius.xl },
+  head: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  days: { flexDirection: 'row', gap: 4 },
+  dayDot: { flex: 1, height: 6, borderRadius: 3 },
+  stats: { flexDirection: 'row', gap: space.md, paddingTop: space.lg, borderTopWidth: StyleSheet.hairlineWidth },
+});

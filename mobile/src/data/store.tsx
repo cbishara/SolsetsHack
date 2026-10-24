@@ -109,6 +109,8 @@ export type Action =
   | { type: 'addMemory'; item: MemoryItem }
   | { type: 'updateMemory'; id: string; text: string }
   | { type: 'removeMemory'; id: string }
+  | { type: 'updatePerson'; id: string; patch: Partial<Person> }
+  | { type: 'removePerson'; id: string }
   // settings
   | { type: 'setProfile'; patch: Partial<Profile> }
   | { type: 'setNightAlerts'; patch: Partial<NightAlerts> }
@@ -249,6 +251,8 @@ function reducer(s: AppState, a: Action): AppState {
     case 'addMemory': return { ...s, memory: [a.item, ...s.memory] };
     case 'updateMemory': return { ...s, memory: s.memory.map((m) => (m.id === a.id ? { ...m, text: a.text } : m)) };
     case 'removeMemory': return { ...s, memory: s.memory.filter((m) => m.id !== a.id) };
+    case 'updatePerson': return { ...s, people: s.people.map((x) => (x.id === a.id ? { ...x, ...a.patch } : x)) };
+    case 'removePerson': return { ...s, people: s.people.filter((x) => x.id !== a.id) };
 
     case 'setProfile': return { ...s, profile: { ...s.profile, ...a.patch } };
     case 'setNightAlerts': return { ...s, nightAlerts: { ...s.nightAlerts, ...a.patch } };

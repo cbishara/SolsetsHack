@@ -1,160 +1,156 @@
-import { Lock, Pencil, Plus, Trash2 } from 'lucide-react-native';
+import { Calendar, Mail, MessageCircle, MessagesSquare, Pencil, Sparkles, Trash2, UserRound } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Header } from '../../components/header';
-import { Button, Card, Chip, Screen, Section, Stack, T, tap } from '../../components/ui';
-import { useStore } from '../../data/store';
-import type { MemoryCategory, MemoryItem } from '../../data/types';
-import { confirmAction, shortDate, SOURCE_LABEL } from '../../features/learning/parts';
+import { SolOrb } from '../../components/sol-orb';
+import { Avatar, Badge, Button, Chip, Field, Glass, IconButton, List, ListRow, OptionRow, Screen, Section, Sheet, T, tap } from '../../components/ui';
+import { relative } from '../../data/dates';
+import { newId, useStore } from '../../data/store';
+import type { MemoryCategory, MemoryItem, Person } from '../../data/types';
 import { useTheme } from '../../theme/theme';
 import { radius, space } from '../../theme/tokens';
 
-const CATEGORIES: { id: MemoryCategory; label: string }[] = [
-  { id: 'vida', label: 'Tu vida' },
+const CATS: { id: MemoryCategory; label: string }[] = [
   { id: 'trabajo', label: 'Trabajo' },
-  { id: 'personas', label: 'Personas' },
   { id: 'horarios', label: 'Horarios' },
   { id: 'preferencias', label: 'Preferencias' },
+  { id: 'vida', label: 'Tu vida' },
 ];
+const SOURCE: Record<MemoryItem['source'], { label: string; icon: typeof Mail }> = {
+  onboarding: { label: 'Me lo contaste al empezar', icon: Sparkles },
+  chat: { label: 'Me lo dijiste en el chat', icon: MessagesSquare },
+  email: { label: 'Lo vi en tu correo', icon: Mail },
+  whatsapp: { label: 'Lo vi en WhatsApp', icon: MessageCircle },
+  calendar: { label: 'Lo vi en tu calendario', icon: Calendar },
+};
 
-// Memoria: everything Sol knows, where it learned it, and full control to fix
-// or forget it. Nothing hidden: if it is not here, Sol does not use it.
+/**
+ * Lo que sabe de ti: who Sol thinks the person is, the people that matter and
+ * what it learned, each with where it came from. Everything editable.
+ * Only the person teaches Sol: what others write never changes this.
+ */
 export default function Memoria() {
   const { p } = useTheme();
   const { state, dispatch } = useStore();
-  const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState<MemoryItem | null>(null);
+  const [person, setPerson] = useState<Person | null>(null);
+  const [about, setAbout] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
-  const [category, setCategory] = useState<MemoryCategory>('preferencias');
+  const [draftCat, setDraftCat] = useState<MemoryCategory>('preferencias');
+  const { profile } = state;
 
-  const save = () => {
+  const teach = () => {
     const text = draft.trim();
     if (!text) return;
-    dispatch({ type: 'addMemory', item: { id: `m${Date.now()}`, category, text, source: 'chat', learnedAt: new Date().toISOString() } });
     tap('success');
+    dispatch({ type: 'addMemory', item: { id: newId('m'), category: draftCat, text, source: 'chat', learnedAt: new Date().toISOString() } });
     setDraft('');
-    setAdding(false);
   };
 
   return (
-    <Screen edges={['top']}>
-      <Header title="Memoria" />
+    <Screen padBottom={false}>
+      <Header title="Lo que sabe de ti" />
 
-      <Stack gap="sm">
-        <T v="title" accessibilityRole="header">Lo que sé de ti</T>
-        <T tone="muted">
-          Lo uso para ordenar tus cosas sin preguntarte dos veces. Si algo está mal, corrígelo. Si no quieres que lo recuerde, bórralo.
-        </T>
-      </Stack>
-
-      {adding ? (
-        <Card>
-          <T v="bodyStrong">Dile algo a Sol para que lo recuerde</T>
-          <TextInput
-            value={draft}
-            onChangeText={setDraft}
-            placeholder="Por ejemplo: los martes busco a Tomás a las 17:30"
-            placeholderTextColor={p.faint}
-            multiline
-            autoFocus
-            style={[s.input, { color: p.ink, backgroundColor: p.surface, borderColor: p.line }]}
-            accessibilityLabel="Qué quieres que Sol recuerde"
-          />
-          <View style={s.chips}>
-            {CATEGORIES.map((c) => (
-              <Chip key={c.id} label={c.label} selected={category === c.id} onPress={() => setCategory(c.id)} />
-            ))}
+      <Glass style={s.card}>
+        <View style={s.head}>
+          <Avatar name={profile.fullName ?? profile.name} size={52} ring />
+          <View style={{ flex: 1, gap: 2 }}>
+            <T v="h3">{profile.fullName ?? profile.name}</T>
+            {profile.role ? <T v="callout" tone="muted">{profile.role}</T> : null}
           </View>
-          <View style={{ flexDirection: 'row', gap: space.sm }}>
-            <Button kind="secondary" label="Cancelar" onPress={() => { setAdding(false); setDraft(''); }} style={{ flex: 1 }} />
-            <Button label="Guardar" onPress={save} disabled={!draft.trim()} style={{ flex: 1 }} />
-          </View>
-        </Card>
-      ) : (
-        <Button kind="secondary" icon={Plus} label="Dile algo para que lo recuerde" onPress={() => setAdding(true)} />
-      )}
+          <IconButton icon={Pencil} label="Corregir cómo te entiende Sol" onPress={() => setAbout(profile.about ?? '')} size={40} />
+        </View>
+        <View style={s.understood}>
+          <SolOrb size={14} state="watching" style={{ margin: -6 }} />
+          <T v="captionStrong" tone="sol">Cómo te entiendo</T>
+        </View>
+        <T>{profile.about ?? 'Todavía no sé mucho de ti. Cuéntame en el chat a qué te dedicas y qué te importa.'}</T>
+      </Glass>
 
-      {CATEGORIES.map((c) => {
-        const items = state.memory.filter((m) => m.category === c.id);
-        if (!items.length) return null;
+      <Section title="Personas" count={state.people.length}>
+        <T v="callout" tone="muted" style={{ marginTop: -space.sm }}>Así sé que un mensaje de tu jefa no es igual a un boletín.</T>
+        <List>
+          {state.people.map((x, i) => (
+            <ListRow key={x.id} title={x.name} detail={x.relation} leading={<Avatar name={x.name} size={36} color={x.importance === 'high' ? p.sol : undefined} />}
+              right={x.importance === 'high' ? <Badge label="Importante" tone="sol" /> : undefined} onPress={() => setPerson(x)} last={i === state.people.length - 1} />
+          ))}
+        </List>
+      </Section>
+
+      {CATS.map((c) => {
+        const list = state.memory.filter((m) => m.category === c.id || (c.id === 'trabajo' && m.category === 'personas'));
+        if (!list.length) return null;
         return (
-          <Section key={c.id} eyebrow={c.label}>
-            <View style={[s.group, { backgroundColor: p.card, borderColor: p.line }]}>
-              {items.map((m, i) => (
-                <MemoryRow key={m.id} item={m} last={i === items.length - 1} />
-              ))}
-            </View>
+          <Section key={c.id} title={c.label} count={list.length}>
+            <List>
+              {list.map((m, i) => {
+                const src = SOURCE[m.source];
+                const Icon = src.icon;
+                return (
+                  <ListRow key={m.id} title={m.text} numberOfLines={3} onPress={() => setEditing(m)} last={i === list.length - 1}
+                    detail={`${src.label} · ${relative(m.learnedAt)}`} leading={<View style={[s.src, { backgroundColor: p.surface }]}><Icon size={15} color={p.muted} /></View>} />
+                );
+              })}
+            </List>
           </Section>
         );
       })}
 
-      <Card tone="surface">
-        <View style={{ flexDirection: 'row', gap: space.sm, alignItems: 'center' }}>
-          <Lock size={18} color={p.accent} />
-          <T v="bodyStrong">Tu memoria es tuya</T>
+      <Section title="Enséñale algo">
+        <Field value={draft} onChangeText={setDraft} placeholder="Ej: Los viernes salgo a las 16:00" onSubmitEditing={teach} returnKeyType="done" accessibilityLabel="Algo que Sol debería saber" />
+        <View style={s.chips}>
+          {CATS.map((c) => <Chip key={c.id} label={c.label} selected={draftCat === c.id} onPress={() => setDraftCat(c.id)} />)}
         </View>
-        <T v="callout" tone="muted">
-          Guardo solo lo que ves aquí: lo que me contaste y lo que aprendí de tus chats, correos y calendario conectados. No se comparte con nadie ni se usa para otra cosa. Tú decides qué queda.
-        </T>
-      </Card>
+        <Button kind="sol" label="Guardar" disabled={!draft.trim()} onPress={teach} />
+        <T v="caption" tone="faint">Sol solo aprende de ti: de lo que le dices y de cómo corriges. Lo que escriben otras personas nunca cambia lo que sabe de ti.</T>
+      </Section>
+      <View style={{ height: space.xxxl }} />
+
+      <Sheet visible={!!editing} onClose={() => setEditing(null)} title="Lo que sé" action={{ label: 'Guardar', onPress: () => { if (editing) dispatch({ type: 'updateMemory', id: editing.id, text: editing.text }); setEditing(null); } }}>
+        {editing ? (
+          <>
+            <Field value={editing.text} onChangeText={(text) => setEditing({ ...editing, text })} multiline accessibilityLabel="Texto" />
+            <T v="caption" tone="faint">{SOURCE[editing.source].label}.</T>
+            <List>
+              <ListRow icon={Trash2} iconTone="urgent" titleTone="urgent" title="Olvidar esto" last onPress={() => { tap(); dispatch({ type: 'removeMemory', id: editing.id }); setEditing(null); }} />
+            </List>
+          </>
+        ) : null}
+      </Sheet>
+
+      <Sheet visible={!!person} onClose={() => setPerson(null)} title={person?.name}>
+        {person ? (
+          <>
+            <Field value={person.relation} onChangeText={(relation) => setPerson({ ...person, relation })} placeholder="Quién es para ti" accessibilityLabel="Relación" />
+            <List>
+              <OptionRow title="Importante" detail="Lo suyo se prioriza y nunca se silencia" selected={person.importance === 'high'} onPress={() => setPerson({ ...person, importance: 'high' })} />
+              <OptionRow title="Normal" selected={person.importance === 'normal'} onPress={() => setPerson({ ...person, importance: 'normal' })} last />
+            </List>
+            <Button kind="sol" label="Guardar" onPress={() => {
+              tap('success');
+              dispatch({ type: 'updatePerson', id: person.id, patch: person });
+              setPerson(null);
+            }} />
+            <List>
+              <ListRow icon={UserRound} iconTone="urgent" titleTone="urgent" title="Olvidar a esta persona" last
+                onPress={() => { tap(); dispatch({ type: 'removePerson', id: person.id }); setPerson(null); }} />
+            </List>
+          </>
+        ) : null}
+      </Sheet>
+
+      <Sheet visible={about !== null} onClose={() => setAbout(null)} title="Cómo te entiendo" action={{ label: 'Guardar', onPress: () => { dispatch({ type: 'setProfile', patch: { about: about ?? '' } }); setAbout(null); } }}>
+        <Field value={about ?? ''} onChangeText={setAbout} multiline accessibilityLabel="Cómo te entiende Sol" />
+        <T v="caption" tone="faint">Escríbelo como se lo contarías a alguien nuevo en tu equipo.</T>
+      </Sheet>
     </Screen>
   );
 }
 
-function MemoryRow({ item, last }: { item: MemoryItem; last: boolean }) {
-  const { p } = useTheme();
-  const { dispatch } = useStore();
-  const [editing, setEditing] = useState(false);
-  const [text, setText] = useState(item.text);
-
-  const remove = () =>
-    confirmAction('¿Olvido esto?', `"${item.text}"\n\nDejo de usarlo desde ahora. No se puede deshacer.`, 'Olvidar', () =>
-      dispatch({ type: 'removeMemory', id: item.id }),
-    );
-
-  return (
-    <View style={[s.row, !last && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.line }]}>
-      {editing ? (
-        <View style={{ gap: space.sm }}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            multiline
-            autoFocus
-            style={[s.input, { color: p.ink, backgroundColor: p.surface, borderColor: p.line }]}
-            accessibilityLabel="Corregir recuerdo"
-          />
-          <View style={{ flexDirection: 'row', gap: space.sm }}>
-            <Button kind="secondary" label="Cancelar" onPress={() => { setText(item.text); setEditing(false); }} style={{ flex: 1 }} />
-            <Button
-              label="Guardar"
-              disabled={!text.trim()}
-              onPress={() => { dispatch({ type: 'updateMemory', id: item.id, text: text.trim() }); tap('success'); setEditing(false); }}
-              style={{ flex: 1 }}
-            />
-          </View>
-        </View>
-      ) : (
-        <View style={{ flexDirection: 'row', gap: space.md, alignItems: 'flex-start' }}>
-          <View style={{ flex: 1, gap: 4 }}>
-            <T>{item.text}</T>
-            <T v="caption" tone="muted">{SOURCE_LABEL[item.source]}, {shortDate(item.learnedAt)}</T>
-          </View>
-          <Pressable accessibilityRole="button" accessibilityLabel={`Corregir: ${item.text}`} onPress={() => { tap(); setEditing(true); }} hitSlop={8} style={s.icon}>
-            <Pencil size={18} color={p.muted} />
-          </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel={`Olvidar: ${item.text}`} onPress={() => { tap(); remove(); }} hitSlop={8} style={s.icon}>
-            <Trash2 size={18} color={p.muted} />
-          </Pressable>
-        </View>
-      )}
-    </View>
-  );
-}
-
 const s = StyleSheet.create({
-  group: { borderRadius: radius.lg, borderCurve: 'continuous', borderWidth: 1, overflow: 'hidden' },
-  row: { paddingHorizontal: space.lg, paddingVertical: space.md + 2 },
-  icon: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill },
-  input: { fontFamily: 'InterTight_400Regular', fontSize: 17, lineHeight: 23, minHeight: 72, borderWidth: 1, borderRadius: radius.md, padding: space.md, textAlignVertical: 'top' },
+  card: { padding: space.xl, gap: space.md, borderRadius: radius.xl },
+  head: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  understood: { flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.xs },
+  src: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
 });

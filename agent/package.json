@@ -15,6 +15,7 @@
     "eval": "node scripts/eval.ts",
     "worker": "node scripts/worker.ts",
     "integration:verify": "node scripts/verify-integration.ts",
+    "verify:voice": "node --env-file-if-exists=.env scripts/verify-voice.ts",
     "check": "npm run typecheck && npm test && npm run eval"
   },
   "dependencies": {

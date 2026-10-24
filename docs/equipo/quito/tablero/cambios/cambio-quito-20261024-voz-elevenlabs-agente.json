@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-voz-elevenlabs-agente",
+  "title": "El agente transcribe y habla con la voz Miguel G de ElevenLabs",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "Se publica el código de voz del agente que estaba solo en el Mac de Quito y se le agregan dos rutas para que server/ lo use por HTTP, como ya hace con la clasificación. Responde la tarea #72 de Amaru.",
+  "before": "La app ya grababa y mandaba el audio a POST /api/transcribe, pero nadie lo transcribía: server/ no tenía la ruta y el adaptador de ElevenLabs no estaba en el repo. Sol hablaba con la voz robótica del teléfono.",
+  "after": "agent/src/voice/elevenlabs.ts transcribe (scribe_v2, español) y lee la respuesta de Sol con Miguel G (k8cFOyAg7B9qwBlDDNTC), que queda como voz por defecto. El agente expone POST /v1/voice/transcribe (audio crudo, hasta 5 MiB, responde el texto) y POST /v1/voice/speak (texto, responde MP3), detrás del mismo AGENT_TOKEN. Ejemplo: la app graba «Mañana a primera hora reviso el respaldo», server/ reenvía los bytes, el agente devuelve ese texto; después server/ manda la respuesta de Sol a speak y la app reproduce el MP3. Sin ELEVENLABS_API_KEY las rutas responden 503 y la app sigue con su voz propia. Los errores salen con un estado fijo (400, 502, 503, 504, 499) y nunca con el cuerpo del proveedor ni la clave. VOICE.md propone a server/ las rutas /api/transcribe y /api/speak.",
+  "reason": "Quito pidió dejar la voz funcionando de punta a punta. Server/ ya le habla al agente por HTTP y no importa su código, así que la voz sigue el mismo camino y la clave queda en un solo servicio. Leer un texto ya guardado permite volver a escuchar una respuesta sin repetir la inferencia.",
+  "checked": "En agent/: npm run typecheck sin errores, npm test con 131 pruebas aprobadas, incluidas 11 del adaptador y 2 de las rutas con un proveedor simulado, y npm run eval igual que main. Prueba real contra ElevenLabs con las rutas en un puerto local y la voz por defecto: speak respondió 200 con 84470 bytes de MP3 en 4627 ms y transcribe devolvió la misma frase sintética en 1170 ms. agent/.env.example no trae la clave.",
+  "availability": "Publicado en main por el PR de esta rama. No está desplegado: falta poner ELEVENLABS_API_KEY en el servicio agent de Railway. Las rutas /api/transcribe y /api/speak de server/ son de Amaru y no existen todavía, y la app aún no reproduce el MP3. No se probó en un teléfono.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

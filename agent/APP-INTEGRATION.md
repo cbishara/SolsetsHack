@@ -66,7 +66,7 @@ Esta ruta admite `source: simulated` para la aceptación sintética. El puente e
 }
 ```
 
-Salida: `{reply,tasks,questions,engine,model}`. Cada tarea tiene `id,title,source,sourceLabel,due,important:false,done:false,createdAt`. `source` admite `you` o `voice`: **voice recibe texto ya transcrito**, no audio. La captura y transcripción pertenecen al flujo de voz; este módulo no las implementa.
+Salida: `{reply,tasks,questions,engine,model}`. Cada tarea tiene `id,title,source,sourceLabel,due,important:false,done:false,createdAt`. `source` admite `you` o `voice`: **voice recibe texto ya transcrito**, no audio. La captura pertenece a la app y la transcripción a `/v1/voice/transcribe` ([VOICE.md](./VOICE.md)); este módulo no las implementa.
 
 El ejemplo produce llamar al dentista y comprar pan el sábado 24, y pagar la luz el viernes 30. Conserva el criterio de la referencia local: un día de semana igual al actual se interpreta como la próxima semana. Los cálculos se hacen en código con fecha local y zona IANA, incluyendo cambios de horario y meses; `due.at` representa el mediodía local como ancla de calendario, **no una hora de recordatorio**. Si el usuario cambia de zona, el consumidor debe conservar la zona original o adaptar la presentación de la fecha.
 

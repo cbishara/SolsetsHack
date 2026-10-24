@@ -7,6 +7,7 @@ import { rulesEngine } from './engines/rules.ts';
 import { MemoryStore } from './store.ts';
 import { createChat } from './chat.ts';
 import { randomUUID } from 'node:crypto';
+import { createElevenLabsVoice, SOL_VOICE_ID } from './voice/elevenlabs.ts';
 
 async function start(opts: { token?: string; dev: boolean; chatPassword?: string }) {
   const store = new MemoryStore();
@@ -109,5 +110,62 @@ test('the morning report lists the decisions of a user with their message', asyn
     assert.equal(list.length, 1);
     assert.equal(list[0].decision.decision, 'PARTE');
     assert.equal(list[0].message.text, 'mañana revisa la impresora');
+  } finally { await close(); }
+});
+
+async function startWithVoice(voice?: ReturnType<typeof createElevenLabsVoice>) {
+  const store = new MemoryStore();
+  const server = createAgentServer({ store, agent: createAgent({ store, engine: rulesEngine }), token: 't'.repeat(32), dev: false, voice });
+  await new Promise<void>(resolve => server.listen(0, resolve));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  return { base, close: () => new Promise(resolve => server.close(resolve)) };
+}
+
+test('voice routes transcribe raw audio and speak a given reply behind the agent token', async () => {
+  const sent: Array<{ url: string; body: unknown }> = [];
+  const voice = createElevenLabsVoice({ apiKey: 'test-key', voiceId: SOL_VOICE_ID, fetcher: async (url, init) => {
+    sent.push({ url: String(url), body: init?.body });
+    if (String(url).endsWith('/v1/speech-to-text')) return Response.json({ text: 'Mañana llamo al taller.' });
+    return new Response(new Uint8Array([73, 68, 51, 4]), { headers: { 'content-type': 'audio/mpeg' } });
+  } });
+  const { base, close } = await startWithVoice(voice);
+  const auth = { authorization: `Bearer ${'t'.repeat(32)}` };
+  try {
+    assert.equal((await fetch(`${base}/v1/voice/speak`, { method: 'POST', body: '{"text":"Hola"}' })).status, 401);
+    const heard = await fetch(`${base}/v1/voice/transcribe`, { method: 'POST', headers: { ...auth, 'content-type': 'audio/m4a' }, body: new Uint8Array([1, 2, 3]) });
+    assert.equal(heard.status, 200);
+    assert.deepEqual(await heard.json(), { text: 'Mañana llamo al taller.' });
+    const form = sent[0].body as FormData;
+    assert.equal((form.get('file') as File).size, 3);
+    const spoken = await fetch(`${base}/v1/voice/speak`, { method: 'POST', headers: { ...auth, 'content-type': 'application/json' }, body: JSON.stringify({ text: 'Lo dejo para mañana.' }) });
+    assert.equal(spoken.status, 200);
+    assert.equal(spoken.headers.get('content-type'), 'audio/mpeg');
+    assert.deepEqual(new Uint8Array(await spoken.arrayBuffer()), new Uint8Array([73, 68, 51, 4]));
+    assert.equal(new URL(sent[1].url).pathname, `/v1/text-to-speech/${SOL_VOICE_ID}`);
+    assert.deepEqual(JSON.parse(sent[1].body as string).text, 'Lo dejo para mañana.');
+  } finally { await close(); }
+});
+
+test('voice routes fail with controlled statuses and never call the provider for bad input', async () => {
+  let calls = 0;
+  const voice = createElevenLabsVoice({ apiKey: 'test-key', voiceId: SOL_VOICE_ID, fetcher: async () => { calls++; return new Response('secret detail', { status: 429 }); } });
+  const auth = { authorization: `Bearer ${'t'.repeat(32)}` };
+  const unconfigured = await startWithVoice();
+  try {
+    const off = await fetch(`${unconfigured.base}/v1/voice/speak`, { method: 'POST', headers: auth, body: '{"text":"Hola"}' });
+    assert.equal(off.status, 503);
+    assert.equal((await off.json()).error, 'not-configured');
+  } finally { await unconfigured.close(); }
+  const { base, close } = await startWithVoice(voice);
+  try {
+    assert.equal((await fetch(`${base}/v1/voice/transcribe`, { method: 'POST', headers: { ...auth, 'content-type': 'text/plain' }, body: 'hola' })).status, 400);
+    assert.equal((await fetch(`${base}/v1/voice/transcribe`, { method: 'POST', headers: { ...auth, 'content-type': 'audio/m4a' }, body: new Uint8Array(5 * 1024 * 1024 + 1) })).status, 400);
+    assert.equal((await fetch(`${base}/v1/voice/speak`, { method: 'POST', headers: auth, body: '{}' })).status, 400);
+    assert.equal((await fetch(`${base}/v1/voice/other`, { method: 'POST', headers: auth, body: '{}' })).status, 404);
+    assert.equal(calls, 0);
+    const quota = await fetch(`${base}/v1/voice/speak`, { method: 'POST', headers: auth, body: '{"text":"Hola"}' });
+    assert.equal(quota.status, 503);
+    const body = await quota.text();
+    assert.equal(body.includes('secret detail') || body.includes('test-key'), false);
   } finally { await close(); }
 });

@@ -1,6 +1,6 @@
 # Sugerir chats y responder con contexto elegido
 
-Estado: implementación del carril de Quito para [#30](https://github.com/cbishara/SolsetsHack/issues/30). El contrato se entrega por separado en [PR #44](https://github.com/cbishara/SolsetsHack/pull/44); el procesador y el trabajador se entregan en el PR de esta funcionalidad. Amaru aceptó los campos de catálogo/evidencia y la precisión de identidad/modo real. V1 todavía no está activado contra Railway. El puente v0 del PR #31 conserva su contrato y sigue siendo sintético.
+Estado: implementación del carril de Quito para [#30](https://github.com/cbishara/SolsetsHack/issues/30). El contrato se entrega por separado en [PR #44](https://github.com/cbishara/SolsetsHack/pull/44); el procesador y el trabajador se entregan en el PR de esta funcionalidad. Amaru aceptó los campos de catálogo/evidencia y la precisión de identidad/modo real. V1 está activado en el servicio candidato de Railway; salud, autenticación y reservas del trabajador están comprobadas. Falta el primer turno remoto con una cuenta vinculada. El puente v0 del PR #31 conserva su contrato y sigue siendo sintético.
 
 Quito autorizó en esta sesión procesar nombres/tipos de sus chats reales y mensajes únicamente de los chats que seleccione. La decisión quedó [oficial](../docs/equipo/adr/oficiales/2026-10-23-contexto-whatsapp-autorizado.md). Esta autorización no convierte las pruebas en datos reales: las pruebas y evaluación usan fixtures. El agente no descarga chats, resuelve identidades ni envía mensajes. Servidor y app conservan esas responsabilidades.
 
@@ -82,7 +82,7 @@ Verificado: **85 pruebas aprobadas en el cierre sobre main con el contrato del P
 
 Pruebas nuevas: catálogo sin contenido, IDs/efectos inválidos, límites, identidad, contexto y permisos, memoria A/B, inyección por evidencia y respuesta anterior, corrección/borrado, plazos, instantánea inmutable, modo real explícito, HTTP v1, reinicio y reentrega persistente. Se conserva la batería v0.
 
-Contrato e implementación se entregan en PR separados. Falta acoplar el extremo v1 que Amaru preparó y verificar dos usuarios por HTTP compartido con modelo real. La conexión v0 ya fue comprobada por Amaru en Railway con el Codex de este Mac: tres inferencias reales, corrección de dos a cinco minutos y aislamiento A/B, informados en #24. La prueba de acuse perdido es local; no se atribuye a esa sesión de red. No se declara conectado v1 a Railway, listo el móvil ni probado un envío de WhatsApp por existir este módulo.
+Contrato e implementación se entregan en PR separados. El cotejo local entre ambos extremos pasó y el servidor candidato ya acepta reservas v1. Falta verificar el primer turno remoto desde una cuenta vinculada y completar el recorrido de dos usuarios en el servicio compartido. La conexión v0 ya fue comprobada por Amaru en Railway con el Codex de este Mac: tres inferencias reales, corrección de dos a cinco minutos y aislamiento A/B, informados en #24. La prueba de acuse perdido es local; no se atribuye a esa sesión de red. La conexión de reservas v1 a Railway está comprobada; siguen pendientes el turno remoto con modelo, el móvil y un envío controlado de WhatsApp.
 
 ## Cotejo publicado y ejecución desde el Mac
 
@@ -91,3 +91,13 @@ El trabajador del commit **2a171bf8d1e7574e9713f263af0d6fd05368520d** se cotejó
 Se dejó un proceso independiente ejecutándose desde el Mac, con código fijado a ese commit, identidad `quito-mac-demo-v1` y bandeja privada propia. Lee el token dedicado por el canal privado de Railway; las credenciales de Codex permanecen en el Mac. Requiere que el Mac siga encendido y la sesión Codex permanezca válida. No se configura inicio automático tras reiniciar el Mac.
 
 **Estado al arrancar (2026-10-24 00:14 UTC):** el servidor candidato todavía tenía v1 deshabilitado y respondió 503 a los claims; el trabajador quedó vivo esperando con backoff, sin inferencia pendiente. Se pidió a Amaru activar su extremo tras el cotejo. El arranque no acredita disponibilidad desde la app, prueba v1 en Railway ni funcionamiento real de WhatsApp; esa activación y su verificación deben registrarse aparte.
+
+## Activación del servidor candidato (2026-10-24)
+
+Quito autorizó explícitamente intervenir en el carril de Amaru: «Actívalo tú y avisa a Amaru». Se avisó antes de cambiar **solo `SOL_AGENT_V1_ENABLED=false → true`** en `sol-multiuser-demo`; no se editaron archivos de servidor, pairing, secretos ni el piloto anterior. El despliegue `e8ef721a-aebc-42e0-879d-bb69c4499556` terminó **SUCCESS**.
+
+Comprobado en el servicio compartido: `/api/health` devuelve 200; chat sin sesión y reservas sin token devuelven 401; las reservas autenticadas del propio trabajador `quito-mac-demo-v1` pasaron de 503 a **204**. El proceso del Mac sigue vivo, con el código publicado `2a171bf`. No se hicieron reservas manuales ni se generaron trabajos de otras personas para probar.
+
+Esto verifica habilitación y conexión, no una respuesta de modelo remota v1: las reservas estaban vacías. La prueba local anterior sí completó dos llamadas reales a Codex con datos ficticios. No se enviaron OTP ni mensajes WhatsApp en esta activación. Falta el primer turno ficticio desde una cuenta personalmente vinculada/verificada; no se sembraron identidades verificadas en producción para sustituir ese paso.
+
+Si el acoplamiento falla, la reversión es desactivar únicamente `SOL_AGENT_V1_ENABLED`; no reinferir operaciones inciertas. La activación y estos límites se comunicaron a Amaru en #30.

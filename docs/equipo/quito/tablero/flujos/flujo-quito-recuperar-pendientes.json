@@ -242,6 +242,12 @@
       "environment": "HTTP local aislado con agent 2a171bf y server 7703ab7; proceso v1 independiente en el Mac",
       "result": "Cotejo exacto aprobado: acuse perdido y reinicio sin reinferencia, memoria 2→5, A/B aislados, 51 metadatos sin lecturas adicionales, revocación y borrado de A. Dos inferencias reales de Codex con evidencia ficticia fueron aceptadas por el servidor local. Trabajador v1 arrancado contra el candidato; al arrancar el gate del servidor seguía apagado y devolvía 503, así que el proceso espera sin inferir. Falta activación de Amaru y prueba compartida; no acredita móvil, OTP ni WhatsApp real.",
       "evidence": "agent/INTEGRATION-V1.md; https://github.com/cbishara/SolsetsHack/issues/30#issuecomment-6377357142"
+    },
+    {
+      "date": "2026-10-24",
+      "environment": "Railway sol-multiuser-demo y trabajador publicado 2a171bf en el Mac",
+      "result": "Con autorización explícita de Quito para intervenir en el carril de Amaru, solo SOL_AGENT_V1_ENABLED cambió a true. Despliegue SUCCESS; salud200; chat/reservas sin autenticación401; reservas propias del trabajador204, proceso vivo. Esto acredita conexión y autenticación, no una inferencia remota v1: no había trabajo en cola. Pendiente primer turno desde cuenta vinculada; sin OTP ni envíos WhatsApp en esta prueba.",
+      "evidence": "agent/INTEGRATION-V1.md; coordinación #30"
     }
   ],
   "evidence": [

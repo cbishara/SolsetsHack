@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-habilitar-servidor-v1",
+  "title": "Habilitar el servidor para recibir al trabajador v1",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "El servidor candidato ya autentica al trabajador v1 y acepta sus reservas; falta el primer turno desde una cuenta vinculada.",
+  "before": "V1 estaba publicado y el proceso del Mac esperaba: el servidor respondía503 porque su gate estaba desactivado.",
+  "after": "Con permiso explícito de Quito y aviso a Amaru, se activó solo SOL_AGENT_V1_ENABLED. El despliegue terminó y las reservas propias devolvieron204 sin trabajo. La API sigue exigiendo sesión y token.",
+  "reason": "Quito eligió activar y comprobar v1, y confirmó que lo hiciera su agente avisando a Amaru.",
+  "checked": "Con autorización explícita de Quito para intervenir en el carril de Amaru, solo SOL_AGENT_V1_ENABLED cambió a true. Despliegue SUCCESS; salud200; chat/reservas sin autenticación401; reservas propias del trabajador204, proceso vivo. Esto acredita conexión y autenticación, no una inferencia remota v1: no había trabajo en cola. Pendiente primer turno desde cuenta vinculada; sin OTP ni envíos WhatsApp en esta prueba.",
+  "availability": "Servicio candidato Railway habilitado y trabajador del Mac conectado. No acredita chat remoto con modelo, móvil ni WhatsApp completo. Requiere cuenta personal vinculada para la prueba de chat.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

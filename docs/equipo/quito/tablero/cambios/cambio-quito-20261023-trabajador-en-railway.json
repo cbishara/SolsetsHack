@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-trabajador-en-railway",
+  "title": "El trabajador del puente también corre en Railway, sin depender del Mac",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "El servicio agent levanta el trabajador del puente junto al chat, con la sesión de Codex del servidor. Los trabajos de sol-multiuser-demo ya no necesitan el Mac de Quito encendido.",
+  "before": "El trabajador que toma los trabajos de server/ y llama a Codex corría solo en el Mac de Quito (quito-mac-demo). Si el Mac se dormía, el chat de la app quedaba sin respuesta.",
+  "after": "En el servicio agent de Railway corre un segundo trabajador, railway-agent, que pide trabajos a https://sol-multiuser-demo-production.up.railway.app. El token se toma por referencia de la variable SOL_AGENT_WORKER_TOKEN del servicio de Amaru, sin copiarlo. Su bandeja queda en /data/worker.json. Si se detiene, se reintenta cada 30 s.",
+  "reason": "Quito pidió que el chat use su Codex como servicio y no en local, y aprobó correr el puente en Railway porque Amaru ya aceptó su contrato.",
+  "checked": "2026-10-23: el deploy quedó en SUCCESS; el log muestra «Trabajador v0 railway-agent listo» y ningún código de error durante más de un minuto de sondeo, y el trabajador registra cualquier fallo de token, rutas o red. El chat del servicio siguió respondiendo y conservó memoria y mensajes tras el deploy. En local, un servidor falso recibió los sondeos con Bearer del trabajador lanzado por el arranque. Checks del agente tras mezclar main: TypeScript, 85 pruebas y evaluación sintética en verde. No se verificó todavía un trabajo real de punta a punta: falta que pase un chat por sol-multiuser-demo. En el segundo deploy el trabajador chocó una vez con el candado que dejó el contenedor anterior en el disco y se recuperó al reintentar a los 30 s. Como Railway nunca monta el disco en dos deploys a la vez, el arranque ahora borra ese candado; en local, un candado con un PID siempre vivo ya no frena al trabajador.",
+  "availability": "Desplegado en el servicio agent de solsets-hack. Trabajador v0, solo trabajos sintéticos. El trabajador del Mac no estaba corriendo al momento del deploy; después otra sesión levantó en el Mac un trabajador v1.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

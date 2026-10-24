@@ -22,4 +22,23 @@ fi
 
 "$CODEX_BIN" login status || echo "Codex sin sesión: el chat responderá 'unavailable' y la clasificación caerá a reglas."
 
+# The bridge worker (INTEGRATION.md) runs next to the HTTP agent when it is configured,
+# so server/ jobs reach this Codex session instead of a laptop. It stops on purpose on
+# bad config or auth, so wait before trying again instead of hammering the server.
+if [ -n "${AGENT_WORKER_URL:-}" ]; then
+  # Each protocol version keeps its own outbox, as scripts/worker.ts does locally.
+  case "${AGENT_WORKER_VERSION:-v0}" in v1) outbox=worker-v1.json ;; *) outbox=worker.json ;; esac
+  export AGENT_WORKER_STATE="${AGENT_WORKER_STATE:-$(dirname "$AGENT_DATA_FILE")/$outbox}"
+  # Railway never mounts a volume in two deployments at once, so a lock found at boot
+  # is from the previous container. Its PID means nothing here and can collide with ours.
+  rm -f "$AGENT_WORKER_STATE.lock"
+  (
+    while true; do
+      node scripts/worker.ts || true
+      echo "El trabajador se detuvo; se reintenta en 30 s."
+      sleep 30
+    done
+  ) &
+fi
+
 exec node src/server.ts

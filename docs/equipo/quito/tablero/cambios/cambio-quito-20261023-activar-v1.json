@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-activar-v1",
+  "title": "Dejar el trabajador v1 disponible desde el Mac",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "V1 publicada, cotejada contra el servidor candidato y arrancada desde el Mac; espera la habilitación del extremo de Amaru.",
+  "before": "Contrato e implementación estaban integrados en main; todavía faltaban el cotejo exacto entre ambos componentes y el proceso v1 del Mac.",
+  "after": "El trabajador publicado ya ejecutó el contrato HTTP v1 contra el servidor candidato local y quedó corriendo separado de la terminal, con ID y bandeja propios. Al arrancar, el servidor compartido todavía respondía 503 por su gate deshabilitado.",
+  "reason": "Quito pidió dejar subida la versión 1 después de autorizar la publicación y el uso de contexto real con selección explícita.",
+  "checked": "Cotejo exacto aprobado: acuse perdido y reinicio sin reinferencia, memoria 2→5, A/B aislados, 51 metadatos sin lecturas adicionales, revocación y borrado de A. Dos inferencias reales de Codex con evidencia ficticia fueron aceptadas por el servidor local. Trabajador v1 arrancado contra el candidato; al arrancar el gate del servidor seguía apagado y devolvía 503, así que el proceso espera sin inferir. Falta activación de Amaru y prueba compartida; no acredita móvil, OTP ni WhatsApp real.",
+  "availability": "Código en main por PR #44/#45. Proceso v1 vivo en el Mac con código fijo 2a171bf; requiere Mac encendido y sesión Codex válida. El estado al arranque es espera del servidor, no demo móvil completa. No se habilitó el servidor desde el carril de Quito.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

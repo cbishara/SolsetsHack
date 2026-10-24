@@ -234,8 +234,14 @@
     {
       "date": "2026-10-23",
       "environment": "Node 24, HTTP loopback y Codex real; casos ficticios de #41",
-      "result": "Capacidades de agent/ para descarga en varias tareas, reglas pendientes y preguntas, y clasificación que conserva la clave de un incidente reformulado. Aceptación real: ocho casos con ocho inferencias; pruebas unitarias/HTTP verifican fechas, feedback, usuarios y salidas inválidas. El servidor y Expo siguen pendientes de acoplamiento; no acredita Railway ni teléfono físico.",
+      "result": "Capacidades de agent/ para descarga en varias tareas, reglas pendientes y preguntas, y clasificación que conserva la clave de un incidente reformulado. Aceptación real: ocho casos con ocho inferencias; 100 pruebas y TypeScript pasan; pruebas unitarias/HTTP verifican fechas, feedback, usuarios y salidas inválidas. El servidor y Expo siguen pendientes de acoplamiento; no acredita Railway ni teléfono físico.",
       "evidence": "agent/APP-INTEGRATION.md; agent/scripts/verify-app.ts; agent/src/app-capabilities.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "HTTP local aislado con agent 2a171bf y server 7703ab7; proceso v1 independiente en el Mac",
+      "result": "Cotejo exacto aprobado: acuse perdido y reinicio sin reinferencia, memoria 2→5, A/B aislados, 51 metadatos sin lecturas adicionales, revocación y borrado de A. Dos inferencias reales de Codex con evidencia ficticia fueron aceptadas por el servidor local. Trabajador v1 arrancado contra el candidato; al arrancar el gate del servidor seguía apagado y devolvía 503, así que el proceso espera sin inferir. Falta activación de Amaru y prueba compartida; no acredita móvil, OTP ni WhatsApp real.",
+      "evidence": "agent/INTEGRATION-V1.md; https://github.com/cbishara/SolsetsHack/issues/30#issuecomment-6377357142"
     }
   ],
   "evidence": [

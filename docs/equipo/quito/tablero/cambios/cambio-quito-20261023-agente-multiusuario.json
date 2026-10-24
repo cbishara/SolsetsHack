@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-agente-multiusuario",
+  "title": "Sugerir chats y conversar con el contexto que eligió cada persona",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "El agente candidato propone chats por sus nombres y responde con evidencia elegida, conservando la memoria personal separada.",
+  "before": "El trabajador v0 solo aceptaba clasificación y chat sintéticos, sin sugerencias ni contexto de chats seleccionados.",
+  "after": "El candidato v1 recibe lotes de nombres/tipos y necesidades declaradas; devuelve relevancia explicada sin seleccionar nada. El chat valida dueño, contexto y generaciones de selección, cita mensajes recibidos y decide memoria en una llamada que no ve evidencia de terceros ni respuestas previas del asistente. El operador debe activar expresamente el modo real.",
+  "reason": "Quito pidió avanzar en #30 y autorizó nombres/tipos reales y contenido solo tras selección explícita; las pruebas siguen ficticias. Amaru aceptó el contrato base y preparó su extremo, todavía sin activar v1.",
+  "checked": "85 pruebas del agente y TypeScript aprobados al cerrar sobre main con PR #44 (83 en la comprobación anterior sobre PR #31); 19 pruebas nuevas de catálogo, identidad, permisos, memoria A/B, borrado, errores, plazos, HTTP, diario/reinicio y modo real explícito. Cinco casos de comportamiento aprobados con siete inferencias reales de Codex sobre fixtures sintéticos. La evaluación de reglas conserva sus límites previos; no se presenta como calidad de Codex. Comandos y alcance en agent/INTEGRATION-V1.md.",
+  "availability": "Procesador y trabajador v1 entregados en PR propio, con contrato separado en PR #44. No activados contra Railway; falta verificar el acoplamiento con el extremo v1 de Amaru. No incluye cambios móviles ni envíos.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

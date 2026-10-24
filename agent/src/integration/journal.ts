@@ -4,27 +4,27 @@ import { createHash, randomUUID } from 'node:crypto';
 import type { AgentJob, FailureCode, JobResult } from './contract.ts';
 import { parseJob, record, UUID } from './contract.ts';
 
-export type WorkState =
+export type WorkState<J = AgentJob, R = JobResult> =
   | { phase: 'claim'; requestId: string }
-  | { phase: 'claimed' | 'running'; job: AgentJob }
-  | { phase: 'result'; job: AgentJob; result: JobResult }
-  | { phase: 'failure'; job: AgentJob; code: FailureCode };
-export interface Journal { read(): WorkState | null; write(state: WorkState | null): void }
+  | { phase: 'claimed' | 'running'; job: J }
+  | { phase: 'result'; job: J; result: R }
+  | { phase: 'failure'; job: J; code: FailureCode };
+export interface Journal<J = AgentJob, R = JobResult> { read(): WorkState<J, R> | null; write(state: WorkState<J, R> | null): void }
 const checksum = (state: unknown) => createHash('sha256').update(JSON.stringify(state)).digest('hex');
 
-export class MemoryJournal implements Journal {
-  private state: WorkState | null = null;
+export class MemoryJournal<J = AgentJob, R = JobResult> implements Journal<J, R> {
+  private state: WorkState<J, R> | null = null;
   read() { return this.state ? structuredClone(this.state) : null; }
-  write(state: WorkState | null) { this.state = state ? structuredClone(state) : null; }
+  write(state: WorkState<J, R> | null) { this.state = state ? structuredClone(state) : null; }
 }
 
 /** One private outbox per worker. Tokens never enter this file. Corruption fails closed. */
-export class FileJournal implements Journal {
+export class FileJournal<J = AgentJob, R = JobResult> implements Journal<J, R> {
   private readonly nonce = randomUUID();
-  private state: WorkState | null = null;
+  private state: WorkState<J, R> | null = null;
   private readonly path: string;
-  private readonly identity: { url: string; workerId: string };
-  constructor(path: string, identity: { url: string; workerId: string }) {
+  private readonly identity: { url: string; workerId: string; protocol?: 'v1' };
+  constructor(path: string, identity: { url: string; workerId: string; protocol?: 'v1' }, validateJob: (input: unknown) => J = parseJob as (input: unknown) => J) {
     this.path = path; this.identity = identity;
     mkdirSync(dirname(path), { recursive: true });
     this.lock();
@@ -33,19 +33,19 @@ export class FileJournal implements Journal {
       try { raw = JSON.parse(readFileSync(path, 'utf8')); }
       catch (e) { if ((e as NodeJS.ErrnoException).code === 'ENOENT') return; throw e; }
       const data = record(raw);
-      if (data.url !== identity.url || data.workerId !== identity.workerId) throw new Error('La bandeja pendiente pertenece a otro servidor o trabajador.');
+      if (data.url !== identity.url || data.workerId !== identity.workerId || data.protocol !== identity.protocol) throw new Error('La bandeja pendiente pertenece a otro servidor, trabajador o protocolo.');
       if (data.version !== 1 || data.checksum !== checksum(data.state)) throw new Error('Bandeja inválida: el contenido no coincide con su comprobación.');
       if (data.state !== null) {
         const s = record(data.state);
         if (s.phase === 'claim') {
           if (typeof s.requestId !== 'string' || !UUID.test(s.requestId)) throw new Error('Bandeja inválida.');
         } else if (['claimed', 'running', 'result', 'failure'].includes(String(s.phase))) {
-          parseJob(s.job);
+          validateJob(s.job);
           if (s.phase === 'result') record(s.result);
           if (s.phase === 'failure' && typeof s.code !== 'string') throw new Error('Bandeja inválida.');
         } else throw new Error('Bandeja inválida.');
       }
-      this.state = data.state as WorkState | null;
+      this.state = data.state as WorkState<J, R> | null;
     } catch (error) { this.close(); throw error; }
   }
   private lock() {
@@ -68,7 +68,7 @@ export class FileJournal implements Journal {
     }
   }
   read() { return this.state ? structuredClone(this.state) : null; }
-  write(state: WorkState | null) {
+  write(state: WorkState<J, R> | null) {
     const tmp = this.path + '.' + this.nonce + '.tmp';
     writeFileSync(tmp, JSON.stringify({ version: 1, ...this.identity, state, checksum: checksum(state) }), { mode: 0o600, flush: true });
     renameSync(tmp, this.path);

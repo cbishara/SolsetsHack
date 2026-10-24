@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-boton-voz-central",
+  "title": "Pedir un botón central para hablar con SOL",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Quito pidió a Bishara una experiencia de voz con un botón circular en el centro de la barra inferior. El pedido está enviado y documentado; el diseño y la implementación móviles siguen pendientes.",
+  "before": "La tarea de voz pedía captura y reproducción, sin concretar un acceso circular central. El brief móvil anterior mencionaba acceso al chat abajo a la derecha.",
+  "after": "El pedido enviado en #28 concreta botón central, toque para hablar y estados de grabación, espera, respuesta y error. Bishara define el acabado y los controles finales de detener, enviar y cancelar, conservando Mi espacio, modo noche y chat escrito.",
+  "reason": "Quito pidió que la feature de voz sea bonita y que la barra inferior tenga un botón circular central que permita hablar al tocarlo. Confirmó que el destinatario era Cristóbal Bishara.",
+  "checked": "El mensaje fue publicado en la tarea #28 y se enlazó desde la spec. Se contrastó con el brief y el sistema visual publicados. Miguel G ya fue validado por Quito tras una prueba real de ElevenLabs; eso no verifica este botón ni la integración móvil.",
+  "availability": "Pedido entregado en GitHub y documentación local del carril Quito. No se modificó mobile/ ni se acredita un botón funcionando. Dependencia del transporte de voz de Amaru en #29.",
+  "featureIds": ["feat-quito-descarga"],
+  "flowIds": ["flujo-quito-recuperar-pendientes"]
+}

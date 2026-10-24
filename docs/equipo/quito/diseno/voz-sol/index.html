@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>SOL — Conversación por voz · propuesta</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#202639;background:#f2f3f5;font-synthesis:none;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:disabled{cursor:default;opacity:.4}
+button:focus-visible,a:focus-visible{outline:3px solid #7597ff;outline-offset:5px}[hidden]{display:none!important}
+svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.studio{min-height:100svh;display:grid;grid-template-columns:minmax(210px,310px) 390px minmax(210px,270px);align-items:center;justify-content:center;gap:clamp(28px,4vw,80px);padding:42px 28px}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:650;color:#697185}
+.intro h1{margin:22px 0 18px;font-size:clamp(36px,3.8vw,52px);line-height:1.06;font-weight:550;letter-spacing:-.055em}.intro h1 span{color:#2e59e5}
+.intro p{margin:0 0 28px;line-height:1.65;color:#666f81;font-size:15px;max-width:275px}.signature{font-size:23px;letter-spacing:-.08em;font-weight:650}.signature i{font-style:normal;color:#2e59e5}
+.intro small{display:block;max-width:265px;color:#71798b;line-height:1.65;font-size:12px}.studio-panel{align-self:center}.studio-panel h2{font-size:13px;font-weight:600;margin:0 0 16px}
+.presets{display:flex;gap:8px;flex-direction:column}.preset,.local-mic,.theme-switch{text-align:left;border:1px solid #dce0e7;background:transparent;padding:12px 14px;border-radius:12px;color:#576075;font-size:13px;display:flex;align-items:center;gap:10px;min-height:44px}
+.preset svg,.local-mic svg{width:18px;height:18px}.preset:hover,.local-mic:hover,.theme-switch:hover{background:#fff;border-color:#c5ccda}.preset.selected{background:#e6ecff;color:#2349c1;border-color:#ccd8ff}
+.local-mic{margin-top:24px;width:100%;color:#2349c1}.theme-switch{margin-top:8px;width:100%;justify-content:space-between}.prototype-note{margin:14px 0 0;color:#71798b;font-size:11px;line-height:1.6;max-width:260px}
+.desktop-only-link{color:#415780;font-size:12px;display:inline-block;margin-top:26px;text-decoration:none;border-bottom:1px solid #c2cad8;padding-bottom:3px}
+.phone{--night:#0c1429;--raised:#19233b;--ink:#f4f5fc;--secondary:#adb8d0;--tertiary:#8591ae;--line:#ffffff0e;--brand:#7294ff;--lime:#e4f51a;--danger:#f0b9be;position:relative;width:390px;height:844px;border:7px solid #252a35;border-radius:52px;background:var(--night);color:var(--ink);overflow:hidden;isolation:isolate;box-shadow:0 18px 44px #19253915,0 1px 3px #19253925}
+.phone[data-theme="day"]{--night:#fbfbfd;--raised:#eff1f7;--ink:#18223b;--secondary:#596783;--tertiary:#66718b;--line:#18223b0e;--brand:#2e59e5;--danger:#a8404a}
+.statusbar{position:absolute;top:0;left:0;right:0;height:50px;padding:15px 26px 0;display:flex;align-items:flex-start;justify-content:space-between;z-index:10;font-size:13px;font-weight:600;pointer-events:none}.island{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:113px;height:28px;border-radius:28px;background:#03060e}
+.status-icons{display:flex;gap:5px;align-items:center;padding-top:1px}.status-icons svg{width:14px;height:14px;stroke-width:1.7}.status-icons .battery{width:22px}
+.home-indicator{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:126px;height:4px;border-radius:5px;background:var(--ink);opacity:.65;z-index:14}
+.chat-screen{padding:71px 25px 130px;height:100%;display:flex;flex-direction:column}.chat-header{display:flex;align-items:center;justify-content:space-between}.chat-wordmark{font-size:24px;letter-spacing:-.075em;font-weight:600}.arrow-mark{color:var(--brand);font-style:normal}
+.avatar{width:33px;height:33px;border-radius:50%;background:var(--raised);display:grid;place-items:center;color:var(--secondary);font-size:11px}
+.chat-intro{margin-top:82px}.chat-intro .date{font-size:11px;color:var(--tertiary)}.chat-intro h2{margin:16px 0;font-size:34px;font-weight:450;letter-spacing:-.06em;line-height:1.12}.chat-intro p{color:var(--secondary);font-size:14px;line-height:1.6;max-width:235px}
+.chat-thread{margin-top:28px;font-size:14px;line-height:1.6;overflow-y:auto}.chat-thread .person{margin-left:42px;background:var(--raised);padding:12px 15px;border-radius:18px 18px 5px 18px}.chat-thread .agent{margin-top:18px;padding:0 2px;color:var(--secondary)}.chat-thread .agent::before{content:"SOL ↗";display:block;font-size:10px;letter-spacing:.06em;font-weight:650;color:var(--brand);margin-bottom:6px}
+.chat-footer{position:absolute;bottom:23px;left:0;right:0;padding:22px 30px 10px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;border-top:1px solid var(--line)}.nav-option{display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--tertiary);font-size:9px;padding:8px 0}.nav-option svg{width:21px;height:21px}
+.voice-entry{border:0;margin:-24px auto 0;width:66px;height:66px;border-radius:50%;display:grid;place-items:center;background:var(--lime);color:#17220b;box-shadow:0 0 0 8px var(--night)}.voice-entry svg{width:27px;height:27px;stroke-width:1.9}.entry-wrap{display:flex;flex-direction:column;align-items:center;gap:13px;color:var(--ink);font-size:9px;padding-bottom:8px}
+.voice-screen{position:absolute;inset:0;background:var(--night);display:flex;flex-direction:column;padding:68px 25px 39px;z-index:2;animation:appear 200ms ease-out}@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.voice-header{display:flex;align-items:center;justify-content:space-between;min-height:44px}.voice-brand{display:flex;align-items:center;gap:12px}.back-button{width:44px;height:44px;border:0;background:transparent;color:var(--secondary);display:grid;place-items:center;border-radius:50%;margin-left:-10px}.back-button svg{width:22px;height:22px}
+.voice-name{color:var(--ink);font-size:20px;font-weight:550;letter-spacing:-.07em}.voice-caption{color:var(--tertiary);font-size:10px;letter-spacing:.01em;margin-top:3px}.session-indicator{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--secondary)}.session-dot{width:5px;height:5px;border-radius:50%;background:var(--lime)}
+.voice-body{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 30px}.orb-button{width:286px;height:286px;max-width:100%;border:0;padding:0;background:transparent;color:inherit;border-radius:50%;display:grid;place-items:center;position:relative;flex-shrink:0}.orb-canvas{width:100%;height:100%;pointer-events:none}.orb-muted-icon{position:absolute;width:31px;height:31px;color:#d8e1ff;opacity:.75}.orb-muted-icon svg{width:31px;height:31px;stroke-width:1.4}
+.voice-state{font-size:26px;font-weight:450;letter-spacing:-.04em;line-height:1.25;margin:20px 0 9px;text-align:center}.voice-hint{font-size:12px;color:var(--secondary);text-align:center;line-height:1.65;margin:0;min-height:40px;max-width:270px}.live-caption{margin:19px 0 0;max-width:285px;min-height:44px;font-size:15px;line-height:1.55;color:var(--secondary);text-align:center}.live-caption:empty{min-height:0;margin:0}
+.voice-controls-wrap{margin-top:auto}.turn-hint{color:var(--tertiary);text-align:center;font-size:10px;margin:0 0 28px;min-height:14px}.voice-controls{display:flex;justify-content:center;gap:29px;align-items:start}.control-wrap{display:flex;flex-direction:column;gap:10px;align-items:center;width:65px;color:var(--secondary);font-size:10px;text-align:center;line-height:1.3}
+.control{width:58px;height:58px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--raised);color:var(--ink);transition:background 140ms,transform 140ms}.control:active{transform:scale(.94)}.control svg{width:23px;height:23px}.control.mute[aria-pressed="true"]{background:#e9edf8;color:#18223b}.control.end{color:var(--danger);background:#ef8d9812}
+.phone[data-state="muted"] .session-dot{background:var(--tertiary)}.phone[data-state="thinking"] .session-dot{background:var(--brand)}.phone[data-state="error"] .session-dot{background:var(--danger)}
+.transcript{position:absolute;left:10px;right:10px;bottom:24px;max-height:70%;z-index:12;border-radius:27px;background:var(--raised);padding:15px 22px 23px;box-shadow:0 -20px 50px #00000012;overflow-y:auto}.sheet-handle{width:32px;height:4px;border-radius:4px;margin:0 auto 17px;background:var(--tertiary);opacity:.55}.sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.sheet-header h2{font-weight:550;font-size:17px;letter-spacing:-.025em;margin:0}.sheet-close{border:0;background:transparent;color:var(--secondary);width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+.sheet-messages{font-size:14px;line-height:1.6}.sheet-messages .who{color:var(--tertiary);font-size:10px;margin-bottom:5px}.sheet-messages p{margin:0 0 20px}.sheet-footnote{font-size:10px;line-height:1.6;color:var(--tertiary);margin:12px 0 0}
+.inline-retry{border:0;border-radius:20px;color:var(--ink);background:var(--raised);padding:10px 20px;margin:10px 0 0;font-size:12px;min-height:44px}
+.board{padding:38px 65px 42px;max-width:1320px;margin:auto}.board-header{display:flex;align-items:end;justify-content:space-between;margin-bottom:29px}.board-header h1{font-size:31px;font-weight:500;letter-spacing:-.055em;margin:10px 0 0}.board-header p{font-size:12px;line-height:1.6;color:#737b8c;text-align:right;margin:0}.board-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.board-card .phone{width:100%;height:736px;border-width:6px;border-radius:44px}.board-card .orb-button{width:265px;height:265px}.board-card .voice-body{padding-top:0;padding-bottom:12px}.board-card .voice-state{font-size:24px;margin-top:14px}.board-card .voice-screen{padding:62px 22px 33px}.board-card .voice-controls{gap:23px}.board-card .turn-hint{margin-bottom:23px}
+.board-label{padding:20px 6px 0}.board-label h2{font-size:14px;font-weight:550;letter-spacing:-.02em;margin:0 0 7px}.board-label p{font-size:11px;color:#697185;line-height:1.6;margin:0;max-width:290px}.board-footer{display:flex;justify-content:space-between;color:#8a91a0;font-size:10px;margin-top:32px}
+@media(max-width:1050px){.studio{grid-template-columns:260px 390px;gap:40px}.studio-panel{grid-column:1;grid-row:1;align-self:end;padding-bottom:30px}.intro{align-self:start;padding-top:20px}.intro p{margin-bottom:15px}.intro small,.desktop-only-link{display:none}.phone-host{grid-column:2;grid-row:1}.presets{display:grid;grid-template-columns:1fr 1fr;gap:6px}.preset{font-size:11px;padding:10px}}
+@media(max-width:720px){:root{background:#0c1429}.studio{display:block;padding:0;min-height:0}.intro{display:none}.phone{border:0;border-radius:0;width:100%;height:100svh;min-height:580px;box-shadow:none}.statusbar,.home-indicator{display:none}.voice-screen{padding-top:max(22px,env(safe-area-inset-top));padding-bottom:max(28px,env(safe-area-inset-bottom))}.chat-screen{padding-top:max(28px,env(safe-area-inset-top))}.studio-panel{padding:25px;background:#f2f3f5}.presets{display:grid;grid-template-columns:1fr 1fr}.studio-panel h2::before{content:"Maqueta · "}.prototype-note{max-width:none}.board{padding:24px 15px}.board-grid{display:flex;overflow-x:auto;gap:20px}.board-card{min-width:320px}.board-header p{display:none}.board .phone{height:736px;border:6px solid #252a35;border-radius:44px}.board .statusbar,.board .home-indicator{display:flex}.board .voice-screen{padding-top:62px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.orb-button:disabled{opacity:1}
+/* Revision 02: a night atmosphere, fluid Orb, Phosphor and a tactile dock. */
+.studio{background:radial-gradient(ellipse at 52% 47%,#dce5fa55,transparent 56%),#f2f3f5}
+.phone{--night:#091428;--raised:#1b2b47;--secondary:#bec9e3;--tertiary:#899bbd;--brand:#91b1ff;--voice-level:0}
+.voice-screen{background:radial-gradient(ellipse at 50% 43%,#1c3a7048 0%,transparent 60%),linear-gradient(165deg,#101e39 0%,#0b1935 55%,#070f23 100%);overflow:hidden}
+.voice-screen::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.8' d='M0 0h180v180H0z'/%3E%3C/svg%3E")}
+.voice-atmosphere{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.voice-atmosphere::before{content:"";position:absolute;width:420px;height:420px;left:50%;top:24%;transform:translateX(-50%);background:radial-gradient(ellipse,#4d82e91a,transparent 64%);opacity:calc(.55 + var(--voice-level)*.45)}
+.voice-atmosphere::after{content:"";position:absolute;left:-30%;right:-30%;top:57%;height:23%;border-radius:50%;box-shadow:0 -14px 72px #3c6ed61c,0 -1px 0 #99c2ff0d;transform:rotate(-10deg);background:linear-gradient(180deg,#294c7e15,transparent)}
+.sky-dust{position:absolute;width:2px;height:2px;left:12%;top:17%;border-radius:50%;background:#b7d4ff4f;box-shadow:224px 30px #c1d8ff66,72px 55px #94b9ff30,185px -37px #c7dfff47,269px 114px #a9caff3d,28px 284px #c3dbff30,244px 310px #d3e3ff27,103px -32px #d2e4ff25}
+.night-horizon{position:absolute;inset:0;width:100%;height:100%;stroke:none;fill:none;opacity:.75}
+.voice-header,.voice-body,.voice-controls-wrap{position:relative;z-index:2}
+.voice-header{padding-bottom:7px}
+.voice-name{font-size:22px;font-weight:600;letter-spacing:-.075em}
+.voice-caption{color:#92a7ca;font-size:10px;letter-spacing:.02em;margin-top:4px}
+.back-button{background:#9ab8f008;box-shadow:inset 0 1px 0 #ffffff05}
+.session-indicator{padding:7px 10px;border-radius:30px;background:#90b1e609;box-shadow:inset 0 0 0 1px #b6cdff09}
+.session-dot{box-shadow:0 0 7px #e4f51a28}
+.voice-body{padding-bottom:14px}
+.orb-button{isolation:isolate;width:294px;height:294px;margin-top:8px}
+.orb-button::before{content:"";position:absolute;inset:17px;border-radius:50%;z-index:-1;background:radial-gradient(circle,#80bbff24 0%,#457ae829 37%,#3164dc0a 61%,transparent 72%);filter:blur(15px);transform:scale(calc(1.06 + var(--voice-level)*.21));pointer-events:none}
+.orb-canvas{position:relative;z-index:2;display:block;width:100%;height:100%;border-radius:50%;overflow:hidden}
+.orb-webgl,.orb-fallback{display:block;width:100%!important;height:100%!important}
+.orb-rings{position:absolute;inset:-13px;width:calc(100% + 26px);height:calc(100% + 26px);fill:none;stroke:#a8c8ff;stroke-width:.65;opacity:calc(.23 + var(--voice-level)*.35);pointer-events:none;z-index:1;transform:scale(calc(.98 + var(--voice-level)*.08)) rotate(-16deg)}
+.orb-rings ellipse:nth-child(2){stroke:#5c94ee;stroke-width:.5;opacity:.5}
+.orb-rings ellipse:nth-child(3){stroke:#d0e4ff;stroke-width:.7;opacity:.35}
+.orb-muted-icon{z-index:4;background:#10213a75;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 1px #d0e3ff12;opacity:1}
+.orb-muted-icon svg{width:26px;height:26px}
+.voice-state{font-size:28px;font-weight:500;letter-spacing:-.05em;margin-top:12px}
+.voice-hint{font-size:12px;color:var(--secondary);line-height:1.7}
+.live-caption{font-size:14px;color:#baccea;margin-top:17px;max-width:265px}
+.turn-hint{color:#8fa5cb;font-size:10px;margin-bottom:17px}
+.voice-controls{gap:25px;padding:17px 14px 15px;border-radius:32px;background:linear-gradient(145deg,#abcaff12,#7f9fdb05);border:1px solid #bbd4ff14;box-shadow:inset 0 1px 0 #e4edff0b,0 8px 30px #0007131a;backdrop-filter:blur(20px)}
+.control-wrap{font-size:10px;color:#c0ceea;gap:9px}
+.control{width:57px;height:57px;background:linear-gradient(155deg,#41608958,#243b5b75);box-shadow:inset 0 1px 0 #e3edff18,0 5px 12px #0009181a}
+.control svg{width:26px;height:26px}
+.control.end{color:#ffc4cb;background:linear-gradient(155deg,#754d6650,#3e263950)}
+.control.mute[aria-pressed="true"]{color:#18345c;background:linear-gradient(155deg,#f4f7ff,#c1d6f5);box-shadow:inset 0 1px 0 #fff9,0 4px 16px #a9c8f51a}
+.transcript{z-index:12;background:#172942ee;border:1px solid #a5c7ff16;backdrop-filter:blur(22px)}
+.phone[data-state="muted"] .orb-button::before,.phone[data-state="error"] .orb-button::before{opacity:.2}
+.phone[data-state="muted"] .orb-rings,.phone[data-state="error"] .orb-rings{opacity:.1;transform:scale(.97) rotate(-16deg)}
+.phone[data-state="muted"] .session-dot,.phone[data-state="error"] .session-dot{box-shadow:none}
+.phone[data-state="thinking"] .orb-rings{opacity:.22}
+.phone[data-theme="day"]{--night:#f5f8ff;--raised:#e8eef8;--ink:#182b4d;--secondary:#566c91;--tertiary:#6f84a8;--brand:#2e59e5}
+.phone[data-theme="day"] .voice-screen{background:radial-gradient(ellipse at 50% 35%,#d7e5ff,transparent 65%),linear-gradient(170deg,#f8fbff,#edf3ff 63%,#e2ebfc)}
+.phone[data-theme="day"] .voice-caption,.phone[data-theme="day"] .turn-hint{color:#5c759e}
+.phone[data-theme="day"] .voice-atmosphere{opacity:.45}
+.phone[data-theme="day"] .sky-dust{opacity:.25}
+.phone[data-theme="day"] .voice-controls{background:linear-gradient(155deg,#ffffffa3,#e7efff75);border-color:#ffffffbd;box-shadow:inset 0 1px 0 #fff,0 8px 28px #2754a20b}
+.phone[data-theme="day"] .control{background:linear-gradient(155deg,#fdfefe,#dce7fa);box-shadow:inset 0 1px 0 #fff,0 3px 10px #294a810c}
+.phone[data-theme="day"] .control.end{color:#ab4e69;background:linear-gradient(155deg,#fcf7fa,#f1e7ef)}
+.phone[data-theme="day"] .control-wrap{color:#576f94}
+.phone[data-theme="day"] .live-caption{color:#506d9a}
+.phone[data-theme="day"] .session-indicator{background:#fff7}
+.phone[data-theme="day"] .session-dot{background:#426ed3;box-shadow:none}
+.phone[data-theme="day"] .transcript{background:#f4f8fff2;border-color:#fff}
+.phone[data-theme="day"] .back-button{background:#678bcc0b}
+.board-header h1{font-size:33px}
+.board-card .voice-controls{gap:16px;padding:15px 9px 13px;border-radius:29px}
+.board-card .voice-state{font-size:25px}
+.board-card .turn-hint{margin-bottom:16px;font-size:9px}
+.board-card .orb-button{width:260px;height:260px}
+.board-card .voice-screen{padding-left:20px;padding-right:20px}
+.phone svg:has(use[href^="#i-"]){stroke:none;fill:currentColor}
+.phone .status-icons svg{fill:none}
+.voice-body .live-caption,.voice-body .live-caption:empty{min-height:44px;margin:17px 0 0}
+.voice-body .live-caption[hidden]{display:block!important;visibility:hidden}
+.board-card .orb-button{width:248px;height:248px}
+@media(max-width:720px){.studio{background:#091428}.voice-screen{padding-left:24px;padding-right:24px}.voice-controls{gap:25px}.studio-panel{position:relative;z-index:3}}
+/* Revision 03: a living night sky and a small animatronic character inside the circle. */
+.sky-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.aurora{position:absolute;border-radius:50%;filter:blur(34px);opacity:calc(.55 + var(--voice-level)*.45)}
+.aurora.a1{width:340px;height:150px;left:-90px;top:96px;background:radial-gradient(ellipse,#3f73e666,transparent 70%);animation:sol-drift-a 19s ease-in-out infinite alternate}
+.aurora.a2{width:310px;height:140px;right:-110px;top:214px;background:radial-gradient(ellipse,#5fb2ff40,transparent 70%);animation:sol-drift-b 26s ease-in-out infinite alternate}
+@keyframes sol-drift-a{from{transform:translate(0,0) rotate(-8deg)}to{transform:translate(110px,34px) rotate(7deg)}}
+@keyframes sol-drift-b{from{transform:translate(0,0) rotate(10deg)}to{transform:translate(-120px,-26px) rotate(-5deg)}}
+.moon{position:absolute;top:122px;right:40px;width:24px;height:24px;border-radius:50%;box-shadow:inset -7px 3px 0 0 #d9e6ff;opacity:.6;transform:rotate(-18deg)}
+.moon::after{content:"";position:absolute;inset:-24px;border-radius:50%;background:radial-gradient(circle,#9cc0ff24,transparent 65%);animation:sol-halo 7s ease-in-out infinite alternate}
+@keyframes sol-halo{from{opacity:.45;transform:scale(.88)}to{opacity:1;transform:scale(1.1)}}
+.night-horizon .hill{animation:sol-sway 15s ease-in-out infinite alternate}
+.night-horizon .hill.h2{animation-duration:20s;animation-delay:-7s}
+.night-horizon .hill.h3{animation-duration:24s;animation-delay:-3s}
+@keyframes sol-sway{from{transform:translateX(-9px)}to{transform:translateX(9px)}}
+.sky-dust{display:none}
+.orb-rig{position:absolute;inset:0;transform-origin:50% 88%;will-change:transform}
+.sol-face,.sol-antenna{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;stroke:none;fill:none}
+.sol-antenna{z-index:1}.sol-face{z-index:3}
+.sol-face .eye-body{fill:#0a1636;opacity:.92}.sol-face .glint{fill:#f1f6ff}
+.sol-face .eye-happy{fill:none;stroke:#0a1636;stroke-width:2.5;stroke-linecap:round;opacity:.92}
+.sol-face .mouth{fill:#0a1636;stroke:#0a1636;stroke-width:1.3;stroke-linejoin:round;opacity:.9}
+.sol-antenna .stalk{fill:none;stroke:#a9c6ff;stroke-width:1.05;stroke-linecap:round;opacity:.85}
+.sol-antenna .tip{fill:#e2eeff}.sol-antenna .tip-halo{fill:#8fbaff}
+.phone[data-state="error"] .sol-antenna .tip,.phone[data-state="error"] .sol-antenna .tip-halo{fill:#f0b9be}
+.orb-shadow{position:absolute;left:50%;bottom:-18px;width:150px;height:16px;margin-left:-75px;border-radius:50%;background:radial-gradient(ellipse,#01061299,transparent 70%);pointer-events:none}
+.phone:not([data-character="antena"]) .sol-antenna{display:none}
+.phone[data-character="ojos"] .orb-shadow{display:none}
+.phone[data-character="criatura"] .orb-rig{transform-origin:50% 96%}
+.orb-muted-icon{left:50%;bottom:10px;transform:translateX(-50%);width:40px;height:40px}
+.orb-muted-icon svg{width:21px;height:21px}
+.phone[data-theme="day"] .aurora{opacity:.35}
+.phone[data-theme="day"] .moon{display:none}
+.phone[data-theme="day"] .sol-antenna .stalk{stroke:#6f93d8}.phone[data-theme="day"] .sol-antenna .tip{fill:#3d68e4}.phone[data-theme="day"] .sol-antenna .tip-halo{fill:#7ea6ff}
+.phone[data-theme="day"] .orb-shadow{background:radial-gradient(ellipse,#2a4c8a33,transparent 70%)}
+.board-card .moon{top:112px;right:34px}
+.character-switch{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:22px}.character-option{border:1px solid #dce0e7;background:transparent;border-radius:12px;padding:10px 6px;color:#576075;font-size:12px;min-height:44px}.character-option[aria-pressed="true"]{background:#e6ecff;color:#2349c1;border-color:#ccd8ff}
+.options-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 26px}.options-bar button{border:1px solid #dce0e7;background:#fff;border-radius:30px;padding:9px 15px;color:#576075;font-size:12px;min-height:40px}.options-bar button[aria-pressed="true"]{background:#2e59e5;color:#fff;border-color:#2e59e5}.options-bar .cycle{margin-left:auto}
+.board-card.recommended .board-label h2::after{content:"Recomendada";margin-left:9px;font-size:10px;font-weight:600;letter-spacing:.04em;color:#2349c1;background:#e6ecff;padding:3px 8px;border-radius:20px;vertical-align:2px}
+
+/* Revision 03b: line character, line icons and ten flat button docks. */
+.control{position:relative}
+.control.mute .ico{position:absolute;inset:0;margin:auto;transition:clip-path 300ms cubic-bezier(.2,.8,.2,1)}
+.control.mute .ico-on{clip-path:polygon(0 0,200% 0,200% 200%,0 200%,0 0)}
+.control.mute .ico-off{clip-path:polygon(0 0,0 0,0 0)}
+.control.mute[aria-pressed="true"] .ico-on{clip-path:polygon(200% 0,200% 0,200% 200%,0 200%,0 200%)}
+.control.mute[aria-pressed="true"] .ico-off{clip-path:polygon(0 0,200% 0,0 200%)}
+.sol-face .eye-line{fill:none;stroke:#0a1636;stroke-width:2.3;stroke-linecap:round;opacity:.9;display:none}
+.phone[data-character="lineas"] .eye-line{display:inline}
+.phone[data-character="lineas"] .eye-shape,.phone[data-character="lineas"] .eye-happy{display:none}
+.phone[data-character="lineas"] .sol-antenna{display:block}
+.phone[data-character="lineas"] .sol-antenna .stalk{stroke:#c9dbff;stroke-width:.65}
+.phone[data-character="lineas"] .sol-antenna .tip{fill:none;stroke:#e3edff;stroke-width:.75}
+.phone[data-character="lineas"] .sol-antenna .tip-halo{r:4.5}
+.phone[data-character="lineas"] .orb-shadow{opacity:.6}
+.phone[data-character="lineas"] .orb-rings{stroke-width:.5}
+[data-dock] .voice-controls{--ease:cubic-bezier(.2,.8,.2,1);--spring:linear(0,.32 10%,.66 20%,.9 30%,1.03 40%,1.06 50%,1.04 60%,1.01 70%,.995 80%,1);--on-bg:#f4f6fb;--on-ink:#0b1220;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:10px 6px;gap:22px;border-radius:0;align-items:start}
+[data-dock] .voice-controls .control{isolation:isolate;box-shadow:none;background:none;border:0;transition:background-color 200ms var(--ease),color 200ms var(--ease),border-color 200ms var(--ease),border-radius 460ms var(--spring),transform 380ms var(--spring)}
+[data-dock] .voice-controls .control:active{transform:scale(.92);transition-duration:200ms,200ms,200ms,460ms,90ms}
+[data-dock] .voice-controls .control::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--on-bg);transform:scale(.35);opacity:0;z-index:-1;transition:transform 440ms var(--spring),opacity 180ms var(--ease)}
+[data-dock] .voice-controls .control.mute[aria-pressed="true"]::before{transform:scale(1);opacity:1}
+[data-dock] .voice-controls .control.mute[aria-pressed="true"]{color:var(--on-ink);background:none}
+[data-dock] .voice-controls .control svg{width:24px;height:24px}
+[data-dock] .control-wrap{color:#aab3c5;font-size:10px;letter-spacing:.01em;gap:9px;transition:color 200ms;width:84px;white-space:nowrap}
+[data-dock="ios"] .voice-controls{gap:12px}
+[data-dock="ios"] .voice-controls .control{width:64px;height:64px;border-radius:50%;background:#ffffff24;color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+[data-dock="ios"] .voice-controls .control.end{background:#ff3b30;color:#fff}
+[data-dock="ios"] .control-wrap{color:#e9edf5;font-size:11px}
+[data-dock="chatgpt"] .voice-controls{gap:4px}
+[data-dock="chatgpt"] .voice-controls .control{width:56px;height:56px;border-radius:50%;background:#ffffff17;color:#f2f3f5}
+[data-dock="chatgpt"] .control-wrap>span{display:none}
+[data-dock="gemini"] .voice-controls{gap:10px;align-items:center}
+[data-dock="gemini"] .control-wrap{position:relative;flex-direction:row;width:auto;white-space:nowrap;gap:8px;height:48px;padding:0 18px 0 13px;border-radius:24px;background:#ffffff14;color:#eef1f7;font-size:13px;line-height:1;transition:background-color 220ms var(--ease),color 220ms var(--ease),transform 380ms var(--spring)}
+[data-dock="gemini"] .control-wrap:active{transform:scale(.95);transition-duration:220ms,220ms,90ms}
+[data-dock="gemini"] .voice-controls .control{position:static;width:24px;height:24px;color:inherit}
+[data-dock="gemini"] .voice-controls .control::before{display:none}
+[data-dock="gemini"] .voice-controls .control::after{content:"";position:absolute;inset:0;border-radius:24px}
+[data-dock="gemini"] .voice-controls .control.mute .ico{position:absolute;inset:auto;margin:0}
+[data-dock="gemini"] .control-wrap:has(.mute[aria-pressed="true"]){background:#eef1f7;color:#0b1220}
+[data-dock="gemini"] .voice-controls .control.mute[aria-pressed="true"]{color:#0b1220}
+[data-dock="gemini"] .control-wrap:has(.text){width:48px;padding:0;justify-content:center}
+[data-dock="gemini"] .control-wrap:has(.text)>span{display:none}
+[data-dock="gemini"] .control-wrap:has(.end){background:#e5484d;color:#fff}
+[data-dock="meet"] .voice-controls{gap:4px}
+[data-dock="meet"] .voice-controls .control{width:56px;height:56px;border-radius:20px;background:#ffffff1a;color:#e8eaed}
+[data-dock="meet"] .voice-controls{--on-bg:#e5484d;--on-ink:#fff}
+[data-dock="meet"] .voice-controls .control.end{width:76px;border-radius:28px;background:#e5484d;color:#fff}
+/* 05, chosen by Quito: shape morph with Bishara's Soltra tokens (mobile/src/theme/tokens.ts, 2026-10-24): surface icon buttons, white accent, coral urgent, radius.lg 22, size.fab 56, press .97 in 120 ms, spring snapBack 400 ms / damping .8, easeOut .23,1,.32,1. */
+[data-dock="m3"] .voice-controls{gap:2px;--b-ease:cubic-bezier(.23,1,.32,1);--b-spring:linear(0,.07 5%,.224 10%,.401 15%,.567 20%,.706 25%,.815 30%,.894 35%,.947 40%,.982 45%,1.001 50%,1.011 55%,1.015 60%,1.015 65%,1.013 70%,1.01 75%,1.008 80%,1.005 85%,1.004 90%,1.002 95%,1);--on-bg:#E6E6E9;--on-ink:#000000;--b-card:#121214;--b-line:rgba(255,255,255,.07);--b-ink:#E6E6E9;--b-muted:#A09FA5;--b-urgent:#F2756C;--b-urgent-soft:rgba(242,117,108,.13);--b-fast:120ms;--b-base:200ms;--b-spring-time:400ms}
+.phone[data-dock][data-theme="day"] .voice-controls{background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.phone[data-dock="m3"][data-theme="day"] .voice-controls{--on-bg:#FFFFFF;--on-ink:#000000;--b-card:#161618;--b-line:rgba(255,255,255,.08);--b-ink:#FFFFFF;--b-muted:#BCBBC0;--b-urgent:#FF7B72;--b-urgent-soft:rgba(255,123,114,.14)}
+[data-dock="m3"] .voice-controls .control{width:56px;height:56px;border-radius:28px;background:var(--b-card);border:1px solid var(--b-line);color:var(--b-ink);transition:background-color var(--b-base) var(--b-ease),color var(--b-base) var(--b-ease),border-color var(--b-base) var(--b-ease),border-radius var(--b-spring-time) var(--b-spring),transform var(--b-spring-time) var(--b-spring)}
+[data-dock="m3"] .voice-controls .control:active{transform:scale(.97);border-radius:22px;transition-duration:var(--b-base),var(--b-base),var(--b-base),var(--b-spring-time),var(--b-fast)}
+[data-dock="m3"] .voice-controls .control::before{transition:transform var(--b-spring-time) var(--b-spring),opacity var(--b-base) var(--b-ease)}
+[data-dock="m3"] .voice-controls .control.mute[aria-pressed="true"]{border-radius:22px;border-color:transparent}
+[data-dock="m3"] .voice-controls .control.end{width:72px;border-radius:22px;background:var(--b-urgent-soft);border-color:transparent;color:var(--b-urgent)}
+[data-dock="m3"] .voice-controls .control.end:active{border-radius:28px}
+.phone[data-dock="m3"][data-theme="day"] .control-wrap{color:var(--b-muted)}
+[data-dock="m3"] .control-wrap{width:96px;font-family:"Inter Tight",-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;line-height:18px;font-weight:500;letter-spacing:0;color:var(--b-muted)}
+[data-dock="linear"] .voice-controls{gap:8px;--on-bg:#ffffff17;--on-ink:#fff}
+[data-dock="linear"] .voice-controls .control{width:52px;height:52px;border-radius:14px;border:1px solid #ffffff21;background:#ffffff05;color:#e6e9f0;transition-duration:140ms,140ms,140ms,460ms,380ms}
+[data-dock="linear"] .voice-controls .control:hover{background:#ffffff0c;border-color:#ffffff33}
+[data-dock="linear"] .voice-controls .control.mute[aria-pressed="true"]{border-color:#ffffff4d}
+[data-dock="linear"] .voice-controls .control.mute::after{content:"";position:absolute;left:50%;bottom:-8px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#e6e9f0;opacity:0;transform:scale(.3);transition:opacity 140ms var(--ease),transform 380ms var(--spring)}
+[data-dock="linear"] .voice-controls .control.mute[aria-pressed="true"]::after{opacity:1;transform:scale(1)}
+[data-dock="linear"] .voice-controls .control.end{color:#ff9b9b;border-color:#ff6b6b38}
+[data-dock="linear"] .control-wrap{color:#8b93a7;gap:13px}
+[data-dock="geist"] .voice-controls{gap:4px;--on-bg:#ededed;--on-ink:#0a0a0a}
+[data-dock="geist"] .voice-controls .control{width:52px;height:52px;border-radius:10px;background:#0a0a0a;border:1px solid #2e2e2e;color:#ededed}
+[data-dock="geist"] .voice-controls .control.mute[aria-pressed="true"]{border-color:#ededed}
+[data-dock="geist"] .voice-controls .control.end{color:#ff6166}
+[data-dock="geist"] .control-wrap{width:96px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#a1a1a1}
+[data-dock="nothing"] .voice-controls{gap:2px;--on-bg:#f2f2f2;--on-ink:#000}
+[data-dock="nothing"] .voice-controls .control{width:58px;height:58px;border-radius:50%;border:1.5px solid #f2f2f2b8;color:#f2f2f2}
+[data-dock="nothing"] .voice-controls .control.end{border-color:#d71921}
+[data-dock="nothing"] .voice-controls .control.end::after{content:"";position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:#d71921}
+[data-dock="nothing"] .control-wrap{width:104px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:#d6d6d6}
+[data-dock="island"] .voice-controls{background:#000;border-radius:36px;padding:8px;gap:6px;box-shadow:0 0 0 1px #ffffff14;--on-bg:#f5f5f7;--on-ink:#000;align-items:center;width:max-content;margin:0 auto}
+[data-dock="island"] .control-wrap{width:auto}
+[data-dock="island"] .control-wrap>span{display:none}
+[data-dock="island"] .voice-controls .control{width:56px;height:56px;border-radius:50%;color:#f5f5f7}
+[data-dock="island"] .voice-controls .control.end{background:#ff453a;color:#fff}
+[data-dock="trazo"] .voice-controls{gap:14px;--on-bg:transparent;--on-ink:#fff}
+[data-dock="trazo"] .voice-controls .control{width:48px;height:44px;border-radius:12px;color:#dde3ee}
+[data-dock="trazo"] .voice-controls .control svg{width:27px;height:27px}
+[data-dock="trazo"] .voice-controls .control.mute::after{content:"";position:absolute;left:50%;bottom:-4px;width:16px;height:2px;margin-left:-8px;border-radius:2px;background:#fff;transform:scaleX(0);transition:transform 380ms var(--spring)}
+[data-dock="trazo"] .voice-controls .control.mute[aria-pressed="true"]::after{transform:scaleX(1)}
+[data-dock="trazo"] .voice-controls .control.end{color:#ff9b9b}
+[data-dock="trazo"] .control-wrap{color:#8f99ad;gap:8px}
+.buttons-layout{display:grid;grid-template-columns:390px 1fr;gap:44px;align-items:start}
+.dock-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dock-card{border:1px solid #dfe3ea;border-radius:20px;padding:14px 14px 13px;background:#fff;cursor:pointer;transition:border-color 160ms,box-shadow 160ms}
+.dock-card:hover{border-color:#c8cfdc}.dock-card[aria-current="true"]{border-color:#2e59e5;box-shadow:0 0 0 3px #2e59e51f}
+.dock-card header{display:flex;align-items:baseline;gap:8px;margin:0 2px 10px}.dock-card h2{font-size:13px;font-weight:600;letter-spacing:-.01em;margin:0}.dock-num{font-size:11px;color:#8a91a0;font-variant-numeric:tabular-nums}.dock-ref{margin-left:auto;font-size:10px;color:#8a91a0}
+.dock-card h2[data-badge]::after{content:attr(data-badge);margin-left:8px;font-size:9px;font-weight:600;color:#2349c1;background:#e6ecff;padding:2px 7px;border-radius:20px;vertical-align:1px}
+.dock-stage{height:122px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(180deg,#10203d,#0a1429)}
+.dock-meta{margin:10px 2px 0;font-size:10.5px;line-height:1.5;color:#697185}
+</style>
+</head>
+<body>
+<svg hidden aria-hidden="true"><defs>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5.5 10v1.5a6.5 6.5 0 0 0 13 0V10M12 18v3.5M8.5 21.5h7"/></symbol>
+<symbol id="i-mic-off" viewBox="0 0 24 24"><path d="M9 5.2V5a3 3 0 0 1 6 0v6M9 9v2a3 3 0 0 0 5.1 2.1M5.5 10v1.5a6.5 6.5 0 0 0 10.6 5M18.5 10v1.5a6.5 6.5 0 0 1-.5 2.5M12 18v3.5M8.5 21.5h7M3 3l18 18"/></symbol>
+<symbol id="i-text" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4V4Z"/><path d="M8 8h8M8 12h5"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11m-17-14 1 1 2-2m-3 8 1 1 2-2M4 19h.01"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+<symbol id="i-replay" viewBox="0 0 24 24"><path d="M3.5 10a8.5 8.5 0 1 1 1 7M3 4v6h6"/></symbol>
+</defs></svg>
+<main class="studio" id="studio">
+<aside class="intro"><div class="signature">SOL <i>↗</i></div><h1>La voz<br><span>cobra vida.</span></h1><p>Ondas fluidas, luz de noche y una conversación que sigue tu ritmo.</p><small>Propuesta de diseño · 03<br>Mi espacio / modo noche<br>Quito + SOL · 24 octubre 2026</small><a class="desktop-only-link" href="?view=options">Comparar los personajes ↗</a><br><a class="desktop-only-link" href="?view=buttons">Ver los diez botones ↗</a></aside>
+<div class="phone-host" id="phone-host"></div>
+<aside class="studio-panel"><h2>Personaje</h2><div class="character-switch" id="character-switch"><button class="character-option" data-character="ojos" aria-pressed="false">A · Ojos</button><button class="character-option" data-character="antena" aria-pressed="false">B · Antena</button><button class="character-option" data-character="criatura" aria-pressed="false">C · Criatura</button><button class="character-option" data-character="lineas" aria-pressed="false">D · Líneas</button></div><h2>Prueba la conversación</h2><div class="presets">
+<button class="preset" data-demo="listening"><svg><use href="#i-mic"/></svg>Te escucha</button>
+<button class="preset" data-demo="talking"><svg><use href="#i-wave"/></svg>Estás hablando</button>
+<button class="preset" data-demo="thinking"><svg><use href="#i-pause"/></svg>Prepara la respuesta</button>
+<button class="preset" data-demo="speaking"><svg><use href="#i-wave"/></svg>SOL responde</button>
+<button class="preset" data-demo="interrupt"><svg><use href="#i-mic"/></svg>Interrumpir a SOL</button>
+<button class="preset" data-demo="muted"><svg><use href="#i-mic-off"/></svg>Micrófono silenciado</button>
+<button class="preset" data-demo="error"><svg><use href="#i-replay"/></svg>Si falla la conexión</button>
+<button class="preset" data-demo="chat"><svg><use href="#i-text"/></svg>Entrada desde el chat</button>
+</div>
+<button class="local-mic" id="local-mic"><svg><use href="#i-mic"/></svg><span>Probar con mi micrófono</span></button>
+<button class="theme-switch" id="theme-switch"><span>Cambiar a modo día</span><span aria-hidden="true">◐</span></button>
+<p class="prototype-note" id="prototype-note">Maqueta interactiva. Los turnos son ejemplos y no se envían al agente. Puedes probar el movimiento con tu micrófono: se mide el volumen en este navegador, sin guardar ni enviar audio.</p>
+</aside></main>
+<section class="board" id="board" hidden><header class="board-header"><div><div class="eyebrow">SOL ↗ · Propuesta de voz / 02</div><h1>La conversación, a tu ritmo.</h1></div><p>Un toque para entrar. Habla sin mantener pulsado.<br>Mi espacio · modo noche</p></header><div class="board-grid" id="board-grid"></div><footer class="board-footer"><span>Propuesta para revisar con Quito · sin integrar en Expo</span><span>Círculo reactivo · interrupción · silenciar · texto</span></footer></section>
+<section class="board" id="buttons" hidden><header class="board-header"><div><div class="eyebrow">SOL ↗ · Propuesta de voz / 03 · botones</div><h1>Diez botones para elegir.</h1></div><p>Toca un estilo para verlo en el teléfono.<br>Silenciar se activa solo cada pocos segundos para mostrar la animación.</p></header><div class="buttons-layout"><div id="buttons-phone"></div><div class="dock-grid" id="dock-grid"></div></div><footer class="board-footer"><span>Opciones para elegir con Quito · sin integrar en Expo · interpretaciones, no copias</span><span>Personaje D · líneas · iconos Phosphor Light</span></footer></section>
+<section class="board" id="options" hidden><header class="board-header"><div><div class="eyebrow">SOL ↗ · Propuesta de voz / 03</div><h1>Tres maneras de darle vida.</h1></div><p>Mismo cielo animado en las tres.<br>Mueve el cursor sobre un teléfono: SOL te sigue con la mirada.</p></header><div class="options-bar" id="options-bar"></div><div class="board-grid" id="options-grid"></div><footer class="board-footer"><span>Opciones para elegir con Quito · sin integrar en Expo</span><span>Estados de ejemplo · sin conexión al agente</span></footer></section>
+<template id="phone-template">
+<section class="phone" data-theme="night" data-state="listening" aria-label="Propuesta móvil de SOL">
+<div class="statusbar" aria-hidden="true"><span>9:41</span><span class="island"></span><div class="status-icons"><svg viewBox="0 0 18 16"><path d="M2 12v2M6 9v5M10 6v8M14 2v12"/></svg><svg viewBox="0 0 18 16"><path d="M2 5a11 11 0 0 1 14 0M4.5 8a7 7 0 0 1 9 0M7 11a3 3 0 0 1 4 0"/><circle cx="9" cy="14" r=".4" fill="currentColor"/></svg><svg class="battery" viewBox="0 0 28 14"><rect x="1" y="2" width="22" height="10" rx="2"/><path d="M26 5v4"/><rect x="3" y="4" width="17" height="6" rx="1" fill="currentColor" stroke="none"/></svg></div></div>
+<section class="chat-screen" aria-label="Chat con SOL"><header class="chat-header"><span class="chat-wordmark">Mi espacio <i class="arrow-mark">↗</i></span><div class="avatar">R</div></header><div class="chat-intro"><div class="date">Viernes, 23 de octubre</div><h2>¿Qué tienes<br>dando vueltas?</h2><p>Cuéntamelo. Podemos mirarlo juntos.</p></div><div class="chat-thread" hidden></div><nav class="chat-footer" aria-label="Acceso al chat de voz"><div class="nav-option"><svg><use href="#i-home"/></svg><span>Mi espacio</span></div><div class="entry-wrap"><button class="voice-entry" aria-label="Hablar con SOL"><svg><use href="#i-mic"/></svg></button><span>Hablar con SOL</span></div><div class="nav-option"><svg><use href="#i-list"/></svg><span>Pendientes</span></div></nav></section>
+<section class="voice-screen" hidden aria-label="Conversación por voz">
+<div class="voice-atmosphere" aria-hidden="true"><span class="aurora a1"></span><span class="aurora a2"></span><span class="moon"></span><svg class="night-horizon" viewBox="0 0 390 844" preserveAspectRatio="none"><path class="hill h1" d="M-40 562C70 484 204 538 430 452V844H-40Z" fill="#2c5084" opacity=".11"/><path class="hill h2" d="M-40 640C118 522 236 650 430 548V844H-40Z" fill="#22436d" opacity=".17"/><path class="hill h3" d="M-40 712C98 600 242 716 430 645V844H-40Z" fill="#071020" opacity=".5"/><path class="hill h1" d="M-40 570C70 492 229 541 430 448" fill="none" stroke="#91baff" stroke-width=".7" opacity=".13"/></svg><canvas class="sky-canvas"></canvas></div>
+<header class="voice-header"><div class="voice-brand"><button class="back-button" aria-label="Volver al chat y cerrar el micrófono"><svg><use href="#i-down"/></svg></button><div><div class="voice-name">SOL <i class="arrow-mark">↗</i></div><div class="voice-caption">Miguel G · Español</div></div></div><div class="session-indicator"><span class="session-dot"></span><span class="session-text">Voz activa</span></div></header>
+<div class="voice-body"><button class="orb-button" aria-label="SOL está escuchando"><span class="orb-shadow" aria-hidden="true"></span><div class="orb-rig" aria-hidden="true"><svg class="orb-rings" viewBox="0 0 320 320" aria-hidden="true"><ellipse cx="160" cy="160" rx="139" ry="147"/><ellipse cx="160" cy="160" rx="151" ry="143" transform="rotate(19 160 160)"/><ellipse cx="160" cy="160" rx="153" ry="155" transform="rotate(-11 160 160)"/></svg><svg class="sol-antenna" viewBox="0 0 100 100"><path class="stalk"/><circle class="tip-halo" r="6"/><circle class="tip" r="2.5"/></svg><div class="orb-canvas"></div><svg class="sol-face" viewBox="0 0 100 100"></svg></div><span class="orb-muted-icon" hidden><svg><use href="#i-mic-off"/></svg></span></button><h1 class="voice-state" aria-live="polite" aria-atomic="true">Te escucho</h1><p class="voice-hint">Habla cuando quieras.<br>No hace falta mantener pulsado.</p><p class="live-caption"></p><button class="inline-retry" hidden>Volver a conectar</button></div>
+<div class="voice-controls-wrap"><p class="turn-hint">Puedes interrumpirme cuando quieras</p><div class="voice-controls"><div class="control-wrap"><button class="control mute" aria-label="Silenciar micrófono" aria-pressed="false"><svg class="ico ico-on" aria-hidden="true"><use href="#i-mic"/></svg><svg class="ico ico-off" aria-hidden="true"><use href="#i-mic-off"/></svg></button><span class="mute-label">Silenciar</span></div><div class="control-wrap"><button class="control text" aria-label="Ver texto de la conversación" aria-haspopup="dialog"><svg><use href="#i-text"/></svg></button><span>Ver texto</span></div><div class="control-wrap"><button class="control end" aria-label="Terminar conversación de voz"><svg><use href="#i-close"/></svg></button><span>Terminar</span></div></div></div>
+<section class="transcript" role="dialog" aria-label="Texto de la conversación" aria-modal="true" hidden><div class="sheet-handle" aria-hidden="true"></div><header class="sheet-header"><h2>La conversación</h2><button class="sheet-close" aria-label="Cerrar texto y volver a voz"><svg><use href="#i-close"/></svg></button></header><div class="sheet-messages"></div><p class="sheet-footnote">Ejemplo de diseño. El texto real aparecerá aquí cuando la voz esté conectada al agente.</p></section>
+</section><div class="home-indicator" aria-hidden="true"></div>
+</section></template>
+<!-- SOL_VOICE_AUDIO -->
+<!-- SOL_VOICE_VISUALS -->
+<script>
+'use strict';
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+const params=new URLSearchParams(location.search),fixed=params.get('capture')==='1';
+const sampleUser='Mañana tengo que llamar al taller. Prefiero dar un paso de dos minutos.';
+const sampleAgent='Podemos dejar preparada la pregunta para esa llamada. ¿Qué necesitas saber del taller?';
+const copy={
+listening:{title:'Te escucho',hint:'Habla cuando quieras.\nNo hace falta mantener pulsado.',footer:'Puedes interrumpirme cuando quieras',session:'Voz activa'},
+talking:{title:'Te escucho',hint:'Tómate tu tiempo.',footer:'Sigue hablando; no hace falta pulsar',session:'Tu voz'},
+thinking:{title:'Un momento…',hint:'Estoy preparando tu respuesta.',footer:'Puedes añadir algo si lo necesitas',session:'Preparando'},
+speaking:{title:'SOL está hablando',hint:'Si hablas, me detengo para escucharte.',footer:'También puedes tocar el círculo para interrumpir',session:'Voz activa'},
+muted:{title:'Micrófono silenciado',hint:'Vuelve a activarlo cuando quieras.',footer:'Tu micrófono está apagado',session:'En silencio'},
+error:{title:'Se cortó la conexión',hint:'Puedes seguir en el chat escrito.',footer:'El micrófono está pausado',session:'Sin conexión'}
+};
+const characters=['ojos','antena','criatura','lineas'];
+const seeded=seed=>()=>{seed=seed*16807%2147483647;return seed/2147483647};
+// Night sky behind the character: twinkling stars, a rare shooting star and motes that follow the voice.
+class NightSky{
+constructor(canvas){this.c=canvas;this.ctx=canvas.getContext('2d');this.w=0;this.h=0;const r=seeded(7);this.r=r;
+this.stars=Array.from({length:70},()=>({x:r(),y:Math.pow(r(),1.25)*.56,s:.45+r()*1.05,a:.25+r()*.6,f:.5+r()*1.7,p:r()*6.283}));
+this.motes=Array.from({length:14},()=>({x:r(),y:r(),s:.8+r()*1.3,v:.008+r()*.014,p:r()*6.283,f:.5+r()*.9}));this.shot=null;this.nextShot=2.5+r()*3}
+fit(){const w=this.c.clientWidth,h=this.c.clientHeight;if(!w||!h)return false;if(w!==this.w||h!==this.h){const d=Math.min(devicePixelRatio||1,2);this.c.width=w*d;this.c.height=h*d;this.ctx.setTransform(d,0,0,d,0,0);this.w=w;this.h=h}return true}
+update(t,level,day,still){
+if(!this.fit())return;const{ctx,w,h}=this;ctx.clearRect(0,0,w,h);const dim=day?.22:1;ctx.fillStyle='#d3e4ff';
+for(const s of this.stars){const twinkle=still?.8:.55+.45*Math.sin(t*s.f+s.p);ctx.globalAlpha=s.a*twinkle*dim;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.s,0,6.283);ctx.fill();if(s.s>1.2){ctx.globalAlpha*=.22;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.s*3.2,0,6.283);ctx.fill()}}
+if(!still){if(!this.shot&&t>this.nextShot)this.shot={t0:t,x:.55+this.r()*.4,y:.06+this.r()*.18};if(this.shot){const k=(t-this.shot.t0)/.9;if(k>=1||k<0){this.shot=null;this.nextShot=t+6+this.r()*7}else{const x=this.shot.x*w-k*170,y=this.shot.y*h+k*92,g=ctx.createLinearGradient(x,y,x+74,y-40);g.addColorStop(0,'rgba(226,238,255,.95)');g.addColorStop(1,'rgba(226,238,255,0)');ctx.globalAlpha=Math.sin(k*Math.PI)*dim;ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+74,y-40);ctx.stroke()}}}
+for(const m of this.motes){const span=.4,rise=still?0:t*m.v*(1+level*2.4),k=((m.y-rise)%1+1)%1,y=h*(1-span*k)-26,x=m.x*w+(still?0:Math.sin(t*m.f+m.p)*13),fade=Math.sin(k*Math.PI),pulse=.45+.55*Math.pow(Math.sin((still?2:t)*m.f*1.4+m.p),2),a=fade*pulse*(.32+level*.6)*(day?.5:1);
+const glow=ctx.createRadialGradient(x,y,0,x,y,m.s*5);glow.addColorStop(0,day?'rgba(70,120,220,.55)':'rgba(160,205,255,.75)');glow.addColorStop(1,'rgba(120,170,255,0)');ctx.globalAlpha=a;ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,m.s*5,0,6.283);ctx.fill()}
+ctx.globalAlpha=1}
+}
+// The animatronic: eyes with lids, gaze, blinks and per-state expressions; options add an antenna or a mouth.
+let characterId=0;
+class SolCharacter{
+constructor(owner,kind){this.o=owner;const id='sol'+ ++characterId,eye=side=>'<g class="eye"><clipPath id="'+id+side+'"><rect class="lid" x="-11" y="-9.5" width="22" height="22"/></clipPath><g class="eye-shape" clip-path="url(#'+id+side+')"><rect class="eye-body" x="-4.7" y="-8" width="9.4" height="16" rx="4.7"/><circle class="glint" cx="-1.6" cy="-4.1" r="1.45"/></g><path class="eye-happy" d="M-5.2 2.4Q0-6.6 5.2 2.4"/><line class="eye-line"/></g>';
+this.face=owner.$('.sol-face');this.face.innerHTML=eye('l')+eye('r')+'<path class="mouth"/>';this.eyes=[...this.face.querySelectorAll('.eye')].map(g=>({g,lid:g.querySelector('.lid'),body:g.querySelector('.eye-shape'),happy:g.querySelector('.eye-happy'),line:g.querySelector('.eye-line')}));this.mouth=this.face.querySelector('.mouth');
+this.rig=owner.$('.orb-rig');this.shadow=owner.$('.orb-shadow');this.stalk=owner.$('.stalk');this.tip=owner.$('.tip');this.halo=owner.$('.tip-halo');
+this.p={gx:0,gy:0,lid:0,lidAngle:0,happy:0,scale:1,mouth:0,smile:1,flat:0,tilt:0,glow:.6};this.look={x:0,y:0,next:0};this.blinkAt=1.4;this.doubleBlink=false;this.pointer=null;this.prev=null;this.surprise=-9;this.hop=-9;this.ant={a:0,v:0};this.last=null;
+owner.el.addEventListener('pointermove',e=>{const r=owner.$('.orb-button').getBoundingClientRect();if(!r.width)return;const c=v=>Math.max(-1.3,Math.min(1.3,v));this.pointer={x:c((e.clientX-r.left-r.width/2)/(r.width*.8)),y:c((e.clientY-r.top-r.height/2)/(r.height*.8)),at:performance.now()}});
+owner.el.addEventListener('pointerleave',()=>{this.pointer=null});this.setKind(kind)}
+setKind(kind){this.kind=characters.includes(kind)?kind:'antena';this.o.el.dataset.character=this.kind}
+update(t,level,still){
+const dt=this.last===null?.016:Math.max(0,Math.min(.05,t-this.last)),state=this.o.state,kind=this.kind,p=this.p;this.last=t;
+if(this.prev!==null&&state!==this.prev){if(this.prev==='speaking'&&state==='talking')this.surprise=t;this.hop=t;this.ant.v+=(this.ant.a>0?-1:1)*120}this.prev=state;
+const T={gx:0,gy:0,lid:0,lidAngle:0,happy:0,scale:1,mouth:0,smile:1,flat:0,tilt:0,glow:.5+.25*Math.sin(t*2.1)};
+if(state==='talking'){T.gy=1.4+level*1.6;T.scale=1.07;T.glow=.55+level*.45}
+else if(state==='thinking'){T.gx=4.2;T.gy=-5;T.lid=.08;T.scale=.93;T.tilt=7;T.smile=.4;T.glow=Math.sin(t*7)>0?.95:.15}
+else if(state==='speaking'){T.gy=.6;if(kind==='criatura'){T.mouth=level}else if(kind==='lineas'){T.lid=level*.35}else T.happy=1;T.glow=.85+level*.15}
+else if(state==='muted'){T.gy=3.8;T.lid=kind==='lineas'?0:.6;T.flat=1;T.scale=.95;T.glow=.06;T.tilt=-3}
+else if(state==='error'){T.gy=3;T.lid=.4;T.lidAngle=1;T.smile=-.8;T.glow=.12}
+if(!still&&['listening','talking','speaking'].includes(state)){if(t>this.look.next){const wide=state==='listening'?1:.35;this.look.x=(Math.random()*2-1)*3.3*wide;this.look.y=(Math.random()*2-1)*2*wide;this.look.next=t+(state==='listening'?1+Math.random()*2.4:.6+Math.random()*1.3)}T.gx+=this.look.x;T.gy+=this.look.y}
+if(this.pointer&&performance.now()-this.pointer.at<2600&&state!=='muted'&&state!=='error'){T.gx=this.pointer.x*5;T.gy=this.pointer.y*4}
+const surprised=t-this.surprise;if(surprised>=0&&surprised<.5){T.scale+=.17*Math.sin(surprised/.5*Math.PI);T.lid=0;T.happy=0}
+const ease=(key,rate)=>{p[key]+=(T[key]-p[key])*(still?1:1-Math.exp(-rate*dt))};
+ease('gx',16);ease('gy',16);ease('lid',10);ease('lidAngle',8);ease('happy',9);ease('scale',12);ease('mouth',24);ease('smile',8);ease('flat',10);ease('tilt',5);ease('glow',8);
+let blink=0;if(!still&&state!=='muted'){if(t>this.blinkAt+.15){if(this.doubleBlink){this.blinkAt=t+.07;this.doubleBlink=false}else{this.blinkAt=t+2.2+Math.random()*3.6;this.doubleBlink=Math.random()<.22}}const b=(t-this.blinkAt)/.15;if(b>=0&&b<=1)blink=Math.sin(b*Math.PI)}
+const lid=Math.max(p.lid,blink*(1-p.happy)),turn=p.gx/5;
+this.eyes.forEach((e,i)=>{const side=i?1:-1,x=50+side*11*(1-Math.abs(turn)*.06)+p.gx,y=45+p.gy,sx=p.scale*(1+side*turn*.09);
+e.g.setAttribute('transform','translate('+x.toFixed(2)+' '+y.toFixed(2)+') scale('+sx.toFixed(3)+' '+p.scale.toFixed(3)+')');
+if(kind==='lineas'){const length=(1-p.flat)*Math.max(.01,11*(1-lid))+p.flat*7,angle=(p.flat*90+side*-14*p.lidAngle)*Math.PI/180,dx=Math.sin(angle)*length/2,dy=Math.cos(angle)*length/2;e.line.setAttribute('x1',(-dx).toFixed(2));e.line.setAttribute('y1',(-dy).toFixed(2));e.line.setAttribute('x2',dx.toFixed(2));e.line.setAttribute('y2',dy.toFixed(2))}
+e.lid.setAttribute('transform','rotate('+(side*24*p.lidAngle).toFixed(1)+') translate(0 '+(lid*18).toFixed(2)+')');e.body.style.opacity=(1-p.happy).toFixed(3);e.happy.style.opacity=p.happy.toFixed(3)});
+if(kind==='criatura'){const x=50+p.gx*.8,y=59.5+p.gy*.6,open=Math.min(1,p.mouth*1.4);const curve=p.smile*2;this.mouth.setAttribute('d','M'+(x-6)+' '+y+'Q'+x+' '+(y+curve).toFixed(2)+' '+(x+6)+' '+y+'Q'+x+' '+(y+curve+.6+open*8).toFixed(2)+' '+(x-6)+' '+y+'Z')}else this.mouth.removeAttribute('d');
+let lift=0,tilt=0,sx=1,sy=1;
+if(kind==='antena'||kind==='lineas'){tilt=p.tilt+p.gx*1.1;if(!still)lift=Math.sin(t*1.8)*(kind==='lineas'?2.5:4.5)-(state==='talking'?level*3:0)+(state==='muted'?3:0)}
+if(kind==='criatura'&&!still){const breath=Math.sin(t*2.3)*.012;sy=1+breath;sx=1-breath*.7;if(state==='talking'){sy+=level*.05;sx-=level*.03}if(state==='speaking'){sy+=level*.035;sx+=level*.02}const hop=(t-this.hop)/.55;if(hop>=0&&hop<1){lift=-Math.sin(hop*Math.PI)*13*(1-hop*.3);if(hop<.18){const s=Math.sin(hop/.18*Math.PI);sy-=.07*s;sx+=.06*s}}tilt=p.tilt*.6}
+this.rig.style.transform=kind==='ojos'?'':'translateY('+lift.toFixed(2)+'px) rotate('+tilt.toFixed(2)+'deg) scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
+this.shadow.style.transform='scale('+(1+lift/42).toFixed(3)+')';this.shadow.style.opacity=(.85+lift/28).toFixed(3);
+if(kind==='antena'||kind==='lineas'){const target=-tilt*.9+(still?0:Math.sin(t*1.25)*3+(state==='talking'?Math.sin(t*9)*level*7:0))+(state==='muted'?38:0);
+if(still){this.ant.a=target;this.ant.v=0}else{this.ant.v+=(-55*(this.ant.a-target)-5.5*this.ant.v)*dt;this.ant.a+=this.ant.v*dt}
+const a=this.ant.a*Math.PI/180,len=12.5,bx=50,by=8.5,tx=bx+Math.sin(a)*len,ty=by-Math.cos(a)*len,cx=bx+Math.sin(a*.35)*len*.55,cy=by-Math.cos(a*.35)*len*.55;
+this.stalk.setAttribute('d','M'+bx+' '+by+'Q'+cx.toFixed(2)+' '+cy.toFixed(2)+' '+tx.toFixed(2)+' '+ty.toFixed(2));for(const c of[this.tip,this.halo]){c.setAttribute('cx',tx.toFixed(2));c.setAttribute('cy',ty.toFixed(2))}
+this.tip.style.opacity=(.25+p.glow*.75).toFixed(3);this.halo.style.opacity=(p.glow*.38).toFixed(3)}
+}
+}
+class VoicePreview{
+constructor(host,initial,readOnly,character){
+host.append(document.getElementById('phone-template').content.cloneNode(true));this.el=host.querySelector('.phone');
+this.state='listening';this.beforeMute='listening';this.muted=false;this.readOnly=!!readOnly;this.localMode=false;this.meter=0;this.smooth=0;this.stream=null;this.micContext=null;this.outputContext=null;this.outputAnalyser=null;this.outputSamples=null;this.audio=null;this.timer=null;this.micTimer=null;this.chatSaved=false;this.epoch=0;this.raf=null;this.closed=true;this.permissionPending=false;
+this.canvas=this.$('.orb-canvas');this.graphics=window.SolVoiceVisuals?.mount(this.canvas,this)||null;this.ctx=null;if(!this.graphics){const fallback=document.createElement('canvas');fallback.className='orb-fallback';this.canvas.append(fallback);this.canvas=fallback;this.ctx=fallback.getContext('2d')}this.draw=this.draw.bind(this);
+this.sky=new NightSky(this.$('.sky-canvas'));this.character=new SolCharacter(this,character);
+this.$('.voice-entry').onclick=()=>this.open('listening');this.$('.back-button').onclick=()=>this.end();this.$('.end').onclick=()=>this.end();
+this.$('.mute').onclick=()=>this.toggleMute();this.$('.text').onclick=()=>this.showText(true);this.$('.sheet-close').onclick=()=>this.showText(false);
+this.$('.orb-button').onclick=()=>{if(!this.muted&&!this.readOnly&&(this.state==='speaking'||this.state==='thinking'))this.interrupt()};
+this.$('.inline-retry').onclick=()=>this.open('listening');
+this.$('.transcript').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();this.showText(false)}if(e.key==='Tab'){e.preventDefault();this.$('.sheet-close').focus()}});
+this.observer=new ResizeObserver(()=>{this.resize();this.draw(2.2)});this.observer.observe(this.canvas);
+if(initial)this.open(initial);
+if(!fixed&&!reducedMotion.matches)this.raf=requestAnimationFrame(this.draw);
+reducedMotion.addEventListener('change',()=>{cancelAnimationFrame(this.raf);if(!reducedMotion.matches&&!fixed)this.raf=requestAnimationFrame(this.draw);else this.draw(2.2)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&!this.readOnly){this.stopMic();this.stopAudio();if(!this.closed)this.setState('muted')}});
+}
+$(s){return this.el.querySelector(s)}
+resize(){const side=this.canvas.offsetWidth||this.canvas.getBoundingClientRect().width||286,scale=Math.min(devicePixelRatio||1,2);if(!this.graphics){this.canvas.width=side*scale;this.canvas.height=side*scale;this.ctx.setTransform(scale,0,0,scale,0,0)}this.side=side}
+open(state){this.closed=false;this.$('.voice-screen').hidden=false;this.$('.chat-screen').inert=true;this.setState(state||'listening');this.resize();this.draw(2.2)}
+setState(next){
+this.state=next;this.muted=next==='muted';if(this.stream)this.stream.getAudioTracks().forEach(t=>{t.enabled=!this.muted&&next!=='error'});
+this.el.dataset.state=next;const c=copy[next]||copy.listening;this.$('.voice-state').textContent=c.title;
+this.$('.voice-hint').replaceChildren(...c.hint.split('\n').flatMap((line,i)=>i?[document.createElement('br'),document.createTextNode(line)]:[document.createTextNode(line)]));
+this.$('.turn-hint').textContent=c.footer;this.$('.session-text').textContent=c.session;
+this.$('.mute').setAttribute('aria-pressed',String(this.muted));this.$('.mute').setAttribute('aria-label',this.muted?'Activar micrófono':'Silenciar micrófono');this.$('.mute-label').textContent=this.muted?'Activar micro':'Silenciar';
+this.$('.orb-muted-icon').hidden=!this.muted;this.$('.orb-button').disabled=this.muted||next==='error';this.$('.orb-button').setAttribute('aria-label',next==='speaking'||next==='thinking'?'Interrumpir a SOL y seguir hablando':c.title);
+this.$('.inline-retry').hidden=next!=='error';this.$('.mute').disabled=next==='error';
+this.$('.live-caption').textContent=!this.localMode&&next==='talking'?'“Mañana tengo que llamar al taller…”':'';this.$('.live-caption').hidden=next!=='talking';
+if(next==='muted'||next==='error')this.meter=0;
+document.querySelectorAll('[data-demo]').forEach(b=>b.classList.toggle('selected',b.dataset.demo===next));
+if(fixed||reducedMotion.matches)this.draw(2.2);
+}
+toggleMute(){if(this.muted)this.setState(this.beforeMute==='speaking'&&this.audio&&!this.audio.paused?'speaking':'listening');else{this.beforeMute=this.state;if(this.state!=='speaking'){clearTimeout(this.timer);this.epoch++}this.setState('muted')}}
+demo(next){if(!(next==='speaking'&&this.localMode))this.stopMic();this.stopAudio();this.epoch++;if(next==='chat'){this.end();return}this.open(next==='interrupt'?'talking':next);if(next==='interrupt')this.$('.voice-hint').textContent='Me detengo. Te escucho.';if(['talking','speaking','interrupt'].includes(next))this.chatSaved=true;if(next==='speaking')this.playSample()}
+playSample(){
+const epoch=++this.epoch;this.audio=new Audio(window.solVoiceSample||'./miguel-sample.mp3');
+try{this.outputContext=new AudioContext();this.outputAnalyser=this.outputContext.createAnalyser();this.outputAnalyser.fftSize=512;this.outputSamples=new Float32Array(512);this.outputContext.createMediaElementSource(this.audio).connect(this.outputAnalyser);this.outputAnalyser.connect(this.outputContext.destination);this.outputContext.resume().catch(()=>{})}catch{}
+this.audio.onended=()=>{if(epoch===this.epoch&&!this.closed)this.setState(this.muted?'muted':'listening')};
+this.audio.onerror=()=>{if(epoch!==this.epoch||this.closed)return;document.getElementById('prototype-note').textContent='Vista de diseño: falta la muestra junto al HTML. Los controles funcionan sin ella; el agente real aún no está conectado.';this.timer=setTimeout(()=>{if(epoch===this.epoch&&!this.closed)this.setState(this.muted?'muted':'listening')},7000)};
+this.audio.play().catch(()=>{});
+}
+stopAudio(){this.epoch++;if(this.audio){this.audio.pause();this.audio.onended=null;this.audio.onerror=null;this.audio.removeAttribute('src');this.audio.load();this.audio=null}if(this.outputContext){this.outputContext.close().catch(()=>{});this.outputContext=null}this.outputAnalyser=null;clearTimeout(this.timer)}
+interrupt(){if(this.muted)return;this.stopAudio();this.setState(this.localMode?'listening':'talking');this.$('.voice-hint').textContent='Me detengo. Te escucho.'}
+showText(show){
+const sheet=this.$('.transcript');if(show){const target=this.$('.sheet-messages');target.replaceChildren();const rows=this.chatSaved?[['Tú',sampleUser],['SOL',sampleAgent]]:[['SOL','Cuando hables con SOL, podrás seguir y revisar aquí la conversación.']];for(const[who,text]of rows){const label=document.createElement('div');label.className='who';label.textContent=who;const p=document.createElement('p');p.textContent=text;target.append(label,p)}}
+sheet.hidden=!show;this.$('.voice-header').inert=show;this.$('.voice-body').inert=show;this.$('.voice-controls-wrap').inert=show;if(show)this.$('.sheet-close').focus();else this.$('.text').focus();
+}
+end(){this.stopAudio();this.stopMic();this.closed=true;this.showText(false);this.$('.voice-screen').hidden=true;this.$('.chat-screen').inert=false;if(this.chatSaved){this.$('.chat-intro').hidden=true;const thread=this.$('.chat-thread');thread.hidden=false;thread.replaceChildren();const p=document.createElement('div');p.className='person';p.textContent=sampleUser;const a=document.createElement('div');a.className='agent';a.textContent=sampleAgent;thread.append(p,a)}this.$('.voice-entry').focus()}
+async startMic(){
+if(this.permissionPending)return;
+if(this.stream){this.stopMic();this.setState('listening');return}
+if(!navigator.mediaDevices?.getUserMedia){document.getElementById('prototype-note').textContent='El micrófono del navegador requiere localhost o HTTPS. Puedes explorar los estados con los botones de la maqueta.';return}
+this.open('listening');this.stopAudio();const token=++this.epoch;this.permissionPending=true;
+try{const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+if(token!==this.epoch||this.closed){stream.getTracks().forEach(t=>t.stop());return}
+this.stream=stream;this.localMode=true;this.micContext=new AudioContext();await this.micContext.resume();const analyser=this.micContext.createAnalyser();analyser.fftSize=512;this.micContext.createMediaStreamSource(stream).connect(analyser);const samples=new Float32Array(512);let voicedAt=0;
+this.micTimer=setInterval(()=>{if(!this.stream||this.muted){this.meter=0;return}analyser.getFloatTimeDomainData(samples);let total=0;for(const v of samples)total+=v*v;this.meter=Math.min(1,Math.sqrt(total/samples.length)*7);const now=performance.now();if(this.meter>.18){if(!voicedAt)voicedAt=now;if(now-voicedAt>180&&this.state==='speaking')this.interrupt()}else voicedAt=0},32);
+document.getElementById('local-mic').querySelector('span').textContent='Apagar mi micrófono';document.getElementById('prototype-note').textContent='Micrófono local activo. El círculo sigue el volumen real; no transcribe, graba ni envía audio. Al salir, silenciar u ocultar la página deja de escuchar.';this.$('.voice-hint').textContent='El círculo sigue tu voz.';
+}catch{this.stopMic();document.getElementById('prototype-note').textContent='No se pudo abrir el micrófono. Puedes seguir probando los estados de ejemplo y usar el chat escrito.'}
+finally{this.permissionPending=false}
+}
+stopMic(){clearInterval(this.micTimer);if(this.stream){this.stream.getTracks().forEach(t=>t.stop());this.stream=null}if(this.micContext){this.micContext.close().catch(()=>{});this.micContext=null}this.meter=0;this.localMode=false;const b=document.getElementById('local-mic');if(b)b.querySelector('span').textContent='Probar con mi micrófono'}
+draw(timestamp){
+if(!this.side||(!this.ctx&&!this.graphics))return;const t=fixed||reducedMotion.matches?2.2:timestamp/1000,ctx=this.ctx,side=this.side,center=side/2,state=this.state;
+const speaking=state==='speaking',talking=state==='talking',muted=state==='muted',thinking=state==='thinking',error=state==='error',motion=!reducedMotion.matches;
+let target=muted||error||thinking?0:this.localMode&&!speaking?this.meter:speaking?.36+.23*Math.sin(t*11)*Math.sin(t*4.6):talking?.58+.3*Math.sin(t*9.3)*Math.sin(t*3.8):.03;
+if(speaking&&this.outputAnalyser&&this.audio&&!this.audio.paused){this.outputAnalyser.getFloatTimeDomainData(this.outputSamples);let total=0;for(const v of this.outputSamples)total+=v*v;target=Math.min(1,Math.sqrt(total/this.outputSamples.length)*4)}
+this.smooth+=(target-this.smooth)*.14;const level=fixed?(talking?.72:speaking?.46:0):this.smooth,radius=side*(.354+(motion?level*.025:0));
+const still=fixed||reducedMotion.matches,clock=still?2.2:performance.now()/1000;this.character.update(clock,level,still);this.sky.update(clock,level,this.el.dataset.theme==='day',still);
+if(this.graphics){this.graphics.frame(level);if(!fixed&&!reducedMotion.matches&&timestamp>10)this.raf=requestAnimationFrame(this.draw);return}
+ctx.clearRect(0,0,side,side);ctx.save();ctx.translate(center,center);
+const shape=factor=>{ctx.beginPath();for(let i=0;i<=150;i++){const angle=i/150*Math.PI*2,jitter=motion&&!muted&&!thinking&&!error?level*(Math.sin(angle*5+t*3.3)*.023+Math.sin(angle*3-t*2.4)*.016):0,r=radius*factor*(1+jitter),x=Math.cos(angle)*r,y=Math.sin(angle)*r;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.closePath()};
+if(!muted&&!error){shape(1.11+level*.1);ctx.strokeStyle='rgba(114,148,255,'+(.045+level*.08)+')';ctx.lineWidth=.9;ctx.stroke();shape(1.2+level*.14);ctx.strokeStyle='rgba(114,148,255,'+(.018+level*.03)+')';ctx.lineWidth=.7;ctx.stroke()}
+shape(1);const base=ctx.createLinearGradient(-radius*.5,-radius,radius*.4,radius);
+if(muted||error){base.addColorStop(0,'#445477');base.addColorStop(.52,'#2d3d63');base.addColorStop(1,'#1e2945')}else{base.addColorStop(0,'#bbd4ff');base.addColorStop(.25,'#9bbdff');base.addColorStop(.55,'#4878ee');base.addColorStop(1,'#1e43b9')}ctx.fillStyle=base;ctx.fill();ctx.save();ctx.clip();
+if(!muted&&!error){const glow=ctx.createRadialGradient(-radius*.42,-radius*.48,0,-radius*.23,-radius*.28,radius*1.3);glow.addColorStop(0,'#e2eeff');glow.addColorStop(.35,'#b4d5ff85');glow.addColorStop(1,'#3e66de00');ctx.fillStyle=glow;ctx.fillRect(-radius,-radius,radius*2,radius*2);
+for(let i=0;i<5;i++){const shift=Math.sin(t*.7+i*.48)*radius*.09,y=-radius*.12+i*radius*.095+shift;ctx.beginPath();ctx.moveTo(-radius*1.2,y+radius*.32);ctx.bezierCurveTo(-radius*.5,y-radius*.95,radius*.25,y+radius*.52,radius*1.25,y-radius*.22);ctx.lineTo(radius*1.25,radius*1.3);ctx.lineTo(-radius*1.25,radius*1.3);ctx.closePath();const band=ctx.createLinearGradient(0,y-radius*.15,0,y+radius*.75);band.addColorStop(0,'rgba(211,231,255,'+(.15-i*.017)+')');band.addColorStop(.3,'rgba(132,178,255,.08)');band.addColorStop(1,'rgba(40,75,191,0)');ctx.fillStyle=band;ctx.fill()}
+const shade=ctx.createRadialGradient(radius*.05,-radius*.1,radius*.3,0,0,radius*1.1);shade.addColorStop(0,'#091a5400');shade.addColorStop(.75,'#183a8b00');shade.addColorStop(1,'#092e8b70');ctx.fillStyle=shade;ctx.fillRect(-radius,-radius,radius*2,radius*2)}
+ctx.restore();shape(1);ctx.strokeStyle=muted?'#8eaae622':'#d8e7ff30';ctx.lineWidth=.75;ctx.stroke();
+if(thinking){ctx.beginPath();ctx.arc(0,0,radius*1.13,t*.55,t*.55+Math.PI*.45);ctx.strokeStyle='#829feaa0';ctx.lineWidth=1.3;ctx.lineCap='round';ctx.stroke()}ctx.restore();
+if(!fixed&&!reducedMotion.matches&&timestamp>10)this.raf=requestAnimationFrame(this.draw);
+}
+}
+const docks=[
+['ios','01','Llamada de iPhone','en la línea de iOS','Costo bajo. Riesgo: se lee como copia de iPhone y el rojo encandila de noche.'],
+['chatgpt','02','Círculos grises','en la línea de ChatGPT Voice','Costo bajo. Riesgo: sin etiquetas hay que adivinar qué hace cada botón.'],
+['gemini','03','Píldoras con texto','en la línea de Gemini Live','Costo bajo. Riesgo: el texto ocupa ancho y en 390 px queda justo.'],
+['meet','04','Silenciar en rojo','en la línea de Google Meet','Costo bajo. Riesgo: el rojo al silenciar puede leerse como un error.'],
+['m3','05','Forma que cambia','tokens de Soltra · en la línea de Material 3','Paleta de Soltra, radio 22, tamaño 56, presión a 0,97 en 120 ms y resorte de 400 ms de la app. Costo medio por el resorte.'],
+['linear','06','Trazo fino','en la línea de Linear','Costo bajo. Riesgo: el borde de 1 px pierde contraste con poca luz.'],
+['geist','07','Blanco y negro','en la línea de Vercel Geist','Costo bajo. Riesgo: el negro puro se separa del azul de Mi espacio.'],
+['nothing','08','Contorno y punto rojo','en la línea de Nothing OS','Costo bajo. Riesgo: es la estética de otra marca, muy reconocible.'],
+['island','09','Cápsula negra','en la línea de la isla dinámica','Costo medio. Riesgo: sin etiquetas y muy cercano al iPhone.'],
+['trazo','10','Solo trazo','sin contenedor','Costo bajo. Riesgo: no se ve dónde termina el área que se toca.'],
+];
+const dockMarkup='<div class="voice-controls"><div class="control-wrap"><button class="control mute" aria-label="Silenciar micrófono" aria-pressed="false"><svg class="ico ico-on" aria-hidden="true"><use href="#i-mic"/></svg><svg class="ico ico-off" aria-hidden="true"><use href="#i-mic-off"/></svg></button><span class="mute-label">Silenciar</span></div><div class="control-wrap"><button class="control text" aria-label="Ver texto de la conversación"><svg aria-hidden="true"><use href="#i-text"/></svg></button><span>Ver texto</span></div><div class="control-wrap"><button class="control end" aria-label="Terminar conversación de voz"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span>Terminar</span></div></div>';
+const setMute=(button,on)=>{button.setAttribute('aria-pressed',String(on));button.setAttribute('aria-label',on?'Activar micrófono':'Silenciar micrófono');button.parentElement.querySelector('.mute-label').textContent=on?'Activar micro':'Silenciar'};
+let preview;
+const chosenCharacter=characters.includes(params.get('character'))?params.get('character'):'lineas';
+const chosenDock=docks.some(d=>d[0]===params.get('dock'))?params.get('dock'):'m3';
+if(params.get('view')==='buttons'){
+document.getElementById('studio').hidden=true;document.getElementById('buttons').hidden=false;const grid=document.getElementById('dock-grid'),cards=[];
+const phone=new VoicePreview(document.getElementById('buttons-phone'),params.get('state')||'listening',true,characters.includes(params.get('character'))?params.get('character'):'lineas');
+const pick=id=>{phone.el.dataset.dock=id;for(const c of cards)c.setAttribute('aria-current',String(c.dataset.dock===id))};
+for(const[id,num,name,ref,meta]of docks){const card=document.createElement('article');card.className='dock-card';card.dataset.dock=id;card.innerHTML='<header><span class="dock-num">'+num+'</span><h2></h2><span class="dock-ref"></span></header><div class="dock-stage">'+dockMarkup+'</div><p class="dock-meta"></p>';card.querySelector('h2').textContent=name;if(id==='m3')card.querySelector('h2').dataset.badge='Elegida';card.querySelector('.dock-ref').textContent=ref;card.querySelector('.dock-meta').textContent=meta;
+const mute=card.querySelector('.mute');mute.onclick=()=>setMute(mute,mute.getAttribute('aria-pressed')!=='true');card.addEventListener('click',()=>pick(id));grid.append(card);cards.push(card)}
+pick(params.get('dock')?chosenDock:'m3');
+let demo=null;if(!fixed&&!reducedMotion.matches){let on=false;demo=setInterval(()=>{on=!on;cards.forEach((card,i)=>setTimeout(()=>setMute(card.querySelector('.mute'),on),i*110));setTimeout(()=>phone.toggleMute(),cards.length*110)},2600)}
+window.solVoiceButtons={phone,cards,pick,stop:()=>clearInterval(demo)};
+}else if(params.get('view')==='options'){
+document.getElementById('studio').hidden=true;document.getElementById('options').hidden=false;const grid=document.getElementById('options-grid'),bar=document.getElementById('options-bar'),phones=[];
+const states=[['listening','Te escucha'],['talking','Estás hablando'],['thinking','Piensa'],['speaking','SOL responde'],['muted','Silenciado'],['error','Sin conexión']];
+const cycle=['listening','talking','thinking','speaking','talking','muted'];let step=0,timer=null;
+const show=state=>{for(const phone of phones)phone.setState(state);bar.querySelectorAll('[data-state]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.state===state)))};
+for(const[state,label]of states){const b=document.createElement('button');b.dataset.state=state;b.textContent=label;b.onclick=()=>{stop();show(state)};bar.append(b)}
+const auto=document.createElement('button');auto.className='cycle';bar.append(auto);
+const stop=()=>{clearInterval(timer);timer=null;auto.textContent='Recorrer solo';auto.setAttribute('aria-pressed','false')};
+const start=()=>{timer=setInterval(()=>{step=(step+1)%cycle.length;show(cycle[step])},3400);auto.textContent='Pausar recorrido';auto.setAttribute('aria-pressed','true')};
+auto.onclick=()=>timer?stop():start();
+for(const[kind,title,detail]of[['ojos','A · Ojos de luz','Solo ojos dentro del círculo. Parpadea, mira tu cursor o tu dedo y cambia de gesto según quién habla.'],['antena','B · Compañero con antena','Lo de A, y además flota, inclina la cabeza y su antena rebota. La luz de la punta dice si te está oyendo.'],['criatura','C · Criatura de luz','Lo de A, más una boca que sigue la voz de SOL y un cuerpo que se estira y da saltitos al cambiar de estado.']]){
+const card=document.createElement('article');card.className='board-card'+(kind==='antena'?' recommended':'');grid.append(card);const phone=new VoicePreview(card,params.get('state')||'listening',true,kind);phones.push(phone);const label=document.createElement('div');label.className='board-label';const h=document.createElement('h2');h.textContent=title;const p=document.createElement('p');p.textContent=detail;label.append(h,p);card.append(label);if(params.get('theme')==='day')phone.el.dataset.theme='day'}
+show(params.get('state')||'listening');if(fixed||params.get('state'))stop();else start();window.solVoiceOptions={phones,show,stop};
+}else if(params.get('view')==='board'){
+document.getElementById('studio').hidden=true;document.getElementById('board').hidden=false;const grid=document.getElementById('board-grid');
+for(const[state,title,detail]of[['talking','01 / Tú hablas','El círculo responde a tu voz. Hablas sin mantener ningún botón pulsado.'],['speaking','02 / SOL responde','Puedes interrumpir con tu voz o tocar el círculo. SOL se detiene y te escucha.'],['muted','03 / Tú decides','Silencia el micrófono, consulta el texto o termina. Los controles siempre están en el mismo lugar.']]){
+const card=document.createElement('article');card.className='board-card';grid.append(card);const phone=new VoicePreview(card,state,true,chosenCharacter);const label=document.createElement('div');label.className='board-label';const h=document.createElement('h2');h.textContent=title;const p=document.createElement('p');p.textContent=detail;label.append(h,p);card.append(label);if(params.get('theme')==='day')phone.el.dataset.theme='day'}
+}else{
+preview=new VoicePreview(document.getElementById('phone-host'),params.get('state')||'listening',false,chosenCharacter);if(chosenDock)preview.el.dataset.dock=chosenDock;
+const syncCharacter=()=>document.querySelectorAll('[data-character]').forEach(b=>{if(b.classList.contains('character-option'))b.setAttribute('aria-pressed',String(b.dataset.character===preview.character.kind))});
+document.querySelectorAll('.character-option').forEach(b=>{b.onclick=()=>{preview.character.setKind(b.dataset.character);syncCharacter();if(fixed||reducedMotion.matches)preview.draw(2.2)}});syncCharacter();if(params.get('theme')==='day')preview.el.dataset.theme='day';
+document.querySelectorAll('[data-demo]').forEach(b=>{b.onclick=()=>{if(b.dataset.demo==='interrupt'&&preview.state==='speaking'&&!preview.muted)preview.interrupt();else preview.demo(b.dataset.demo)}});
+document.getElementById('local-mic').onclick=()=>preview.startMic();document.getElementById('theme-switch').onclick=()=>{const day=preview.el.dataset.theme!=='day';preview.el.dataset.theme=day?'day':'night';document.getElementById('theme-switch').firstElementChild.textContent=day?'Cambiar a modo noche':'Cambiar a modo día'};
+window.addEventListener('pagehide',()=>{preview.stopMic();preview.stopAudio()});window.solVoicePreview=preview;
+}
+</script></body></html>

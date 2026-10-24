@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-cierre-chat-web",
+  "title": "Cerrar y documentar el chat web publicado con Luna",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "El chat web y Luna max/Fast solicitado quedaron integrados por el PR #42. El piloto del Mac se revisó y reactivó con su estado intacto.",
+  "before": "Las fichas hablaban de incorporar el cambio mediante este PR, sin indicar su número ni el merge ya realizado. Al revisar el cierre, el proceso local de 4181 no respondía.",
+  "after": "Se documentan PR #42, merge 717148e, configuración, pruebas y límites. El mismo piloto aprobado vuelve a responder en localhost:4181. Su archivo de conversación se conserva y el código publicado queda distinguido de las entregas posteriores #44 y #45.",
+  "reason": "Quito pidió confirmar dónde estábamos y documentar la sesión después de autorizar el despliegue y su incorporación a main.",
+  "checked": "PR #42 verificado como ancestro de origin/main tras actualizar la referencia remota. Durante la entrega se aprobaron TypeScript, 66 pruebas sobre main y tablero build/check; la copia local aislada tuvo 49 pruebas y diez comprobaciones en Chrome con Codex real. En este cierre, el 23 de octubre a las 21:08 Santiago, se confirmó que el puerto 4181 no respondía, se reactivó la misma copia aprobada, /health respondió ok/dev:true y el SHA-256 del archivo de estado permaneció idéntico. No se repitieron inferencias ni se mezclaron las pruebas de las entregas posteriores.",
+  "availability": "Código integrado en main: https://github.com/cbishara/SolsetsHack/pull/42 (717148efaa8f7c046a6b4d9340f7232cfd6c6bce). Piloto local en http://localhost:4181, con Luna max y Fast solicitado; depende del proceso y del Mac. La copia activa no sigue automáticamente main. El nivel de servicio efectivamente servido por el proveedor no se confirmó. Este cierre no acredita el recorrido compartido con app, server y WhatsApp. La actualización documental se entrega mediante el PR de cierre de este registro.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

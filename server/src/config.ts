@@ -14,7 +14,7 @@ export type Config = {
   email?: EmailConfig;
   allowSimulate: boolean;
   // Agent service (agent/ on Railway). Unset: the conservative stand-in runs locally.
-  agent?: { url: string; token?: string; userId: string; timeoutMs: number };
+  agent?: { url: string; token?: string; userId: string; timeoutMs: number; allowWhatsApp: boolean };
 };
 
 export function loadConfig(): Config {
@@ -51,6 +51,7 @@ export function loadConfig(): Config {
     agent: env.AGENT_URL ? {
       url: env.AGENT_URL, token: env.AGENT_TOKEN || undefined,
       userId: env.AGENT_USER_ID || 'rodrigo-demo', timeoutMs: Number(env.AGENT_TIMEOUT_MS) || 30_000,
+      allowWhatsApp: env.AGENT_WHATSAPP === 'true',
     } : undefined,
   };
 

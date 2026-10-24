@@ -235,7 +235,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     store, agent: agents[engineName], devAgents: agents, token, dev,
     chat, chatPassword, corsOrigin: process.env.CHAT_CORS_ORIGIN,
     appCapabilities: createAppCapabilities({ runner: engineName === 'codex' ? createCodexRunner(chatOptions) : null, model: chatOptions.model ?? null }),
-    appClassifier: createAppClassifier({ store, runner: engineName === 'codex' ? createCodexRunner({ bin: process.env.CODEX_BIN, model: process.env.CODEX_MODEL, timeoutMs: Number(process.env.CODEX_TIMEOUT_MS ?? 25_000) }) : null, model: process.env.CODEX_MODEL ?? null }),
+    appClassifier: createAppClassifier({ store, runner: engineName === 'codex' ? createCodexRunner({ bin: process.env.CODEX_BIN, model: process.env.CODEX_MODEL, timeoutMs: Number(process.env.CODEX_TIMEOUT_MS ?? 25_000) }) : null, model: process.env.CODEX_MODEL ?? null, allowWhatsApp: process.env.AGENT_APP_ALLOW_WHATSAPP === 'true' }),
   });
   const port = Number(process.env.PORT ?? 4180);
   const host = process.env.HOST ?? (production ? '0.0.0.0' : '127.0.0.1');

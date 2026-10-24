@@ -57,6 +57,8 @@ export type HttpAgentOptions = {
   /** Single-user demo: the owner id the agent keys memory and feedback by. */
   userId: string;
   timeoutMs?: number;
+  /** Also send WhatsApp from the demo number (AGENT_WHATSAPP=true). Email never leaves the server. */
+  allowWhatsApp?: boolean;
   fetch?: typeof fetch;
 };
 
@@ -82,12 +84,12 @@ export const activeCategories = (categories: Category[] = []) => categories.filt
  * report with the one that already woke Rodrigo. Only synthetic (simulated)
  * messages are sent: real messages never leave the server.
  */
-export function recentIncidents(recent: FeedItem[], userId: string) {
+export function recentIncidents(recent: FeedItem[], userId: string, sources: readonly string[] = ['simulated']) {
   const seen = new Set<string>();
   const out: { userId: string; incidentKey: string; text: string; group?: string; receivedAt: string }[] = [];
   for (const item of [...recent].sort((a, b) => Date.parse(b.message.receivedAt) - Date.parse(a.message.receivedAt))) {
     if (out.length >= MAX_RECENT) break;
-    if (item.message.source !== 'simulated' || !item.incidentKey || seen.has(item.incidentKey)) continue;
+    if (!sources.includes(item.message.source) || !item.incidentKey || seen.has(item.incidentKey)) continue;
     seen.add(item.incidentKey);
     out.push({
       userId, incidentKey: item.incidentKey.slice(0, 200), text: item.message.text.slice(0, 2000),
@@ -98,7 +100,7 @@ export function recentIncidents(recent: FeedItem[], userId: string) {
 }
 
 /** The exact body of POST /v1/app/classify (agent/APP-INTEGRATION.md). */
-export function classifyRequest(message: IncomingMessage, context: AgentContext, userId: string) {
+export function classifyRequest(message: IncomingMessage, context: AgentContext, userId: string, sources: readonly string[] = ['simulated']) {
   return {
     userId,
     requestId: randomUUID(),
@@ -108,7 +110,7 @@ export function classifyRequest(message: IncomingMessage, context: AgentContext,
       id: message.id, externalId: message.externalId, source: message.source, sender: message.sender.slice(0, 120) || 'Sin nombre',
       ...(message.group ? { group: message.group } : {}), text: message.text, receivedAt: message.receivedAt,
     },
-    recent: recentIncidents(context.recent, userId),
+    recent: recentIncidents(context.recent, userId, sources),
     categories: activeCategories(context.categories).slice(0, MAX_CATEGORIES).map((c) => ({
       id: c.id, name: c.name, description: c.description, action: c.action, wakeAtNight: c.wakeAtNight,
       status: c.status, origin: c.origin, color: c.color, icon: c.icon, createdAt: c.createdAt,
@@ -117,15 +119,16 @@ export function classifyRequest(message: IncomingMessage, context: AgentContext,
 }
 
 /** Classifies over HTTP; any error or timeout throws so the guard wakes with fallbackVerdict. */
-export function createHttpAgent({ url, token, userId, timeoutMs = 30_000, fetch: fetcher = fetch }: HttpAgentOptions): Agent {
+export function createHttpAgent({ url, token, userId, timeoutMs = 30_000, allowWhatsApp = false, fetch: fetcher = fetch }: HttpAgentOptions): Agent {
+  const sources = allowWhatsApp ? ['simulated', 'whatsapp'] : ['simulated'];
   const endpoint = `${url.replace(/\/+$/, '')}/v1/app/classify`;
   return {
     async classify(message, context) {
-      if (message.source !== 'simulated') return stubAgent.classify(message, context);
+      if (!sources.includes(message.source)) return stubAgent.classify(message, context);
       const res = await fetcher(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify(classifyRequest(message, context, userId)),
+        body: JSON.stringify(classifyRequest(message, context, userId, sources)),
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (!res.ok) throw new Error(`El agente respondió ${res.status}.`);

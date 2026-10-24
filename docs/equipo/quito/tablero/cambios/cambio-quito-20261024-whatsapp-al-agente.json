@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-whatsapp-al-agente",
+  "title": "Los WhatsApp del número de demo llegan al agente con Codex",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "Con dos variables, server/ manda al agente los WhatsApp del número de demo y el agente los clasifica. El correo nunca sale del server.",
+  "before": "El servicio de WhatsApp recibía mensajes, pero nadie los clasificaba: el agente solo aceptaba mensajes simulados y server/ los resolvía con el reemplazo por palabras clave.",
+  "after": "Con AGENT_WHATSAPP=true en server/ y AGENT_APP_ALLOW_WHATSAPP=true en agent/, un WhatsApp del chat elegido se clasifica con Codex, con categoría, titular y contexto. Sin esas variables todo sigue como antes.",
+  "reason": "Quito pidió probar la demo desde WhatsApp. En ese chat el equipo escribe solo mensajes inventados, así que la regla de datos sintéticos se mantiene.",
+  "checked": "2026-10-24: agent/ npm run check con 120 pruebas en verde; server/ typecheck y 36 pruebas en verde. Pruebas nuevas: WhatsApp rechazado por defecto y aceptado con el permiso; el correo sigue sin salir. Falta la prueba con un WhatsApp real después del deploy.",
+  "availability": "En main tras el PR. Se activa por variables en Railway.",
+  "featureIds": ["feat-quito-descarga"],
+  "flowIds": []
+}

@@ -12,7 +12,7 @@ import { rulesEngine } from '../src/engines/rules.ts';
 import { createAgentServer } from '../src/server.ts';
 import { MemoryStore } from '../src/store.ts';
 import { decideForServer } from '../src/integration/server-policy.ts';
-import type { ClassifyResult } from '../src/integration/contract.ts';
+import type { AppClassifyResult as ClassifyResult } from '../src/integration/contract.ts';
 
 const store = new MemoryStore(), userId = 'owner-app-fixture', token = randomUUID();
 let modelCalls = 0;
@@ -46,11 +46,18 @@ async function check(name: string, run: () => Promise<void>) {
 }
 try {
   let first: ClassifyResult;
+  const categories = [
+    { id: 'c-outage', name: 'Caída de servicio', description: 'Un sistema que usan clientes o sucursales deja de funcionar.', action: 'alert', wakeAtNight: true },
+    { id: 'c-shifts', name: 'Turnos', description: 'Cambios de turno o de guardia del equipo.', action: 'digest', wakeAtNight: false },
+  ];
   const message = { id: 'portal-1', externalId: 'fixture-1', source: 'simulated', sender: 'Compañero ficticio', group: 'Guardia ficticia', text: 'Se cayó el portal de clientes. Ningún cliente puede acceder.', receivedAt: '2026-10-23T23:00:00-03:00' };
   await check('outage_wakes_with_a_clear_reason', async () => {
-    first = await post('/v1/app/classify', { ...base(), message, recent: [] });
+    first = await post('/v1/app/classify', { ...base(), message, recent: [], categories });
     assert.equal(first.engine, 'codex'); assert.equal(first.decision, 'wake'); assert.match(first.reason.toLowerCase(), /portal|cliente|ca[ií]d|acced/);
-    const verdict = decideForServer(first, { night: { onCall: true }, settings: { mode: 'shadow' }, recent: [] }, message.receivedAt);
+    // #61: category from the owner's list, one-line headline and at most three lines of context.
+    assert.equal(first.categoryId, 'c-outage'); assert.ok(first.summary.trim() && !first.summary.includes('\n'));
+    assert.ok(first.context.trim() && first.context.split('\n').length <= 3);
+    const verdict = decideForServer(first, { night: { onCall: true }, settings: { mode: 'shadow' }, recent: [], category: { wakeAtNight: true, action: 'alert' } }, message.receivedAt);
     assert.equal(verdict.wouldWake, true);
   });
   await check('paraphrase_does_not_wake_twice_with_current_server_policy', async () => {
@@ -84,6 +91,8 @@ try {
     ] });
     assert.ok(result.rules.some(r => r.kind === 'wait' && !r.confirmed && /impresora/i.test(r.text)));
     assert.ok(result.questions.length > 0 && result.questions.every(q => !('answer' in q)));
+    assert.ok(result.questions.every(q => q.kind === 'question' && q.effects.length === q.options.length && q.actions.length === q.options.length));
+    assert.ok(result.categories.every(c => c.status === 'suggested' && c.origin === 'sol'));
     assert.deepEqual(store.listMemory(userId), []);
   });
   await check('unreviewed_history_injection_cannot_activate_or_propose_rules', async () => {

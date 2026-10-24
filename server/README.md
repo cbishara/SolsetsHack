@@ -17,10 +17,21 @@ npm test
 2. **WhatsApp por 2Chat:** `POST /api/webhooks/2chat/<token>`. Lee grupos y mensajes directos. Guarda cada evento crudo antes de procesarlo, porque 2Chat no documenta el formato de los mensajes de grupo. Si el número se desconecta, `GET /api/sources` lo muestra como `disconnected`.
 3. **Correo por IMAP:** lee cada 30 segundos los no leídos cuyo asunto trae `[SOLSETS-DEMO]` y los marca como leídos.
 4. **Consola de respaldo:** `POST /api/messages` con `{ text, sender, group }` mete un mensaje a mano.
-5. **Agente:** `server/src/agent.ts` define la interfaz `classify` + `decide` que implementa Quito en `agent/`. Mientras no existe, usa un reemplazo conservador por palabras clave. Si el agente falla, el mensaje despierta igual.
+5. **Agente:** `server/src/agent.ts` define la interfaz `classify` + `decide`. Con `AGENT_URL` llama al servicio `agent` por HTTP (ver abajo). Sin esa variable usa un reemplazo conservador por palabras clave. Si el agente falla, el mensaje despierta igual.
 6. **Pendiente:** push con Expo, llamada de respaldo con temporizador de 3 minutos, calendario de turnos, deploy en Railway.
 
 Variables en `server/.env.example`.
+
+## Agente por HTTP y categorías (contrato app v2, #61)
+
+`server/` no importa el código de `agent/` ni corre Codex: llama al servicio `agent` de Railway.
+
+1. **`AGENT_URL`** (por ejemplo `https://agent.up.railway.app`) y **`AGENT_TOKEN`** (el Bearer interno de `/v1/*` del agente). Opcionales. Sin `AGENT_URL`, todo corre local con el reemplazo conservador. `AGENT_USER_ID` (por defecto `rodrigo-demo`) es el dueño fijo mientras no haya multiusuario; `AGENT_TIMEOUT_MS` (por defecto 30000).
+2. **Qué manda:** cada mensaje `simulated` va a `POST /v1/app/classify` con `requestId` nuevo, `ownerVerified: true`, `synthetic: true`, hasta 30 incidentes recientes distintos (`{userId, incidentKey, text, group, receivedAt}`, solo de mensajes simulados) y las categorías activas. Las sugeridas no se mandan.
+3. **Solo datos sintéticos:** `/v1/app/classify` acepta solo `source: simulated`. Un mensaje de WhatsApp o de correo **no sale del server**: lo clasifica el reemplazo conservador y pasa por la misma política.
+4. **Política en código** (`src/policy.ts`, réplica de `decideForServer` de `agent/src/integration/server-policy.ts`, fijada con los mismos casos en `test/policy.test.ts`): nuevo o confianza < 0.7 despierta; una categoría con `wakeAtNight` agrega un despertar si la noche tiene avisos activos; una categoría nunca quita un despertar; duplicado del mismo incidente en menos de 30 minutos no re-despierta; el modo sombra no silencia. Error, respuesta inválida o más de 30 s → despierta.
+5. **Veredictos:** `/api/feed` y `/api/report` traen además `categoryId` (o `null`), `summary` y `context` cuando los dio el agente.
+6. **Categorías:** `GET/POST /api/categories`, `PATCH/DELETE /api/categories/:id`, con el mismo token que el resto de `/api/*`. Forma `{ id, name, color, icon, description, action, wakeAtNight, origin, status, createdAt }`. Máximo 30. `id`, `origin` y `createdAt` no cambian con `PATCH`. Con `ALLOW_SIMULATE` encendido se siembran una sola vez tres categorías sintéticas (`c-incident`, `c-security`, `c-request`) si no hay ninguna.
 
 ## WhatsApp por Unipile (rama de Amaru)
 

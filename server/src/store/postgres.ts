@@ -59,6 +59,11 @@ export class PostgresStore implements Store {
     return r.rows.map((row) => row.data as T);
   }
 
+  async remove(collection: Collection, id: string) {
+    const r = await this.pool.query(`delete from ${SCHEMA}.documents where collection = $1 and id = $2`, [collection, id]);
+    return r.rowCount === 1;
+  }
+
   async close() {
     await this.pool.end();
   }

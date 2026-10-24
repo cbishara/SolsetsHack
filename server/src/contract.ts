@@ -22,11 +22,15 @@ export type Classification = {
   isNew: boolean;
   confidence: number;
   incidentKey: string;
+  // App contract v2 (#61), optional: only the HTTP agent fills them.
+  categoryId?: string | null; // one of the user's active categories, or null
+  summary?: string; // one-line headline for the inbox
+  context?: string; // 2-3 lines: context and what to do
 };
 
 export type Verdict = Classification & {
   wouldWake: boolean;
-  why: 'urgent' | 'new' | 'low_confidence' | 'duplicate' | 'off_duty' | 'not_urgent';
+  why: 'urgent' | 'new' | 'low_confidence' | 'duplicate' | 'off_duty' | 'not_urgent' | 'category';
 };
 
 export type FeedItem = Verdict & { message: IncomingMessage };
@@ -51,9 +55,26 @@ export type Source = {
   updatedAt: string;
 };
 
+export const CATEGORY_ACTIONS = ['alert', 'task', 'calendar', 'digest', 'ignore'] as const;
+export type CategoryAction = (typeof CATEGORY_ACTIONS)[number];
+/** Per-user category (contract app v2, point 3). Shapes from mobile/src/data/types.ts. */
+export type Category = {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  description: string; // how Sol recognizes it; sent to the agent as data, never as instructions
+  action: CategoryAction;
+  wakeAtNight: boolean; // may wake while night alerts are on
+  origin: 'sol' | 'you';
+  status: 'active' | 'suggested';
+  createdAt: string;
+};
+
 export type AgentContext = {
   night: Night;
   settings: Settings;
   recent: FeedItem[];
   feedback: (Feedback & { text: string })[];
+  categories?: Category[];
 };

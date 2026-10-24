@@ -3,6 +3,7 @@ import express, { type NextFunction, type Request, type Response } from 'express
 import { z } from 'zod';
 import type { Config } from './config.ts';
 import { syntheticNight } from './fixtures.ts';
+import { CATEGORY_ACTIONS } from './contract.ts';
 import type { Guard } from './guard.ts';
 import { parseTwoChat } from './sources/twochat.ts';
 import { unipileWebhook, whatsappRoutes } from './unipile/routes.ts';
@@ -18,6 +19,31 @@ const safeEqual = (a = '', b = '') => {
 };
 
 const fail = (res: Response, code: number, error: string) => res.status(code).json({ error });
+
+// Same limits the agent enforces on /v1/app/classify (agent/src/app-capabilities.ts, parseCategories).
+const categoryFields = {
+  name: z.string().trim().min(1).max(80),
+  color: z.string().trim().min(1).max(40),
+  icon: z.string().trim().min(1).max(40),
+  description: z.string().trim().max(500),
+  action: z.enum(CATEGORY_ACTIONS),
+  wakeAtNight: z.boolean(),
+  status: z.enum(['active', 'suggested']),
+};
+const RESERVED_IDS = ['__proto__', 'constructor', 'prototype'];
+const newCategory = z.object({
+  ...categoryFields,
+  id: z.string().regex(/^[A-Za-z0-9_-]{1,100}$/).refine((id) => !RESERVED_IDS.includes(id)).optional(),
+  color: categoryFields.color.default('blue'),
+  icon: categoryFields.icon.default('info'),
+  description: categoryFields.description.default(''),
+  action: categoryFields.action.default('digest'),
+  wakeAtNight: z.boolean().default(false),
+  origin: z.enum(['sol', 'you']).default('you'),
+  status: categoryFields.status.default('active'),
+});
+// id, origin and createdAt never change; extra fields the app sends are ignored.
+const categoryPatch = z.object(categoryFields).partial();
 
 export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoChat' | 'allowSimulate'> & Pick<Partial<Config>, 'unipile'>, whatsapp?: WhatsAppService) {
   if (whatsapp && !config.apiToken) throw new Error('La API de WhatsApp requiere autenticación.');
@@ -87,6 +113,21 @@ export function createApp(guard: Guard, config: Pick<Config, 'apiToken' | 'twoCh
   app.get('/api/report', async (req, res) => {
     const date = typeof req.query.date === 'string' ? req.query.date : undefined;
     res.json(await guard.report(date));
+  });
+
+  app.get('/api/categories', async (_req, res) => res.json(await guard.categories()));
+  app.post('/api/categories', async (req, res) => {
+    const result = await guard.createCategory(newCategory.parse(req.body));
+    if (result === 'exists') return fail(res, 409, 'Ya existe una categoría con ese id.');
+    if (result === 'full') return fail(res, 409, 'Llegaste al máximo de 30 categorías.');
+    res.status(201).json(result);
+  });
+  app.patch('/api/categories/:id', async (req, res) => {
+    const category = await guard.updateCategory(String(req.params.id), categoryPatch.parse(req.body));
+    return category ? res.json(category) : fail(res, 404, 'Categoría no encontrada.');
+  });
+  app.delete('/api/categories/:id', async (req, res) => {
+    return (await guard.deleteCategory(String(req.params.id))) ? res.json({ ok: true }) : fail(res, 404, 'Categoría no encontrada.');
   });
 
   app.get('/api/metrics', async (_req, res) => res.json(await guard.metrics()));

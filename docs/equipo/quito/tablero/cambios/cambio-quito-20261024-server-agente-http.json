@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-server-agente-http",
+  "title": "El servidor clasifica con el agente por HTTP y guarda las categorías de la persona",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "server/ ya llama al servicio agent por HTTP para clasificar los mensajes simulados, aplica la política con categoría en código y expone las categorías de la persona en /api/categories. Responde los puntos 1, 2 y 3 de la tarea #61, con permiso de Quito para tocar el carril de Amaru.",
+  "before": "server/ usaba siempre un reemplazo por palabras clave que despertaba por cualquier cosa nueva. Los veredictos no traían categoría, titular ni contexto, y no existían rutas de categorías: la app las guardaba solo en el teléfono.",
+  "after": "Con AGENT_URL y AGENT_TOKEN, cada mensaje simulated va a POST /v1/app/classify con requestId nuevo, synthetic true, hasta 30 incidentes recientes distintos y las categorías activas. El veredicto guarda categoryId, summary y context, y /api/feed y /api/report los devuelven. Ejemplo: con la categoría «Caída de servicio» (despierta de noche) y los avisos activos, un aviso que el agente marca como parte despierta con motivo «category»; el segundo aviso del mismo incidente a los 10 minutos no vuelve a despertar. WhatsApp y correo no salen del servidor: los clasifica el reemplazo local, porque la ruta del agente acepta solo datos sintéticos. Si el agente falla, responde mal o tarda más de 30 segundos, el mensaje despierta igual. Rutas nuevas GET/POST /api/categories y PATCH/DELETE /api/categories/:id, en memoria, archivo local y Postgres. Con ALLOW_SIMULATE se siembran una vez tres categorías sintéticas.",
+  "reason": "Quito decidió que server/ hable con el agente por HTTP y no importe su código. La política se replicó en server/src/policy.ts en vez de importarla porque el Dockerfile del servidor copia solo server/. Para que no se separen, server/test/policy.test.ts repite los mismos casos que agent/src/integration/server-policy.test.ts. Una categoría solo agrega despertares, nunca los quita: «ante la duda, despierta».",
+  "checked": "En server/: npm run typecheck sin errores y npm test con 35 pruebas aprobadas (14 nuevas). Las nuevas usan un agente HTTP falso en un puerto local y cubren el mapeo exacto de la entrada, categoría, titular y contexto en el feed y el parte, despertar por categoría y duplicado, categoría inventada que queda en null, error, respuesta inválida y timeout que despiertan, WhatsApp y correo que no llaman al agente, y el CRUD con validación y token. Además, el cuerpo que arma el servidor pasó el validador real de agent/ (createAppClassifier con respaldo de reglas, sin Codex). El servidor arrancó sin claves y sembró las tres categorías.",
+  "availability": "Código sin commit en la rama de Quito, sin publicar ni desplegar. No se probó contra el servicio agent real de Railway ni con Codex, ni con Postgres real: la tabla es la misma de documentos que ya usa el servidor. La app de Bishara aún no lee /api/categories del servidor. Corregir un mensaje, tareas y preguntas (puntos 4 a 7 del contrato v2) siguen pendientes.",
+  "featureIds": [
+    "feat-quito-contrato-noche"
+  ],
+  "flowIds": [
+    "flujo-quito-atender-alerta"
+  ]
+}

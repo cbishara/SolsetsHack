@@ -1,6 +1,7 @@
-import { stubAgent } from './agent.ts';
+import { createHttpAgent, stubAgent } from './agent.ts';
 import { createApp } from './app.ts';
 import { loadConfig } from './config.ts';
+import { demoCategories } from './fixtures.ts';
 import { Guard } from './guard.ts';
 import { startEmailPolling } from './sources/email.ts';
 import { PostgresStore } from './store/postgres.ts';
@@ -11,7 +12,8 @@ import { WhatsAppService } from './unipile/service.ts';
 
 const config = loadConfig();
 const store: Store = config.databaseUrl ? await PostgresStore.connect(config.databaseUrl) : config.localDataFile ? await FileStore.connect(config.localDataFile) : new MemoryStore();
-const guard = new Guard(store, stubAgent);
+const guard = new Guard(store, config.agent ? createHttpAgent(config.agent) : stubAgent);
+if (config.allowSimulate) await guard.seedCategories(demoCategories);
 const whatsapp = config.unipile ? new WhatsAppService(store, new UnipileClient(config.unipile.dsn, config.unipile.apiKey, config.unipile.accountId)) : undefined;
 
 if (config.email) startEmailPolling(guard, config.email);
@@ -20,7 +22,8 @@ if (config.twoChat.webhookToken) await guard.setSource('whatsapp', 'whatsapp', '
 const server = createApp(guard, config, whatsapp).listen(config.port, '0.0.0.0', () => {
   console.log(
     `solsets-server · puerto ${config.port} · base ${config.databaseUrl ? 'postgres' : config.localDataFile ? 'archivo local' : 'memoria'} · ` +
-      `whatsapp ${whatsapp ? 'Unipile configurado (verificar /api/whatsapp/status)' : config.twoChat.webhookToken ? '2Chat' : 'apagado'} · correo ${config.email ? 'activo' : 'apagado'}`,
+      `whatsapp ${whatsapp ? 'Unipile configurado (verificar /api/whatsapp/status)' : config.twoChat.webhookToken ? '2Chat' : 'apagado'} · correo ${config.email ? 'activo' : 'apagado'} · ` +
+      `agente ${config.agent ? `HTTP ${new URL(config.agent.url).host} (solo mensajes simulated)` : 'reemplazo local'}`,
   );
 });
 for (const signal of ['SIGTERM', 'SIGINT'] as const) process.once(signal, () => {

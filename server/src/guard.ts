@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { fallbackVerdict, type Agent } from './agent.ts';
 import type {
-  Alert, AgentContext, FeedItem, Feedback, FeedbackValue, IncomingMessage, Metrics, MorningReport, Night,
+  Alert, AgentContext, Category, FeedItem, Feedback, FeedbackValue, IncomingMessage, Metrics, MorningReport, Night,
   Settings, Source, SourceStatus, Verdict, Worry,
 } from './contract.ts';
 import type { Store } from './store/store.ts';
@@ -24,6 +24,13 @@ export type IngestResult = { status: 'duplicate'; id: string } | { status: 'proc
 
 const DEFAULT_SETTINGS: Settings = { mode: 'shadow' };
 
+/** The agent accepts up to 30 categories per classification. */
+export const MAX_CATEGORIES = 30;
+const CATEGORIES_SEEDED = 'categories-seeded';
+
+export type NewCategory = Omit<Category, 'id' | 'createdAt'> & { id?: string };
+export type CategoryPatch = Partial<Omit<Category, 'id' | 'origin' | 'createdAt'>>;
+
 export class Guard {
   // One message at a time, so duplicate detection sees the previous verdict.
   private queue: Promise<unknown> = Promise.resolve();
@@ -45,7 +52,7 @@ export class Guard {
     let verdict: Verdict;
     try {
       const classification = await this.agent.classify(message, context);
-      verdict = await this.agent.decide(classification, context);
+      verdict = await this.agent.decide(classification, context, message);
     } catch (error) {
       console.error(`[agente] falló con ${id}:`, error);
       verdict = fallbackVerdict(message);
@@ -64,13 +71,14 @@ export class Guard {
   }
 
   async context(): Promise<AgentContext> {
-    const [night, settings, recent, feedback] = await Promise.all([
+    const [night, settings, recent, feedback, categories] = await Promise.all([
       this.night(),
       this.settings(),
       this.store.list<FeedItem>('verdicts', 30),
       this.feedbackWithText(),
+      this.categories(),
     ]);
-    return { night, settings, recent, feedback };
+    return { night, settings, recent, feedback, categories };
   }
 
   private async feedbackWithText() {
@@ -163,6 +171,42 @@ export class Guard {
 
   async registerDevice(expoPushToken: string) {
     await this.store.put('devices', expoPushToken, { expoPushToken, registeredAt: nowIso() });
+  }
+
+  // Categories per user (contract app v2, point 3) ----------------------------
+
+  /** Oldest first, the order the person created them. */
+  async categories(): Promise<Category[]> {
+    const all = await this.store.list<Category>('categories', MAX_CATEGORIES * 2);
+    return all.sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
+  }
+
+  async createCategory(input: NewCategory): Promise<Category | 'exists' | 'full'> {
+    if ((await this.store.list('categories', MAX_CATEGORIES)).length >= MAX_CATEGORIES) return 'full';
+    const category: Category = { ...input, id: input.id ?? `c-${randomUUID()}`, createdAt: nowIso() };
+    return (await this.store.insertIfAbsent('categories', category.id, category)) ? category : 'exists';
+  }
+
+  async updateCategory(id: string, patch: CategoryPatch): Promise<Category | undefined> {
+    const prev = await this.store.get<Category>('categories', id);
+    if (!prev) return undefined;
+    const next = { ...prev, ...patch, id: prev.id, origin: prev.origin, createdAt: prev.createdAt };
+    await this.store.put('categories', id, next);
+    return next;
+  }
+
+  deleteCategory(id: string) {
+    return this.store.remove('categories', id);
+  }
+
+  /** Synthetic demo categories, once, only if the person has none yet. */
+  async seedCategories(seed: Omit<Category, 'createdAt'>[]) {
+    if (await this.store.get('settings', CATEGORIES_SEEDED)) return false;
+    if ((await this.store.list('categories', 1)).length === 0) {
+      for (const c of seed) await this.store.insertIfAbsent<Category>('categories', c.id, { ...c, createdAt: nowIso() });
+    }
+    await this.store.put('settings', CATEGORIES_SEEDED, { at: nowIso() });
+    return true;
   }
 
   // Sources (WhatsApp, email): powers "tonight I'm not covering X" -----------

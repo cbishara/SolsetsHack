@@ -19,6 +19,8 @@ import { CapabilityUnavailable, createAppCapabilities } from './app-capabilities
 import type { AppCapabilities } from './app-capabilities.ts';
 import { createAppClassifier } from './app-classifier.ts';
 import type { AppClassifier } from './app-classifier.ts';
+import { elevenLabsFromEnv, MAX_AUDIO_BYTES, VoiceError, voiceErrorStatus } from './voice/elevenlabs.ts';
+import type { Voice } from './voice/elevenlabs.ts';
 
 /** Chat settings are independent of the guard classifier's model and effort. */
 export function chatCodexOptions(env: NodeJS.ProcessEnv): CodexOptions {
@@ -57,6 +59,8 @@ export interface ServerOptions {
   corsOrigin?: string;
   appCapabilities?: AppCapabilities;
   appClassifier?: AppClassifier;
+  /** ElevenLabs voice for /v1/voice/*. Without it those routes answer 503 and the app keeps its own voice. */
+  voice?: Voice;
 }
 
 /** The pilot session the app reads (`sessions[id="demo:web"]`). */
@@ -83,6 +87,26 @@ async function readJson(req: Req): Promise<unknown> {
   }
 }
 
+/** Raw audio body, capped before buffering more than the provider accepts. */
+async function readAudio(req: Req): Promise<Uint8Array> {
+  if (Number(req.headers['content-length'] ?? 0) > MAX_AUDIO_BYTES) throw new VoiceError('invalid-input', 'El audio supera 5 MiB.');
+  let size = 0;
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    size += (chunk as Buffer).length;
+    if (size > MAX_AUDIO_BYTES) throw new VoiceError('invalid-input', 'El audio supera 5 MiB.');
+    chunks.push(chunk as Buffer);
+  }
+  return new Uint8Array(Buffer.concat(chunks));
+}
+
+/** Aborts the paid provider call if the caller hangs up first. */
+function abortOnHangUp(res: ServerResponse): AbortSignal {
+  const controller = new AbortController();
+  res.on('close', () => { if (!res.writableEnded) controller.abort(); });
+  return controller.signal;
+}
+
 function authorized(req: Req, token: string | undefined): boolean {
   if (!token) return true;
   const given = Buffer.from(req.headers.authorization ?? '');
@@ -103,7 +127,7 @@ function chatAuthorized(req: Req, password: string | undefined): boolean {
   return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
-export function createAgentServer({ store, agent, devAgents = {}, token, dev, chat, chatPassword, corsOrigin, appCapabilities, appClassifier }: ServerOptions): Server {
+export function createAgentServer({ store, agent, devAgents = {}, token, dev, chat, chatPassword, corsOrigin, appCapabilities, appClassifier, voice }: ServerOptions): Server {
   return createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const path = url.pathname;
@@ -130,6 +154,19 @@ export function createAgentServer({ store, agent, devAgents = {}, token, dev, ch
           if (path === '/v1/app/classify' && appClassifier) return send(res, 200, await appClassifier(await readJson(req)));
           if (path === '/v1/app/dump' && appCapabilities) return send(res, 200, await appCapabilities.dump(await readJson(req)));
           if (path === '/v1/app/training' && appCapabilities) return send(res, 200, await appCapabilities.training(await readJson(req)));
+        }
+        if (req.method === 'POST' && path.startsWith('/v1/voice/')) {
+          if (path !== '/v1/voice/transcribe' && path !== '/v1/voice/speak') return send(res, 404, { error: 'Ruta no encontrada.' });
+          if (!voice) return send(res, 503, { error: 'not-configured', message: 'La voz no está configurada en el agente.' });
+          if (path === '/v1/voice/transcribe') {
+            const audio = await readAudio(req);
+            return send(res, 200, await voice.transcribe(audio, req.headers['content-type'] ?? '', abortOnHangUp(res)));
+          }
+          const body = (await readJson(req)) as Record<string, unknown>;
+          if (typeof body.text !== 'string') throw new VoiceError('invalid-input', 'Falta el texto a leer.');
+          const speech = await voice.speak(body.text, abortOnHangUp(res));
+          res.writeHead(200, { 'content-type': speech.contentType, 'content-length': speech.audio.byteLength, 'cache-control': 'no-store' });
+          return res.end(speech.audio);
         }
         if (req.method === 'POST' && path === '/v1/classify') {
           const body = (await readJson(req)) as Record<string, unknown>;
@@ -191,6 +228,7 @@ export function createAgentServer({ store, agent, devAgents = {}, token, dev, ch
         console.error(error);
         return res.end();
       }
+      if (error instanceof VoiceError) return send(res, voiceErrorStatus(error), { error: error.code, message: error.message });
       if (error instanceof InputError) return send(res, 400, { error: error.message });
       if (error instanceof NotFoundError) return send(res, 404, { error: error.message });
       if (error instanceof CapabilityUnavailable) return send(res, 503, { error: 'engine_unavailable' });
@@ -231,8 +269,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       ? createCodexRunner(chatOptions)
       : null,
   });
+  // The key lives only in this service's environment; without it, /v1/voice/* answers 503.
+  const voice = process.env.ELEVENLABS_API_KEY ? elevenLabsFromEnv(process.env) : undefined;
   const server = createAgentServer({
-    store, agent: agents[engineName], devAgents: agents, token, dev,
+    store, agent: agents[engineName], devAgents: agents, token, dev, voice,
     chat, chatPassword, corsOrigin: process.env.CHAT_CORS_ORIGIN,
     appCapabilities: createAppCapabilities({ runner: engineName === 'codex' ? createCodexRunner(chatOptions) : null, model: chatOptions.model ?? null }),
     appClassifier: createAppClassifier({ store, runner: engineName === 'codex' ? createCodexRunner({ bin: process.env.CODEX_BIN, model: process.env.CODEX_MODEL, timeoutMs: Number(process.env.CODEX_TIMEOUT_MS ?? 25_000) }) : null, model: process.env.CODEX_MODEL ?? null, allowWhatsApp: process.env.AGENT_APP_ALLOW_WHATSAPP === 'true' }),
@@ -241,6 +281,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const host = process.env.HOST ?? (production ? '0.0.0.0' : '127.0.0.1');
   server.listen(port, host, () => {
     console.log(`Agente escuchando en http://localhost:${port} · motor de la API: ${engineName}${dev ? ` · consola: http://localhost:${port}/` : ''}`);
+    console.log(`Voz: ${voice ? 'ElevenLabs configurado' : 'sin ELEVENLABS_API_KEY, /v1/voice/* responde 503'}`);
     if (engineName === 'codex') console.log(`Chat: ${chatOptions.model ?? 'modelo predeterminado'} · razonamiento: ${chatOptions.reasoningEffort} · Fast solicitado: ${chatOptions.fast ? 'sí' : 'no'}`);
   });
 }

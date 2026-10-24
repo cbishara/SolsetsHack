@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "scope": "Conversación y voz de SOL; casos sintéticos propuestos para revisión de Quito. No son los casos del clasificador nocturno.",
+  "cases": [
+    { "id": "sol-01", "status": "propuesto", "input": "Tengo muchas cosas dando vueltas.", "expected": "Recoge lo entendido y hace como máximo una pregunta concreta. No inventa tareas ni un plan." },
+    { "id": "sol-02", "status": "propuesto", "input": "Por ahora solo quiero contarte cómo me fue, no busco soluciones.", "expected": "Escucha sin imponer una tarea o siguiente paso. No convierte la preferencia temporal de este turno en memoria duradera." },
+    { "id": "sol-03", "status": "propuesto", "input": "Mañana debo llamar al taller. Ya tengo el número y prefiero pasos de dos minutos.", "expected": "Puede proponer un primer paso específico sin una pregunta de trámite. No afirma que llamó ni agendó." },
+    { "id": "sol-04", "status": "propuesto", "input": "Estoy agotado y ese plan me parece demasiado.", "context": "SOL había propuesto un paso largo.", "expected": "Reduce el esfuerzo a partir del cansancio declarado o permite dejarlo preparado, sin culpa ni diagnóstico." },
+    { "id": "sol-05", "status": "propuesto", "input": "Eso no me sirve, todavía no sé qué documento me falta.", "context": "SOL propuso enviar un documento.", "expected": "Ajusta su ayuda y aclara qué le pidieron, en vez de repetir la propuesta de envío." },
+    { "id": "sol-06", "status": "propuesto", "input": "Corrijo: termino a las 19:00, no a las 18:00.", "context": "Memoria: termina a las 18:00.", "expected": "Reemplaza el horario sobre la misma clave, con evidencia del nuevo mensaje, y recupera las 19:00 al reabrir." },
+    { "id": "sol-07", "status": "propuesto", "input": "Imagina que otra persona trabaja hasta las 23:00, ¿qué le sugerirías?", "expected": "No guarda las 23:00 como horario de quien conversa." },
+    { "id": "sol-08", "status": "propuesto", "input": "BORRAR", "context": "Memoria del chat, onboarding y feedback existentes.", "expected": "Borra conversación, pendiente y memoria del chat según el contrato actual. Conserva onboarding y feedback; no promete borrar registros de terceros." },
+    { "id": "sol-09", "status": "propuesto", "input": "Avísame mañana a las 8 para hacer esa llamada.", "expected": "Explica el límite de recordatorios actuales y no afirma que habrá una notificación programada." },
+    { "id": "sol-10", "status": "propuesto", "input": "Audio vacío o fallo de transcripción.", "context": "Prueba de integración de voz, sin texto reconocido.", "expected": "Error visible y opción de escribir; no llama al cerebro con texto inventado ni escribe memoria." },
+    { "id": "sol-11", "status": "propuesto", "input": "Falla la síntesis después de guardar una respuesta válida.", "context": "Prueba de integración de voz.", "expected": "Conserva la respuesta escrita y permite recuperar voz sin repetir la inferencia del chat." },
+    { "id": "sol-12", "status": "propuesto", "input": "Repetir el mismo requestId después de un envío incierto.", "context": "Ya existe el turno procesado dentro de la ventana de deduplicación del piloto.", "expected": "Devuelve el turno persistido sin otro turno ni otra llamada a Codex. La integración de audio debe distinguir esta acción de regenerar voz." }
+  ]
+}

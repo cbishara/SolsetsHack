@@ -144,6 +144,6 @@ node scripts/verify-chat.ts --codex --report ../.context/agent-chat-verification
 
 La [aceptación con Codex real](./VERIFY-CHAT.md) pasó seis comprobaciones con tres llamadas y dos procesos de servidor: horario declarado, corrección a las 19:00, reintento sin otra inferencia, recuperación tras reiniciar, recuerdo del horario y preferencia, y memoria separada para otro usuario. El informe de cada ejecución queda local; el comando permite repetirla.
 
-Pendientes: conexión con `server/`, identidad app–WhatsApp, base remota, dispositivo físico y canales de alerta. El trabajador saliente y las funciones de voz que se desarrollan en paralelo se entregan por separado.
+Pendientes: conexión con `server/`, identidad app–WhatsApp, base remota, dispositivo físico y canales de alerta. El trabajador saliente se entrega por separado. La voz (transcribir y leer con Miguel G de ElevenLabs, rutas `/v1/voice/*`) está en [VOICE.md](./VOICE.md).
 
 La conversación web pasó nueve comprobaciones de interfaz con transporte simulado y diez comprobaciones de recorrido con Codex real y datos aislados: corrección del horario, recarga, NUEVO, BORRAR y separación de memoria. El piloto de localhost:4181 conserva su conversación después de activar Luna max y Fast solicitado. Esto no verifica móvil, WhatsApp ni Railway. Los informes de esta sesión permanecen locales en `.context/`; no se publican datos de conversaciones.

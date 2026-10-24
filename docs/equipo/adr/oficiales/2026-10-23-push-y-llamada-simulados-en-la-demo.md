@@ -1,6 +1,6 @@
 # En la demo, el push y la llamada se muestran simulados; el esfuerzo va a conectar el servidor con el agente
 
-Estado: oficial
+Estado: reemplazada parcialmente por [2026-10-24-llamada-real-para-despertar.md](2026-10-24-llamada-real-para-despertar.md); la llamada real pasa a ser objetivo de la entrega. Se conserva el push simulado y la cadena real servidor-agente-app.
 Fecha: 2026-10-23
 Decidió: los tres (lo propuso Quito y lo confirmó con Amaru y Bishara)
 Carril: los tres
@@ -26,3 +26,5 @@ Conectar servidor y agente es lo que prueba que el producto funciona: sin eso, l
 3. El README de una página tiene que listar el push y la llamada en "qué se excluyó".
 
 ## Cambios
+
+- 2026-10-24: Quito confirmó como oficial priorizar la llamada real para despertar al iPhone. La nueva decisión reemplaza la simulación de llamada como aceptación; el texto anterior queda como historia del acuerdo del 23 de octubre. Push real sigue excluido y se conserva el plazo de 3 minutos sin confirmación. Esto no acredita implementación ni prueba física.

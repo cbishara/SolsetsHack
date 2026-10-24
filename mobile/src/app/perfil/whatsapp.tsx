@@ -1,71 +1,240 @@
 import { router } from 'expo-router';
-import { Mic, Send, Smartphone } from 'lucide-react-native';
-import { StyleSheet, View } from 'react-native';
+import { Check, ExternalLink, FileText, Link2, MessageCircle, Mic, RefreshCw, ShieldCheck, Smartphone, Unplug, Users } from 'lucide-react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { useBackend } from '../../api/backend';
+import { CodeInput } from '../../components/code-input';
 import { Header } from '../../components/header';
-import { Button, Card, List, ListRow, Screen, Section, T, ToggleRow } from '../../components/ui';
+import { SolOrb } from '../../components/sol-orb';
+import { Avatar, Badge, Button, Glass, IconTile, List, ListRow, Screen, Section, T, tap, ToggleRow } from '../../components/ui';
+import { relative } from '../../data/dates';
 import { useStore } from '../../data/store';
-import { TimeStepper } from '../../features/settings/time-stepper';
+import { confirm } from '../../features/settings/confirm';
+import { createLinkClient, LinkError, linkErrorText } from '../../features/whatsapp/link';
 import { useTheme } from '../../theme/theme';
-import { radius, space } from '../../theme/tokens';
+import { categoryColors, radius, space } from '../../theme/tokens';
 
-// Sol on WhatsApp: the same agent where Rodrigo already lives. Summaries
-// arrive there and voice notes become tasks, with no app to open.
-export default function SolWhatsapp() {
+type Step = 'overview' | 'link' | 'code';
+const GREEN = '#25D366';
+
+/**
+ * WhatsApp: link the person's own account, choose what Sol may read, and see
+ * that the connection is alive. Works against server/'s multiuser routes; with
+ * example data the same steps run as a demonstration and say so.
+ */
+export default function WhatsApp() {
   const { p } = useTheme();
   const { state, dispatch } = useStore();
+  const backend = useBackend();
+  const wa = state.connections.find((c) => c.id === 'whatsapp');
+  const connected = wa?.status === 'connected';
+  const paused = wa?.status === 'off' && !!wa?.account && state.chats.some((c) => c.on);
+  const live = state.dataSource === 'server' && backend.status === 'connected';
+  const client = useMemo(() => (live ? createLinkClient(backend.url) : null), [live, backend.url]);
+
+  const [step, setStep] = useState<Step>('overview');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+  const [connectionId, setConnectionId] = useState<string | null>(null);
+  const [waiting, setWaiting] = useState(false);
+  const poll = useRef<ReturnType<typeof setInterval> | null>(null);
+  useEffect(() => () => { if (poll.current) clearInterval(poll.current); }, []);
+
+  const watched = state.chats.filter((c) => c.on);
   const sum = state.summaries;
-  const { profile } = state;
-  const set = (patch: Partial<typeof profile>) => dispatch({ type: 'setProfile', patch });
+  const viaWa = sum.morning.channels.includes('whatsapp') || sum.evening.channels.includes('whatsapp');
+  const linked = connected || paused;
+
+  const finish = () => {
+    tap('success');
+    dispatch({ type: 'setConnection', id: 'whatsapp', patch: { status: 'connected', detail: 'Vinculado', lastCheck: new Date().toISOString(), account: wa?.account ?? 'Tu WhatsApp' } });
+    setStep('overview');
+    setCode('');
+    router.push('/perfil/whatsapp-chats');
+  };
+
+  const start = async () => {
+    setError(null);
+    setStep('link');
+    if (!client) return; // demonstration: the link step explains and continues by hand
+    setBusy(true);
+    try {
+      await client.ensureSession();
+      const c = await client.start();
+      setConnectionId(c.connectionId);
+      if (await Linking.canOpenURL(c.url).catch(() => false)) void Linking.openURL(c.url);
+      setWaiting(true);
+      poll.current = setInterval(async () => {
+        try {
+          const st = await client.status(c.connectionId);
+          if (st.status === 'awaiting_code') { setWaiting(false); setStep('code'); if (poll.current) clearInterval(poll.current); }
+          if (st.status === 'verified') { if (poll.current) clearInterval(poll.current); finish(); }
+        } catch { /* keep waiting */ }
+      }, 3000);
+    } catch (e) {
+      setError(linkErrorText(e));
+      if (e instanceof LinkError && (e.status === 404 || e.code === 'not_found')) setStep('overview');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const verify = async (value = code) => {
+    if (value.length !== 6) return;
+    setError(null);
+    if (!client || !connectionId) { finish(); return; }
+    setBusy(true);
+    try {
+      await client.verify(connectionId, value);
+      finish();
+    } catch (e) {
+      setError(linkErrorText(e));
+      setCode('');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const disconnect = () => confirm('Dejar de usar WhatsApp', 'Sol deja de leer tus chats. Tu cuenta de WhatsApp no se toca.', async () => {
+    try { await client?.disconnect(); } catch { /* the local state still changes */ }
+    dispatch({ type: 'setConnection', id: 'whatsapp', patch: { status: 'off', detail: 'Sin conectar', account: undefined } });
+    dispatch({ type: 'setChats', chats: state.chats.map((c) => ({ ...c, on: false })) });
+  }, 'Desconectar');
 
   return (
-    <Screen edges={['top', 'bottom']} padBottom={false}>
-      <Header title="Sol en WhatsApp" />
+    <Screen padBottom={false}>
+      <Header title="WhatsApp" />
 
-      <View style={{ gap: space.sm }}>
-        <T v="title" accessibilityRole="header">Sol también te escribe por WhatsApp</T>
-        <T tone="muted">Para que no tengas que abrir la app. Le escribes o le mandas un audio, y lo anota.</T>
-      </View>
-
-      <Card tone="surface">
-        <View style={s.contact}>
-          <View style={[s.icon, { backgroundColor: p.sol }]}><Smartphone size={20} color={p.onSol} strokeWidth={2.2} /></View>
+      <Glass style={s.status}>
+        <View style={s.statusHead}>
+          <IconTile icon={MessageCircle} color={GREEN} size={44} />
           <View style={{ flex: 1, gap: 2 }}>
-            <T v="bodyStrong">Sol</T>
-            <T v="callout" tone="muted">+56 9 0000 0000 · número de demo</T>
+            <T v="h3">{connected ? 'Conectado' : paused ? 'En pausa' : 'Sin conectar'}</T>
+            <T v="callout" tone="muted" numberOfLines={1}>
+              {connected ? `${wa?.account ?? 'Tu WhatsApp'} · revisado ${relative(wa?.lastCheck ?? new Date().toISOString())}` : paused ? 'Sol no está leyendo mensajes nuevos' : 'Sol todavía no lee tus chats'}
+            </T>
           </View>
+          {connected ? <Badge label={`${watched.length} chats`} tone="calm" /> : null}
         </View>
-        <T v="caption" tone="muted">Guárdalo como contacto. Es un número de prueba, distinto al de tu trabajo.</T>
-      </Card>
+        {!live ? <T v="caption" tone="faint">{state.dataSource === 'example' ? 'Demostración con datos de ejemplo. Con "Servidor en vivo" se conecta de verdad.' : 'El servidor no responde: los cambios quedan en este teléfono.'}</T> : null}
+      </Glass>
 
-      <Section eyebrow="Resúmenes">
-        <List>
-          <ToggleRow
-            title="Recibir los resúmenes por WhatsApp"
-            detail={sum.morning.channels.includes('whatsapp') ? 'Llegan a WhatsApp y quedan en la app' : 'Solo en la app'}
-            value={sum.morning.channels.includes('whatsapp')}
-            onChange={(v) => dispatch({ type: 'setSummaries', patch: { morning: { ...sum.morning, channels: v ? ['app', 'whatsapp'] : ['app'] }, evening: { ...sum.evening, channels: v ? ['app', 'whatsapp'] : ['app'] } } })}
-          />
-          <TimeStepper label="Resumen de la mañana" detail="Qué pasó anoche y qué tienes hoy" value={sum.morning.at} onChange={(at) => dispatch({ type: 'setSummaries', patch: { morning: { ...sum.morning, at } } })} />
-          <TimeStepper label="Resumen del día" detail="Lo pendiente y cómo queda mañana" value={sum.evening.at} onChange={(at) => dispatch({ type: 'setSummaries', patch: { evening: { ...sum.evening, at } } })} last />
-        </List>
-        <Button kind="secondary" icon={Send} label="Ver cómo llegan los mensajes" onPress={() => router.push('/resumen/whatsapp')} />
-      </Section>
+      {error ? (
+        <View style={[s.error, { backgroundColor: p.urgentSoft }]}>
+          <T v="callout" tone="urgent" style={{ flex: 1 }}>{error}</T>
+        </View>
+      ) : null}
 
-      <Section eyebrow="Descargar pendientes">
-        <List>
-          <ListRow icon={Mic} title="Mándale un audio" detail={'"Mañana tengo que llamar al proveedor y pagar la luz." Sol lo transcribe, lo separa en tareas y les pone fecha.'} last />
-        </List>
-        <T v="caption" tone="faint">Sol te confirma lo que anotó en el mismo chat, para que lo corrijas si algo quedó mal.</T>
-      </Section>
+      {!linked && step === 'overview' ? (
+        <>
+          <Section title="Cómo funciona">
+            <List>
+              <ListRow icon={Link2} iconColor={GREEN} title="1. Vincula tu WhatsApp" detail="Como WhatsApp Web: escaneas un código desde tu teléfono." />
+              <ListRow icon={ShieldCheck} iconColor={p.sol} title="2. Confirma con un código" detail="El WhatsApp de Sol te manda 6 dígitos para comprobar que la cuenta es tuya." />
+              <ListRow icon={Users} iconColor={categoryColors.blue} title="3. Elige qué chats lee Sol" detail="Sol te sugiere los que parecen importantes. Tú decides: todo empieza sin marcar." last />
+            </List>
+          </Section>
+          <Button kind="primary" label="Conectar WhatsApp" icon={MessageCircle} onPress={() => void start()} disabled={busy} />
+          <T v="caption" tone="faint" style={{ textAlign: 'center' }}>Sol solo lee los chats que elijas. No responde a nadie por ti ni escribe en tus grupos.</T>
+        </>
+      ) : null}
 
-      <Section eyebrow="Lo que Sol no hace">
-        <T v="callout" tone="muted">No responde a nadie por ti ni escribe en tus grupos. Solo te escribe a ti.</T>
-      </Section>
+      {step === 'link' ? (
+        <Glass style={s.flow}>
+          <T v="captionStrong" tone="sol">Paso 1 de 3</T>
+          <T v="h3">Vincula tu WhatsApp</T>
+          <View style={{ gap: space.sm }}>
+            {['Abre WhatsApp en tu teléfono.', 'Ve a Configuración y luego a Dispositivos vinculados.', 'Toca Vincular un dispositivo y escanea el código del enlace.'].map((t, i) => (
+              <View key={t} style={s.inline}>
+                <View style={[s.num, { backgroundColor: p.surface }]}><T v="captionStrong">{i + 1}</T></View>
+                <T v="callout" style={{ flex: 1 }}>{t}</T>
+              </View>
+            ))}
+          </View>
+          {busy || waiting ? (
+            <View style={s.inline}><ActivityIndicator color={p.sol} /><T v="callout" tone="muted">{busy ? 'Preparando el enlace…' : 'Esperando que escanees el código…'}</T></View>
+          ) : null}
+          {!client ? (
+            <Button kind="sol" label="Ya lo vinculé" onPress={() => { tap(); setStep('code'); }} />
+          ) : !busy && !waiting ? (
+            <Button kind="secondary" label="Abrir el enlace otra vez" icon={ExternalLink} onPress={() => void start()} />
+          ) : null}
+          <Button kind="ghost" label="Cancelar" onPress={() => { if (poll.current) clearInterval(poll.current); setWaiting(false); setStep('overview'); }} />
+        </Glass>
+      ) : null}
+
+      {step === 'code' ? (
+        <Glass style={s.flow}>
+          <T v="captionStrong" tone="sol">Paso 2 de 3</T>
+          <View style={s.inline}>
+            <SolOrb size={18} state="watching" style={{ margin: -8 }} />
+            <T v="h3" style={{ flex: 1 }}>Escribe el código que te mandó Sol</T>
+          </View>
+          <T v="callout" tone="muted">Te llegó un WhatsApp de Sol con 6 dígitos. Así comprobamos que la cuenta es tuya.</T>
+          <CodeInput value={code} onChange={setCode} error={!!error} onDone={(v) => void verify(v)} />
+          {!client ? <T v="caption" tone="faint" style={{ textAlign: 'center' }}>En la demostración sirve cualquier código de 6 dígitos.</T> : null}
+          <Button kind="sol" label={busy ? 'Comprobando…' : 'Confirmar'} disabled={code.length !== 6 || busy} onPress={() => void verify()} />
+          <Pressable accessibilityRole="button" onPress={() => { tap(); setError(null); if (client && connectionId) client.resend(connectionId).catch((e) => setError(linkErrorText(e))); }} style={{ alignSelf: 'center' }} hitSlop={10}>
+            <T v="calloutStrong" tone="muted">Mandarme otro código</T>
+          </Pressable>
+        </Glass>
+      ) : null}
+
+      {linked ? (
+        <>
+          <Section title="Chats que lee Sol" count={watched.length} action="Elegir chats" onAction={() => router.push('/perfil/whatsapp-chats')}>
+            <List>
+              {watched.slice(0, 6).map((c, i) => (
+                <ListRow key={c.id} title={c.name} detail={c.reason ?? (c.kind === 'grupo' ? `Grupo${c.members ? ` · ${c.members} personas` : ''}` : 'Chat personal')}
+                  leading={c.kind === 'grupo' ? <IconTile icon={Users} color={GREEN} size={34} /> : <Avatar name={c.name} size={34} />}
+                  right={<Check size={18} color={p.calm} />} last={i === Math.min(watched.length, 6) - 1} />
+              ))}
+              {!watched.length ? <ListRow title="Ningún chat elegido" detail="Sol no lee nada hasta que elijas" onPress={() => router.push('/perfil/whatsapp-chats')} last /> : null}
+            </List>
+            <T v="caption" tone="faint">Solo entra lo que llega a estos chats. Los demás ni se abren.</T>
+          </Section>
+
+          <Section title="Sol en WhatsApp">
+            <Glass style={s.contact}>
+              <View style={[s.botAvatar, { backgroundColor: '#000' }]}><SolOrb size={22} state="watching" /></View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <T v="bodyStrong">Sol</T>
+                <T v="callout" tone="muted">Tu asistente, en un número propio</T>
+              </View>
+              {Platform.OS !== 'web' ? <Button small kind="secondary" label="Escribirle" onPress={() => void Linking.openURL('whatsapp://')} /> : null}
+            </Glass>
+            <List>
+              <ListRow icon={FileText} iconColor={p.sol} title="Resúmenes por WhatsApp" value={viaWa ? 'Activados' : 'Apagados'} onPress={() => router.push('/perfil/resumenes')} />
+              <ListRow icon={Mic} iconColor={categoryColors.green} title="Mándale audios o textos" detail='"Mañana llamar al proveedor y el viernes pagar la luz": lo anota con fecha y te confirma.' />
+              <ListRow icon={Smartphone} iconColor={categoryColors.blue} title="Es la misma conversación que en la app" detail="Lo que le dices por WhatsApp aparece en el chat con Sol, y al revés." last />
+            </List>
+            <Button kind="secondary" label="Ver cómo llegan los mensajes" icon={MessageCircle} onPress={() => router.push('/resumen/whatsapp')} />
+          </Section>
+
+          <Section title="Conexión">
+            <List>
+              <ToggleRow title="Leer mensajes nuevos" detail={connected ? 'Si lo apagas, Sol pausa WhatsApp sin desvincularlo' : 'En pausa: Sol no lee mensajes nuevos'} value={connected}
+                onChange={(on) => dispatch({ type: 'setConnection', id: 'whatsapp', patch: { status: on ? 'connected' : 'off' } })} />
+              <ListRow icon={RefreshCw} iconTone="muted" title="Revisar conexión" detail={`Última revisión ${relative(wa?.lastCheck ?? new Date().toISOString())}`}
+                onPress={() => { tap('success'); dispatch({ type: 'setConnection', id: 'whatsapp', patch: { lastCheck: new Date().toISOString() } }); void backend.refresh(); }} />
+              <ListRow icon={Unplug} iconTone="urgent" titleTone="urgent" title="Dejar de usar WhatsApp" onPress={disconnect} last />
+            </List>
+          </Section>
+        </>
+      ) : null}
+      <View style={{ height: space.xxxl }} />
     </Screen>
   );
 }
 
 const s = StyleSheet.create({
-  contact: { flexDirection: 'row', alignItems: 'center', gap: space.md },
-  icon: { width: 40, height: 40, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
+  status: { padding: space.xl, gap: space.md, borderRadius: radius.xl },
+  statusHead: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  error: { borderRadius: radius.md, padding: space.md, marginTop: -space.lg },
+  flow: { padding: space.xl, gap: space.lg, borderRadius: radius.xl },
+  inline: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  num: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  contact: { flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.lg, borderRadius: radius.lg },
+  botAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
 });

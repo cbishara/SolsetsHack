@@ -100,7 +100,7 @@ function RuleRow({ rule, last, onRemove }: { rule: Rule; last: boolean; onRemove
           ) : (
             <T v="caption" tone="muted">{origin}</T>
           )}
-          {rule.examples ? <Badge label={`${rule.examples} casos`} tone="neutral" /> : null}
+          {rule.examples ? <Badge label={`${rule.examples} ${rule.examples === 1 ? 'caso' : 'casos'}`} tone="neutral" /> : null}
         </View>
       </View>
       <Pressable accessibilityRole="button" accessibilityLabel={`Quitar regla: ${rule.text}`} onPress={() => { tap(); onRemove(); }} hitSlop={8}

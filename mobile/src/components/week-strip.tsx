@@ -32,7 +32,7 @@ export function WeekStrip({ selected, onSelect, shifts, busy = {} }: {
         const key = keyOf(d);
         const isSel = key === selected;
         const shift = shifts.find((x) => x.date === key);
-        const label = `${d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric' })}${shift?.onCall ? ', guardia de noche' : ''}${busy[key] ? `, ${busy[key]} cosas` : ''}`;
+        const label = `${d.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric' })}${shift?.onCall ? ', noche con avisos' : ''}${busy[key] ? `, ${busy[key]} cosas` : ''}`;
         return (
           <Pressable key={key} accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: isSel }}
             onPress={() => { tap(); onSelect(key); }} style={s.day} hitSlop={4}>

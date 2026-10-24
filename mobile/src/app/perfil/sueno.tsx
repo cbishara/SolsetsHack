@@ -57,7 +57,7 @@ export default function Sueno() {
           <T v="h2" tone="muted" style={{ marginBottom: 8 }}>min</T>
         </View>
         <T tone="muted">
-          Te acostaste a las {last.bed} y despertaste a las {last.wake}. {last.woke ? `Te desperté ${last.woke} ${last.woke === 1 ? 'vez' : 'veces'} por la guardia.` : 'Nada te despertó.'}
+          Te acostaste a las {last.bed} y despertaste a las {last.wake}. {last.woke ? `Te avisé ${last.woke} ${last.woke === 1 ? 'vez' : 'veces'} por algo urgente.` : 'Nada te despertó.'}
         </T>
       </Stack>
 
@@ -99,7 +99,7 @@ export default function Sueno() {
         <List>
           <ListRow icon={Moon} title="Hiciste el cierre de la noche" detail="4 de 7 noches, siempre antes de las 23:30" />
           <ListRow icon={BedDouble} title="Dejaste el celular antes de dormir" detail="3 de 7 noches. Sigue igual, sin presión" />
-          <ListRow icon={Watch} title="Despertares por la guardia" detail={`${woke} esta semana. Todos por algo urgente`} last />
+          <ListRow icon={Watch} title="Avisos de noche" detail={`${woke} esta semana. Todos por algo urgente`} last />
         </List>
         <T v="caption" tone="faint">Datos de ejemplo. Son señales para ti, no tareas ni puntajes.</T>
       </Section>

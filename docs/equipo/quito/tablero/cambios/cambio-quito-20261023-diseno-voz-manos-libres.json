@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-diseno-voz-manos-libres",
+  "title": "Diseñar una conversación con SOL que se puede interrumpir",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Quito pidió revisar aquí una experiencia manos libres: círculo reactivo, hablar para interrumpir y micrófono silenciable. Hay una maqueta interactiva local con Mi espacio y modo noche/día, pendiente de aprobación e integración en Expo.",
+  "before": "El pedido enviado a Bishara concretaba un botón central para capturar voz, sin definir una conversación continua ni interrupción por la voz de la persona.",
+  "after": "La propuesta permite entrar desde el botón central y muestra escucha, voz de la persona, espera, respuesta de Miguel G, silencio y fallo. Los controles de silenciar, texto y terminar permanecen visibles; hablar o tocar el círculo interrumpe la muestra. El mismo hilo sintético se conserva al volver al chat.",
+  "reason": "Quito quiere una experiencia familiar como la de las apps reales de conversación y pidió diseñarla juntos, viendo la propuesta antes de implementarla.",
+  "checked": "Capturas de noche/día revisadas y 17 comprobaciones de navegador aprobadas: entrada central, muestra real de Miguel G, interrupción al tocar y por señal sintética de voz, silencio de la pista, cierre del micrófono, texto, modo reducido y permiso rechazado. Sin errores JavaScript ni peticiones de red desde la maqueta. No verifica Codex por voz ni iPhone. Alcance en docs/equipo/quito/diseno/voz-sol/README.md.",
+  "availability": "Fuente en docs/equipo/quito/diseno/voz-sol/ e imágenes locales en .context/voz-sol/. Diseño en revisión, sin publicar ni modificar mobile/ o server/. Captura, turnos, eco, interrupción y descarte de resultados atrasados requieren a Bishara, Amaru y Quito.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

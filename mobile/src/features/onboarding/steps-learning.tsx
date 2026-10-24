@@ -183,7 +183,7 @@ export function Questions({ nav }: { nav: StepNav }) {
             {q.context ? <T v="callout" tone="muted">{q.context}</T> : null}
             <View style={qs_.options}>
               {q.options.map((o) => (
-                <Chip key={o} label={o} selected={q.answer === o} tone={q.answer === o ? 'calm' : 'accent'} onPress={() => dispatch({ type: 'answer', id: q.id, answer: o })} />
+                <Chip key={o} label={o} selected={q.answer === o} tone={q.answer === o ? 'calm' : 'accent'} onPress={() => dispatch({ type: 'answer', id: q.id, index: q.options.indexOf(o) })} />
               ))}
             </View>
             {q.answer ? <T v="caption" tone="calm">Anotado. Desde ahora lo tengo en cuenta.</T> : null}

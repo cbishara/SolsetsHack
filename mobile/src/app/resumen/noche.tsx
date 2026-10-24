@@ -9,6 +9,8 @@ import { useStore } from '../../data/store';
 import { eventsOn, hhmm, openTasks, plural } from '../../features/digest/format';
 import { useTheme } from '../../theme/theme';
 import { space } from '../../theme/tokens';
+import { addDays, todayKey } from '../../data/dates';
+import { tonight } from '../../data/select';
 
 // Nightly close: one minute to put the day down. What stays open, what comes
 // tomorrow, a glance at the week, a place to drop what's on your mind, and
@@ -17,12 +19,12 @@ export default function ResumenNoche() {
   const { p } = useTheme();
   const { state, events, shifts } = useStore();
   const open = openTasks(state.tasks);
-  const forToday = open.filter((t) => t.due.kind === 'today');
-  const forTomorrow = open.filter((t) => t.due.kind === 'tomorrow' || (t.due.at && new Date(t.due.at).toDateString() === new Date(Date.now() + 864e5).toDateString()));
+  const forToday = open.filter((t) => t.date === todayKey());
+  const forTomorrow = open.filter((t) => t.date === addDays(todayKey(), 1));
   const tomorrowEvents = eventsOn(events, 1);
   const tonightShift = shifts.find((s) => s.date === keyOf(new Date()));
-  const onCall = state.onCallTonight ?? tonightShift?.onCall ?? false;
-  const guard = state.profile.nightStyle === 'wake_if_urgent' && onCall;
+  const onCall = tonight(state).on || (tonightShift?.onCall ?? false);
+  const guard = state.nightAlerts.mode === 'urgent' && onCall;
   const wakeRules = state.rules.filter((r) => r.kind === 'wake' && r.confirmed);
   const watched = state.chats.filter((c) => c.on).map((c) => c.name);
   const busy: Record<string, number> = {};
@@ -113,7 +115,7 @@ export default function ResumenNoche() {
           <>
             <View style={s.inline}><MoonStar size={20} color={p.sol} /><T v="eyebrow" tone="onHeroMuted">Esta noche</T></View>
             <T v="h2" tone="onHero">No te voy a despertar.</T>
-            <T tone="onHeroMuted">Sigo leyendo lo que llega y lo ordeno. Mañana a las {state.profile.morningAt} te dejo el resumen.</T>
+            <T tone="onHeroMuted">Sigo leyendo lo que llega y lo ordeno. Mañana a las {state.summaries.morning.at} te dejo el resumen.</T>
           </>
         )}
       </Hero>
@@ -121,7 +123,7 @@ export default function ResumenNoche() {
       <View style={{ gap: space.md }}>
         <Button kind="primary" label="Listo, a descansar" onPress={() => router.back()} />
         {!guard && onCall ? null : (
-          <Button kind="ghost" label={onCall ? 'Cambiar: esta noche no me toca' : '¿Te toca guardia? Confírmalo'} onPress={() => router.push('/guardia')} />
+          <Button kind="ghost" label="Configurar avisos nocturnos" onPress={() => router.push('/perfil/noche')} />
         )}
       </View>
     </Screen>

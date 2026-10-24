@@ -116,7 +116,7 @@ export default function Entrenamiento() {
             {q.context ? <T v="callout" tone="muted">{q.context}</T> : null}
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
               {q.options.map((o) => (
-                <Chip key={o} label={o} onPress={() => dispatch({ type: 'answer', id: q.id, answer: o })} />
+                <Chip key={o} label={o} onPress={() => dispatch({ type: 'answer', id: q.id, index: q.options.indexOf(o) })} />
               ))}
             </View>
           </Card>
@@ -133,7 +133,7 @@ export default function Entrenamiento() {
       <Section eyebrow="Lo último que aprendí" title="Aprendo de tus correcciones">
         <List>
           {learnedRules.map((r) => (
-            <ListRow key={r.id} icon={Sparkles} title={r.text} detail="Regla nueva, salió de tu feedback" onPress={() => router.push('/tu/reglas')} />
+            <ListRow key={r.id} icon={Sparkles} title={r.text} detail="Regla nueva, salió de tu feedback" onPress={() => router.push('/perfil/reglas')} />
           ))}
           {recentMemory.map((m, i) => (
             <ListRow key={m.id} title={m.text} detail={`${SOURCE_LABEL[m.source]}, ${shortDate(m.learnedAt)}`} last={i === recentMemory.length - 1} />
@@ -142,7 +142,7 @@ export default function Entrenamiento() {
         {!learnedRules.length ? (
           <T v="callout" tone="muted">Cuando me corrijas en el resumen de la mañana, la corrección aparece aquí como regla.</T>
         ) : null}
-        <Button kind="ghost" label="Ver todo lo que sé de ti" onPress={() => router.push('/tu/memoria')} />
+        <Button kind="ghost" label="Ver todo lo que sé de ti" onPress={() => router.push('/perfil/memoria')} />
       </Section>
 
       <Section eyebrow="Lo que leí al empezar" title={`Tus últimos ${read.months} meses`}>
@@ -166,7 +166,7 @@ export default function Entrenamiento() {
           ))}
         </List>
         <T v="caption" tone="faint">Datos de ejemplo. Con eso propuse tus primeras reglas y tú las confirmaste.</T>
-        <Button kind="secondary" label="Ver y editar tus reglas" onPress={() => router.push('/tu/reglas')} />
+        <Button kind="secondary" label="Ver y editar tus reglas" onPress={() => router.push('/perfil/reglas')} />
       </Section>
     </Screen>
   );

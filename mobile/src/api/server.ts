@@ -77,7 +77,32 @@ export function createServerClient({ url, token }: ServerConfig) {
     }
   }
 
+  /** Multipart upload of a local recording (file:// on iOS, blob: on web). */
+  async function upload<T>(path: string, uri: string, mime: string): Promise<T> {
+    const form = new FormData();
+    if (uri.startsWith('blob:') || uri.startsWith('data:')) {
+      const blob = await (await fetch(uri)).blob();
+      form.append('audio', blob, 'nota.webm');
+    } else {
+      form.append('audio', { uri, name: 'nota.m4a', type: mime } as unknown as Blob);
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30_000);
+    try {
+      const res = await fetch(`${base}${path}`, { method: 'POST', body: form, signal: controller.signal, headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new ServerError(res.status, typeof data?.error === 'string' ? data.error : `http_${res.status}`, typeof data?.message === 'string' ? data.message : `El servidor respondió ${res.status}.`);
+      return data as T;
+    } catch (error) {
+      if (error instanceof ServerError) throw error;
+      throw new ServerError(0, 'network', 'No pude enviar el audio al servidor.');
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   return {
+    transcribe: (uri: string, mime: string) => upload<{ text: string }>('/api/transcribe', uri, mime),
     health: () => call<{ ok: boolean; service: string }>('GET', '/api/health'),
     night: () => call<ServerNight>('GET', '/api/night/today'),
     setNight: (onCall: boolean) => call<ServerNight>('PUT', '/api/night/today', { onCall }),

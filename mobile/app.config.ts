@@ -31,6 +31,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "expo-font",
       "expo-secure-store",
       "expo-status-bar",
+      ["expo-audio", { microphonePermission: "Soltra usa el micrófono para que le dictes notas y pendientes a Sol." }],
+      "expo-notifications",
       ...(screenTime
         ? [
             [

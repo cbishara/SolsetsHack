@@ -57,8 +57,8 @@ export function SolOrb({ size = 120, state = 'calm', style }: { size?: number; s
         <Svg width={box} height={box}>
           <Defs>
             <RadialGradient id={`halo${uid}`} cx="50%" cy="50%" r="50%">
-              <Stop offset="0.3" stopColor={core} stopOpacity={state === 'waking' ? 0.5 : 0.36} />
-              <Stop offset="0.62" stopColor={core} stopOpacity={0.1} />
+              <Stop offset="0.3" stopColor={core} stopOpacity={state === 'waking' ? 0.5 : 0.34} />
+              <Stop offset="0.62" stopColor={state === 'waking' ? core : p.solDeep} stopOpacity={0.12} />
               <Stop offset="1" stopColor={core} stopOpacity={0} />
             </RadialGradient>
           </Defs>
@@ -69,11 +69,12 @@ export function SolOrb({ size = 120, state = 'calm', style }: { size?: number; s
         <Svg width={size} height={size}>
           <Defs>
             <RadialGradient id={`core${uid}`} cx="44%" cy="40%" r="56%">
-              {/* A light, not a ball: white-hot center, warm body, edge that melts into the halo. */}
-              <Stop offset="0" stopColor="#FFFFFF" stopOpacity={1} />
-              <Stop offset="0.28" stopColor="#FFF6E6" stopOpacity={1} />
-              <Stop offset="0.62" stopColor={core} stopOpacity={0.95} />
-              <Stop offset="1" stopColor={core} stopOpacity={0} />
+              {/* A light, not a ball: hot center, warm amber body, deep edge that melts into the halo. */}
+              <Stop offset="0" stopColor="#FFF7EE" stopOpacity={1} />
+              <Stop offset="0.24" stopColor={state === 'waking' ? '#FFD9D4' : p.solHi} stopOpacity={1} />
+              <Stop offset="0.58" stopColor={core} stopOpacity={0.98} />
+              <Stop offset="0.84" stopColor={state === 'waking' ? p.urgent : p.solDeep} stopOpacity={0.75} />
+              <Stop offset="1" stopColor={state === 'waking' ? p.urgent : p.solDeep} stopOpacity={0} />
             </RadialGradient>
           </Defs>
           <Circle cx={size / 2} cy={size / 2} r={size / 2} fill={`url(#core${uid})`} />
@@ -84,8 +85,8 @@ export function SolOrb({ size = 120, state = 'calm', style }: { size?: number; s
 }
 
 const LABEL: Record<SolState, string> = {
-  calm: 'Sol está de guardia, todo tranquilo',
-  watching: 'Sol está mirando lo que llega',
-  waking: 'Sol te está despertando',
+  calm: 'Sol está atento, todo tranquilo',
+  watching: 'Sol está revisando lo que llega',
+  waking: 'Sol te está avisando algo urgente',
   shadow: 'Sol en modo sombra',
 };

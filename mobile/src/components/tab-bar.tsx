@@ -1,9 +1,11 @@
 import { router, type Tabs } from 'expo-router';
-import { CalendarDays, CircleUserRound, House, ListChecks, type LucideIcon } from 'lucide-react-native';
+import { CalendarDays, House, Inbox, ListChecks, type LucideIcon } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import type { ComponentProps } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useStore } from '../data/store';
+import { toReview } from '../data/select';
 import { useTheme } from '../theme/theme';
 import { radius, size, space } from '../theme/tokens';
 import { SolOrb } from './sol-orb';
@@ -12,16 +14,17 @@ import { PressScale, tap, T } from './ui';
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
 const TABS: { name: string; label: string; icon: LucideIcon }[] = [
-  { name: 'index', label: 'Hoy', icon: House },
+  { name: 'index', label: 'Inicio', icon: House },
+  { name: 'bandeja', label: 'Bandeja', icon: Inbox },
   { name: 'tareas', label: 'Tareas', icon: ListChecks },
   { name: 'agenda', label: 'Agenda', icon: CalendarDays },
-  { name: 'tu', label: 'Tú', icon: CircleUserRound },
 ];
 
 export function TabBar({ state, navigateToTab }: TabBarProps) {
   const { p } = useTheme();
   const insets = useSafeAreaInsets();
   const current = state.routes[state.index]?.name;
+  const review = toReview(useStore().state).length;
 
   // Floating glass capsule, as in Opal. Tabs switch instantly: they are peers.
   return (
@@ -43,8 +46,11 @@ export function TabBar({ state, navigateToTab }: TabBarProps) {
               }}
               style={[styles.tab, active && { backgroundColor: p.accentSoft }]}
             >
-              <Icon size={21} color={active ? p.ink : p.faint} strokeWidth={active ? 2.3 : 2} />
-              <T v="caption" style={{ color: active ? p.ink : p.faint, fontSize: 11, lineHeight: 14 }}>{label}</T>
+              <View>
+                <Icon size={21} color={active ? p.ink : p.faint} strokeWidth={active ? 2.3 : 2} />
+                {name === 'bandeja' && review ? <View style={[styles.badge, { backgroundColor: p.sol, borderColor: p.bg }]} accessibilityLabel={`${review} por revisar`} /> : null}
+              </View>
+              <T v="micro" style={{ color: active ? p.ink : p.faint }}>{label}</T>
             </Pressable>
           );
         })}
@@ -69,9 +75,11 @@ function SolButton() {
       onLongPress={() => { tap('success'); router.push({ pathname: '/sol', params: { voice: '1' } }); }}
       delayLongPress={300}
       scaleTo={0.92}
-      style={[styles.fab, { borderColor: p.line, backgroundColor: p.surface }]}
+      style={[styles.fab, { borderColor: p.glassLine }]}
     >
-      <SolOrb size={26} state="watching" />
+      <BlurView intensity={Platform.OS === 'ios' ? 40 : 0} tint="dark" style={StyleSheet.absoluteFill} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: Platform.OS === 'ios' ? p.tabBar : p.surface }]} />
+      <SolOrb size={30} state="watching" />
     </PressScale>
   );
 }
@@ -84,6 +92,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
   },
   tab: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 2, borderRadius: radius.pill },
+  badge: { position: 'absolute', top: -2, right: -5, width: 9, height: 9, borderRadius: 5, borderWidth: 1.5 },
   fab: {
     width: size.tabBar, height: size.tabBar, borderRadius: radius.pill, borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center', justifyContent: 'center', overflow: 'hidden',

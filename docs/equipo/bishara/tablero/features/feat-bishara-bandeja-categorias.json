@@ -1,0 +1,69 @@
+{
+  "type": "feature",
+  "id": "feat-bishara-bandeja-categorias",
+  "title": "Bandeja con categorías: todo lo que llega, ordenado, con su original",
+  "owner": "Bishara",
+  "collaborators": [
+    "Bishara: pantallas de Bandeja, detalle del mensaje y Categorías",
+    "Quito: categoría, titular y contexto de cada mensaje",
+    "Amaru: guardar categorías y correcciones por usuario"
+  ],
+  "moment": "manana",
+  "productStatus": "propuesta",
+  "buildStatus": "implementada",
+  "availability": "rama",
+  "updatedAt": "2026-10-24",
+  "summary": "Cada cosa que llega por WhatsApp, correo o calendario aparece en la Bandeja con lo que entendió Sol, su categoría, lo que hizo y el mensaje original. La persona decide qué hace Sol con cada categoría.",
+  "need": "Confiar en el agente: ver que leyó todo, cómo lo entendió y poder comprobarlo contra el mensaje real.",
+  "userActions": [
+    "Revisa la Bandeja por día o por categoría, y busca por persona o texto.",
+    "Abre un mensaje y compara lo que entendió Sol con el original.",
+    "Confirma o cambia la categoría con un toque; crea una tarea o silencia.",
+    "Configura cada categoría: qué hace Sol y si puede despertarle de noche.",
+    "Acepta o descarta las categorías que Sol propone."
+  ],
+  "systemActions": [
+    "Clasifica cada mensaje en una categoría con confianza, titular y contexto.",
+    "Aplica la acción de la categoría: avisar, tarea, agenda, resumen o silenciar.",
+    "Deja en Por confirmar lo que no reconoce con seguridad.",
+    "Usa cada corrección como ejemplo en lo siguiente."
+  ],
+  "example": "Ejemplo sintético: llega un correo de Backup Server, 'Respaldo nocturno incompleto (92 %)'. Sol no tiene categoría para eso, lo deja en Por confirmar y propone la categoría Respaldos. La persona responde 'Avisarme al tiro' y desde ahí esos avisos pueden despertarla.",
+  "rules": [
+    "El original siempre se muestra tal como llegó.",
+    "Una categoría sugerida no cambia nada hasta que la persona la acepta.",
+    "Ante la duda, despierta: lo no reconocido de noche avisa si los avisos están activos."
+  ],
+  "limits": [
+    "Hasta que server/ envíe categoryId, la app infiere la categoría por palabras y pide confirmación.",
+    "Las categorías y correcciones viven en el teléfono hasta que existan las rutas del contrato app v2."
+  ],
+  "acceptance": [
+    "Desde el Inicio se entiende cuánto leyó Sol hoy y en qué categorías.",
+    "Cada mensaje abre su original y lo que hizo Sol con él."
+  ],
+  "questions": [
+    "¿El agente devuelve categoryId, summary y context en cada veredicto?",
+    "¿Las categorías iniciales salen del historial en el onboarding?"
+  ],
+  "flowIds": [],
+  "relatedFeatureIds": [],
+  "verification": [
+    {
+      "date": "2026-10-24",
+      "environment": "Web a 390 pt con Expo (Metro local), hora simulada 09:10",
+      "result": "Bandeja, detalle del mensaje, categorías y confirmación de un toque funcionan con datos sintéticos",
+      "evidence": "TypeScript y 21 pruebas de mobile/ en verde; capturas revisadas por el agente de Bishara"
+    }
+  ],
+  "evidence": [
+    {
+      "label": "Contrato app v2 (propuesta)",
+      "path": "docs/equipo/bishara/CONTRATO_APP_V2.md"
+    },
+    {
+      "label": "ADR por confirmar: categorías",
+      "path": "docs/equipo/adr/por-confirmar/2026-10-24-categorias-deciden-que-hace-sol.md"
+    }
+  ]
+}

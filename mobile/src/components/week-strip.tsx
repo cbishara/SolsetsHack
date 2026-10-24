@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import type { Shift } from '../data/types';
+import type { Shift } from '../data/compat';
 import { useTheme } from '../theme/theme';
 import { radius, space } from '../theme/tokens';
 import { T, tap } from './ui';

@@ -11,6 +11,7 @@
     "node_modules",
     "dist",
     "ios",
-    "android"
+    "android",
+    "_archive"
   ]
 }

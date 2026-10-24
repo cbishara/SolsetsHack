@@ -1,60 +1,92 @@
-import { router } from 'expo-router';
-import { CalendarPlus } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
-import { View } from 'react-native';
-import { keyOf, weekOf } from '../../components/week-strip';
-import { Card, IconButton, Screen, Section, T } from '../../components/ui';
+import { Plus } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { TopBar } from '../../components/top-bar';
+import { Button, Chip, IconButton, Screen, Section, Segmented, T, tap } from '../../components/ui';
+import { cap, dayLabel, fromKey, longDate, MONTHS, todayKey, weekOf } from '../../data/dates';
 import { useStore } from '../../data/store';
-import { itemsFor, taskDayKey, weekSummary } from '../../features/agenda/day-items';
-import { Timeline } from '../../features/agenda/timeline';
-import { WeekPager } from '../../features/agenda/week-pager';
-import { space } from '../../theme/tokens';
+import { EventComposer } from '../../features/agenda/event-composer';
+import { weekLine } from '../../features/agenda/entries';
+import { DayTimeline, MonthGrid, WeekBar, WeekList } from '../../features/agenda/views';
+import { categoryColors, space } from '../../theme/tokens';
 
-// Agenda: the week and the selected day in one timeline. Shifts, events and
-// dated tasks together, so nobody has to cross-check three apps.
+type Mode = 'day' | 'week' | 'month';
+
+/**
+ * Agenda: work, personal and shared calendars in one place, with the tasks
+ * that have a time and the nights Sol is on alert. Day, week and month.
+ */
 export default function Agenda() {
-  const { state, events, shifts } = useStore();
-  const [anchor, setAnchor] = useState(() => new Date());
-  const [selected, setSelected] = useState(() => keyOf(new Date()));
+  const { state, dispatch } = useStore();
+  const [mode, setMode] = useState<Mode>('day');
+  const [day, setDay] = useState(todayKey());
+  const [composer, setComposer] = useState(false);
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(t);
+  }, []);
 
-  const busy = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const e of events) if (e.kind !== 'shift') { const k = keyOf(new Date(e.start)); counts[k] = (counts[k] ?? 0) + 1; }
-    for (const t of state.tasks) { const k = taskDayKey(t); if (k && !t.done) counts[k] = (counts[k] ?? 0) + 1; }
-    return counts;
-  }, [events, state.tasks]);
-
-  const items = useMemo(() => itemsFor(selected, events, shifts, state.tasks), [selected, events, shifts, state.tasks]);
-  const summary = useMemo(() => weekSummary(anchor, events, shifts, state.tasks), [anchor, events, shifts, state.tasks]);
-  const thisWeek = weekOf(anchor).some((d) => keyOf(d) === keyOf(new Date()));
-  const selDate = new Date(`${selected}T12:00:00`);
-  const isToday = selected === keyOf(new Date());
-  const dayTitle = isToday ? 'Hoy' : selDate.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+  const today = todayKey();
+  const d = fromKey(day);
+  const week = weekOf(day);
 
   return (
-    <Screen>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.md }}>
-        <View style={{ flex: 1, gap: space.xs }}>
-          <T v="eyebrow" tone="muted">{thisWeek ? 'Esta semana' : 'Otra semana'}</T>
-          <T v="title" accessibilityRole="header">Agenda</T>
-          <T v="callout" tone="muted">{summary}</T>
+    <View style={{ flex: 1 }}>
+      <Screen>
+        <TopBar
+          overline={`${cap(MONTHS[d.getMonth()])} ${d.getFullYear()}`}
+          title="Agenda"
+          actions={
+            <>
+              {day !== today ? <Button small kind="secondary" label="Hoy" onPress={() => setDay(today)} /> : null}
+              <IconButton icon={Plus} label="Nuevo evento" onPress={() => setComposer(true)} size={40} />
+            </>
+          }
+        />
+
+        <View style={{ gap: space.md }}>
+          <Segmented options={[{ id: 'day', label: 'Día' }, { id: 'week', label: 'Semana' }, { id: 'month', label: 'Mes' }]} value={mode} onChange={setMode} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chips} style={s.chipScroll}>
+            {state.calendars.map((c) => (
+              <Chip key={c.id} label={c.name} dot={c.visible ? categoryColors[c.color] : undefined} selected={c.visible}
+                onPress={() => { tap(); dispatch({ type: 'toggleCalendar', id: c.id }); }} />
+            ))}
+          </ScrollView>
         </View>
-        <IconButton icon={CalendarPlus} label="Agregar algo con Sol" onPress={() => router.push('/sol')} />
-      </View>
 
-      <WeekPager anchor={anchor} onAnchor={setAnchor} selected={selected} onSelect={setSelected} shifts={shifts} busy={busy} />
+        {mode === 'day' ? (
+          <>
+            <WeekBar selected={day} onSelect={setDay} />
+            <Section title={day === today ? `Hoy, ${longDate(d).split(' ').slice(1).join(' ')}` : cap(longDate(d))}>
+              <DayTimeline day={day} now={now} />
+            </Section>
+          </>
+        ) : null}
 
-      <Section eyebrow={isToday ? selDate.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric' }) : undefined}
-        title={dayTitle.charAt(0).toUpperCase() + dayTitle.slice(1)}>
-        {items.length ? (
-          <Timeline items={items} />
-        ) : (
-          <Card tone="surface">
-            <T v="bodyStrong">Día libre</T>
-            <T v="callout" tone="muted">No hay nada agendado. Si quieres sumar algo, díselo a Sol y le pone fecha.</T>
-          </Card>
-        )}
-      </Section>
-    </Screen>
+        {mode === 'week' ? (
+          <Section title={week[0] <= today && today <= week[6] ? 'Esta semana' : `Semana del ${fromKey(week[0]).getDate()} de ${MONTHS[fromKey(week[0]).getMonth()]}`}>
+            <T v="callout" tone="muted" style={{ marginTop: -space.sm }}>{weekLine(state, week)}</T>
+            <WeekBar selected={day} onSelect={setDay} />
+            <WeekList days={week} onPick={(k) => { setDay(k); setMode('day'); }} />
+          </Section>
+        ) : null}
+
+        {mode === 'month' ? (
+          <>
+            <MonthGrid selected={day} onSelect={setDay} />
+            <Section title={cap(dayLabel(day))}>
+              <DayTimeline day={day} now={now} />
+            </Section>
+          </>
+        ) : null}
+      </Screen>
+      <EventComposer visible={composer} onClose={() => setComposer(false)} day={day} />
+    </View>
   );
 }
+
+const s = StyleSheet.create({
+  chipScroll: { marginHorizontal: -space.xl },
+  chips: { gap: space.sm, paddingHorizontal: space.xl },
+});

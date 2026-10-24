@@ -7,10 +7,10 @@ export default function TabsLayout() {
   if (!state.onboarded) return <Redirect href="/onboarding" />;
   return (
     <Tabs tabBar={(props) => <TabBar {...props} />} screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: 'transparent' } }}>
-      <Tabs.Screen name="index" options={{ title: 'Hoy' }} />
+      <Tabs.Screen name="index" options={{ title: 'Inicio' }} />
+      <Tabs.Screen name="bandeja" options={{ title: 'Bandeja' }} />
       <Tabs.Screen name="tareas" options={{ title: 'Tareas' }} />
       <Tabs.Screen name="agenda" options={{ title: 'Agenda' }} />
-      <Tabs.Screen name="tu" options={{ title: 'Tú' }} />
     </Tabs>
   );
 }

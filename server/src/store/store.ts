@@ -14,7 +14,8 @@ export type Collection =
   | 'whatsapp_messages'
   | 'whatsapp_selections'
   | 'whatsapp_status'
-  | 'raw_events';
+  | 'raw_events'
+  | 'categories';
 
 export interface Store {
   /** Inserts only if the id is new. Returns false when it already existed. */
@@ -23,6 +24,8 @@ export interface Store {
   get<T>(collection: Collection, id: string): Promise<T | undefined>;
   /** Newest first. */
   list<T>(collection: Collection, limit?: number, idPrefix?: string, orderBy?: 'sentAt'): Promise<T[]>;
+  /** Deletes one document. Returns false when it did not exist. */
+  remove(collection: Collection, id: string): Promise<boolean>;
   close(): Promise<void>;
 }
 
@@ -62,6 +65,10 @@ export class MemoryStore implements Store {
       .sort((a, b) => (orderBy ? String((b.data as Record<string, unknown>)[orderBy] ?? '').localeCompare(String((a.data as Record<string, unknown>)[orderBy] ?? '')) : 0) || b.seq - a.seq)
       .slice(0, limit)
       .map((r) => structuredClone(r.data) as T);
+  }
+
+  async remove(collection: Collection, id: string) {
+    return this.col(collection).delete(id);
   }
 
   async close() {}

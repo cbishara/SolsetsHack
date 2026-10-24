@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, interpolateColor, useAnimatedStyle, useReducedMotion, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { T, tap } from '../../components/ui';
 import { useTheme } from '../../theme/theme';
 import { motion, radius, size, space } from '../../theme/tokens';
@@ -20,19 +20,25 @@ export function ShapeButton({ icon: Icon, label, onPress, on, tone = 'neutral', 
   const reduced = useReducedMotion();
   const [down, setDown] = useState(false);
   const square = useSharedValue(on ? 1 : 0);
+  const fill = useSharedValue(on ? 1 : 0);
   const scale = useSharedValue(1);
 
   useEffect(() => {
     const target = on || down ? 1 : 0;
     square.value = reduced ? target : withSpring(target, SPRING);
   }, [on, down, reduced, square]);
+  useEffect(() => {
+    fill.value = withTiming(on ? 1 : 0, { duration: motion.base, easing: Easing.bezier(...motion.easeOut) });
+  }, [on, fill]);
 
+  const rest = tone === 'end' ? p.urgentSoft : p.surface;
+  const active = tone === 'end' ? p.urgentSoft : p.accent;
   const anim = useAnimatedStyle(() => ({
     borderRadius: (size.fab / 2) - square.value * (size.fab / 2 - radius.lg),
     transform: [{ scale: scale.value }],
+    backgroundColor: interpolateColor(fill.value, [0, 1], [rest, active]),
   }));
 
-  const bg = tone === 'end' ? p.urgentSoft : on ? p.accent : p.surface;
   const fg = tone === 'end' ? p.urgent : on ? p.onAccent : p.ink;
 
   return (
@@ -46,8 +52,7 @@ export function ShapeButton({ icon: Icon, label, onPress, on, tone = 'neutral', 
         onPress={() => { tap(tone === 'end' ? 'warning' : 'light'); onPress(); }}
         hitSlop={8}
       >
-        <Animated.View style={[s.button, { width, height: size.fab, backgroundColor: bg, borderColor: tone === 'end' || on ? 'transparent' : p.line }, anim,
-          { transitionProperty: 'backgroundColor', transitionDuration: motion.base }]}>
+        <Animated.View style={[s.button, { width, height: size.fab, borderColor: tone === 'end' || on ? 'transparent' : p.line }, anim]}>
           <Icon size={24} color={fg} strokeWidth={2.2} />
         </Animated.View>
       </Pressable>

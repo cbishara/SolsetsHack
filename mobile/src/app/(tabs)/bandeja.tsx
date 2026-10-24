@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { TopBar } from '../../components/top-bar';
 import { Button, Chip, EmptyState, Field, IconButton, List, Screen, Section, T, tap } from '../../components/ui';
 import { dayLabel, keyOf, relative } from '../../data/dates';
-import { activeCategories, categoryById, toReview } from '../../data/select';
+import { activeCategories, categoryById, lastNightItems, toReview } from '../../data/select';
 import { useStore } from '../../data/store';
 import type { Item } from '../../data/types';
 import { CategoryPicker } from '../../features/inbox/category-picker';
@@ -17,11 +17,12 @@ type Filter = 'all' | 'review' | 'unread' | string; // or a category id
 
 const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-/** Groups items by day, with last night's on their own. */
-function groupByDay(items: Item[], now = new Date()) {
+/** Groups items by day, newest first, with last night's on their own. */
+function groupByDay(items: Item[], night: Set<string>, now = new Date()) {
   const groups: { id: string; title: string; items: Item[]; silenced: Item[] }[] = [];
-  for (const i of items) {
-    const key = i.night && keyOf(new Date(i.receivedAt)) >= keyOf(new Date(now.getTime() - 86_400_000)) && new Date(i.receivedAt).getHours() < 12 ? 'night' : keyOf(new Date(i.receivedAt));
+  const sorted = [...items].sort((a, b) => b.receivedAt.localeCompare(a.receivedAt));
+  for (const i of sorted) {
+    const key = night.has(i.id) ? 'night' : keyOf(new Date(i.receivedAt));
     let g = groups.find((x) => x.id === key);
     if (!g) {
       g = { id: key, title: key === 'night' ? 'Anoche' : dayLabel(key, now), items: [], silenced: [] };
@@ -68,14 +69,15 @@ export default function Bandeja() {
     return list;
   }, [state.items, filter, query, review, unread]);
 
-  const groups = groupByDay(filter === 'review' ? [] : visible.filter((i) => filter !== 'all' || i.review === 'none' || query));
-  const last = state.items[0]?.receivedAt;
+  const night = new Set(lastNightItems(state).map((i) => i.id));
+  const groups = groupByDay(filter === 'review' ? [] : visible.filter((i) => filter !== 'all' || i.review === 'none' || query), night);
+  const last = state.items.reduce<string | undefined>((m, i) => (!m || i.receivedAt > m ? i.receivedAt : m), undefined);
 
   return (
     <Screen header={undefined}>
       <TopBar
         title="Bandeja"
-        overline={last ? `Al día · lo último llegó ${relative(last)}` : 'Al día'}
+        overline={last ? `Lo último llegó ${relative(last)}` : 'Al día'}
         actions={
           <>
             <IconButton icon={searching ? X : Search} label={searching ? 'Cerrar búsqueda' : 'Buscar'} onPress={() => { setSearching(!searching); setQuery(''); }} size={40} />

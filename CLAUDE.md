@@ -10,6 +10,8 @@ Entrega el sábado 24: solución funcionando + este repo con README de una pági
 > Decidido por Quito el 2026-10-23: el producto es una app de celular hecha con Expo (React Native) en TypeScript. Todo el código que hay hoy en el repo (`web/`, `backend/`, `classifier/`, `supabase/`, `deploy/`) es el prototipo y queda solo como referencia: lo oficial se construye desde cero. Funcionalidades y dueños en `docs/equipo/adr/oficiales/`. Si este archivo y un ADR oficial chocan, manda el ADR.
 
 ## La solución en una frase
+Nombre: la app se llama **Soltra** (desde el 2026-10-24) y **Sol** es su agente. Escribir "Soltra", nunca "SOL" en mayúsculas. Los identificadores técnicos con `sol` no se renombran.
+
 Una app de celular que hace la guardia de noche por Rodrigo (soporte TI, turnos rotativos, guardia por WhatsApp). Antes de dormir le pregunta si esa noche le toca guardia. Si le toca, revisa lo que entra y lo despierta solo si algo es urgente o nuevo: push en la app y, si no lo ve en 3 minutos, una llamada. El resto queda para el parte de la mañana. Las primeras semanas trabaja en modo sombra (no silencia nada, solo muestra qué habría hecho) hasta que Rodrigo confía. Ante la duda, despierta.
 
 ## Núcleo técnico

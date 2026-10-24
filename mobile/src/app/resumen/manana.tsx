@@ -118,7 +118,7 @@ export default function ResumenManana() {
         ) : (
           <T v="callout" tone="calm" style={{ textAlign: 'center' }}>Marcaste todo. Gracias, así aprendo más rápido.</T>
         )}
-        <Button kind="lime" label="Empezar el día" onPress={() => router.back()} />
+        <Button kind="primary" label="Empezar el día" onPress={() => router.back()} />
         <Button kind="ghost" icon={Send} label="Así te llega por WhatsApp" onPress={() => router.push('/resumen/whatsapp')} />
       </View>
     </Screen>

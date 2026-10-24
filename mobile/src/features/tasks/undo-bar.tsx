@@ -15,7 +15,7 @@ export function UndoBar({ text, onUndo, onDismiss, ms = 4500 }: { text: string; 
     <View style={[s.bar, { backgroundColor: p.ink }]} accessibilityLiveRegion="polite">
       <T v="calloutStrong" numberOfLines={1} style={{ color: p.bg, flex: 1 }}>{text}</T>
       <Pressable accessibilityRole="button" onPress={() => { tap(); onUndo(); }} hitSlop={10} style={s.action}>
-        <T v="calloutStrong" style={{ color: p.scheme === 'day' ? p.lime : p.accent }}>Deshacer</T>
+        <T v="calloutStrong" style={{ color: p.scheme === 'day' ? p.sol : p.accent }}>Deshacer</T>
       </Pressable>
     </View>
   );

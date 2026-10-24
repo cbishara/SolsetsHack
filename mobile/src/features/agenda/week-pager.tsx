@@ -10,7 +10,7 @@ const LETTERS = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
 /**
  * Week strip that pages by week. Same look as the shared WeekStrip, plus
- * arrows. A lime dot marks a night on call; a blue dot, that there is something.
+ * arrows. A warm Sol dot marks a night on call; a blue dot, that there is something.
  */
 export function WeekPager({ anchor, onAnchor, selected, onSelect, shifts, busy }: {
   anchor: Date; onAnchor: (d: Date) => void; selected: string; onSelect: (key: string) => void;
@@ -52,7 +52,7 @@ export function WeekPager({ anchor, onAnchor, selected, onSelect, shifts, busy }
                 <T v="bodyStrong" style={{ color: isSel ? p.onAccent : p.ink, fontVariant: ['tabular-nums'] }}>{d.getDate()}</T>
               </View>
               <View style={s.dots}>
-                {shift?.onCall ? <View style={[s.dot, { backgroundColor: p.lime, borderWidth: p.scheme === 'day' ? 1 : 0, borderColor: '#B9C700' }]} /> : null}
+                {shift?.onCall ? <View style={[s.dot, { backgroundColor: p.sol, borderWidth: p.scheme === 'day' ? 1 : 0, borderColor: "transparent" }]} /> : null}
                 {busy[key] ? <View style={[s.dot, { backgroundColor: p.accent }]} /> : null}
               </View>
             </Pressable>

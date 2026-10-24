@@ -2,11 +2,11 @@
 import { night } from '../../theme/tokens';
 
 /**
- * The alert is always nocturnal: deep blue from the night tokens, one warm
- * accent for "urgent" (contrast on card ≈ 7:1) and lime only for "Lo vi".
+ * The alert is always nocturnal: pure black with the night tokens, one warm
+ * accent for "urgent" (contrast on card ≈ 7:1) and Sol's light only for "Lo vi".
  */
 export const alertPalette = {
-  bg: '#050A1C',
+  bg: '#000000',
   card: night.card,
   line: night.line,
   ink: night.ink,
@@ -15,8 +15,8 @@ export const alertPalette = {
   urgent: '#FF9A8F',
   urgentSoft: 'rgba(255,154,143,0.16)',
   urgentLine: 'rgba(255,154,143,0.35)',
-  lime: night.lime,
-  onLime: night.onLime,
+  sol: night.sol,
+  onSol: night.onSol,
   calm: night.calm,
 };
 

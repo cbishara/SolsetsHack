@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "SOL",
+    "name": "Soltra",
     "slug": "sol-mobile-demo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true
     },

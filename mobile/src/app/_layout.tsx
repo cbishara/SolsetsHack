@@ -11,10 +11,10 @@ import { ThemeProvider, useTheme } from '../theme/theme';
 void SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function Navigator() {
-  const { p, scheme } = useTheme();
+  const { p } = useTheme();
   return (
     <>
-      <StatusBar style={scheme === 'night' ? 'light' : 'dark'} />
+      <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" options={{ gestureEnabled: false, animation: 'fade' }} />

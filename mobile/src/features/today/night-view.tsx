@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
-import { BellRing, Moon, ShieldCheck } from 'lucide-react-native';
+import { BellRing } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
+import { SolOrb } from '../../components/sol-orb';
 import { Button, LinkButton, List, ListRow, Section, T } from '../../components/ui';
 import { keyOf } from '../../components/week-strip';
 import { useStore } from '../../data/store';
@@ -13,8 +14,8 @@ import { hhmm } from './moment';
 const REVIEWED_TONIGHT = 14;
 
 /**
- * Hoy at night. Low light, little text. The lime stays on the Sol button only,
- * so in-screen actions are blue. Three states:
+ * Hoy at night. Low light, little text. Sol itself carries the state; actions
+ * stay white. Three states:
  * unanswered guard question, on guard, or a free night.
  */
 export function NightView({ name }: { name: string }) {
@@ -49,7 +50,7 @@ export function NightView({ name }: { name: string }) {
     return (
       <View style={{ gap: space.xxxl }}>
         <View style={{ gap: space.lg, paddingTop: space.xl }}>
-          <View style={[s.halo, { backgroundColor: p.accentSoft }]}><ShieldCheck size={30} color={p.accent} strokeWidth={2} /></View>
+          <SolOrb size={96} state="calm" style={s.orb} />
           <T v="display" accessibilityRole="header">Sol está de guardia</T>
           <T v="h3" tone="muted">hasta las {until}. Duerme tranquilo.</T>
         </View>
@@ -65,7 +66,7 @@ export function NightView({ name }: { name: string }) {
         </Section>
         <View style={s.links}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-            <BellRing size={16} color={p.accent} />
+            <BellRing size={16} color={p.muted} />
             <LinkButton label="Ver cómo te despierto" onPress={() => router.push('/alerta')} />
           </View>
           <LinkButton label="Cambiar mi respuesta" onPress={() => router.push('/guardia')} />
@@ -82,7 +83,7 @@ export function NightView({ name }: { name: string }) {
   return (
     <View style={{ gap: space.xxxl }}>
       <View style={{ gap: space.lg, paddingTop: space.xl }}>
-        <View style={[s.halo, { backgroundColor: p.accentSoft }]}><Moon size={30} color={p.accent} strokeWidth={2} /></View>
+        <SolOrb size={72} state="shadow" style={s.orb} />
         <T v="display" accessibilityRole="header">Esta noche no te voy a despertar</T>
         <T v="h3" tone="muted">Igual reviso lo que llega y te lo ordeno para mañana.</T>
       </View>
@@ -114,6 +115,7 @@ function Greeting({ name }: { name: string }) {
 
 const s = StyleSheet.create({
   panel: { borderRadius: radius.xl, borderWidth: 1, padding: space.xxl, gap: space.md },
-  halo: { width: 64, height: 64, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
+  // The orb box includes its halo; pull it back so the light sits on the text edge.
+  orb: { alignSelf: 'flex-start', marginLeft: -44, marginVertical: -36 },
   links: { gap: space.lg },
 });

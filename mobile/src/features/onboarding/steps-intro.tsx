@@ -1,10 +1,10 @@
-import { ArrowUpRight, Check, Mic } from 'lucide-react-native';
+import { Check, Mic } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import { ArrowField, Wordmark } from '../../components/brand';
-import { Button, T, tap } from '../../components/ui';
+import { Wordmark } from '../../components/brand';
+import { SolOrb } from '../../components/sol-orb';
+import { Button, GlowBackdrop, T, tap } from '../../components/ui';
 import { useStore } from '../../data/store';
 import type { Goal } from '../../data/types';
 import { useTheme } from '../../theme/theme';
@@ -18,35 +18,28 @@ export function Welcome({ next }: { next: () => void }) {
   const { p } = useTheme();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: p.bg }} edges={['top', 'bottom']}>
+      <GlowBackdrop glow="sol" height={620} />
       <View style={w.page}>
         <Wordmark size={22} />
-        <View style={w.hero}>
-          <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" preserveAspectRatio="none">
-            <Defs>
-              <LinearGradient id="welcome" x1="0" y1="0" x2="1" y2="1">
-                <Stop offset="0" stopColor={p.hero[0]} />
-                <Stop offset="1" stopColor={p.hero[1]} />
-              </LinearGradient>
-            </Defs>
-            <Rect x="0" y="0" width="100%" height="100%" fill="url(#welcome)" />
-          </Svg>
-          {/* Full-height field: the shared Hero draws 8 rows, too few for this screen. */}
-          <ArrowField color={p.onHero} opacity={p.scheme === 'night' ? 0.06 : 0.12} rows={26} />
-          <T v="eyebrow" tone="onHeroMuted">Tu asistente para el día y la noche</T>
-          <T accessibilityRole="header" style={[w.big, { color: p.onHero }]}>Suelta.</T>
-          <T v="h3" tone="onHero">Sol lee tu correo y tu WhatsApp, te ordena el día y cuida tu noche.</T>
+        <View style={w.orb}>
+          <SolOrb size={132} state="calm" />
+        </View>
+        <View style={{ gap: space.md }}>
+          <T v="eyebrow" tone="muted">Tu asistente para el día y la noche</T>
+          <T accessibilityRole="header" style={[w.big, { color: p.ink }]}>Suelta.</T>
+          <T v="h3" tone="muted">Sol lee tu correo y tu WhatsApp, te ordena el día y cuida tu noche.</T>
           <View style={w.points}>
             {['Te avisa solo lo urgente', 'Convierte mensajes en tareas con fecha', 'Te deja todo listo antes de dormir'].map((t) => (
               <View key={t} style={w.point}>
-                <ArrowUpRight size={18} color={p.lime} strokeWidth={2.6} />
-                <T v="callout" tone="onHero">{t}</T>
+                <Check size={17} color={p.calm} strokeWidth={2.6} />
+                <T v="callout" tone="ink">{t}</T>
               </View>
             ))}
           </View>
         </View>
         <View style={{ gap: space.sm }}>
-          <Button kind="lime" label="Empezar" onPress={next} />
-          <T v="caption" tone="muted" style={{ textAlign: 'center' }}>Toma unos 3 minutos. Todo se puede cambiar después.</T>
+          <Button kind="primary" label="Empezar" onPress={next} />
+          <T v="caption" tone="faint" style={{ textAlign: 'center' }}>Toma unos 3 minutos. Todo se puede cambiar después.</T>
         </View>
       </View>
     </SafeAreaView>
@@ -55,8 +48,8 @@ export function Welcome({ next }: { next: () => void }) {
 
 const w = StyleSheet.create({
   page: { flex: 1, paddingHorizontal: space.xl, paddingTop: space.md, paddingBottom: space.md, gap: space.xl, justifyContent: 'space-between', width: '100%', maxWidth: 640, alignSelf: 'center' },
-  hero: { flex: 1, justifyContent: 'center', maxHeight: 560, borderRadius: radius.xl, borderCurve: 'continuous', padding: space.xxl, overflow: 'hidden', gap: space.md },
-  big: { fontFamily: font.semibold, fontSize: 76, lineHeight: 80, letterSpacing: -4 },
+  orb: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 200 },
+  big: { fontFamily: font.bold, fontSize: 64, lineHeight: 68, letterSpacing: -3 },
   points: { gap: space.sm, marginTop: space.md },
   point: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
 });
@@ -177,10 +170,10 @@ export function About({ nav, draft }: { nav: StepNav; draft: Draft }) {
             accessibilityRole="button"
             accessibilityLabel="Dictar"
             onPress={() => { tap('light'); setText(SAMPLE_ABOUT); setDictated(true); }}
-            style={({ pressed }) => [ab.mic, { backgroundColor: p.lime, opacity: pressed ? 0.85 : 1 }]}
+            style={({ pressed }) => [ab.mic, { backgroundColor: p.sol, opacity: pressed ? 0.85 : 1 }]}
           >
-            <Mic size={20} color={p.onLime} strokeWidth={2.4} />
-            <T v="calloutStrong" tone="onLime">Dictar</T>
+            <Mic size={20} color={p.onSol} strokeWidth={2.4} />
+            <T v="calloutStrong" tone="onSol">Dictar</T>
           </Pressable>
         </View>
       </View>

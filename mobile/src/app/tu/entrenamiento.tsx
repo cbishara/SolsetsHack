@@ -46,7 +46,7 @@ export default function Entrenamiento() {
 
       <Hero>
         <RowView gap="sm">
-          <ShieldCheck size={18} color={p.lime} />
+          <ShieldCheck size={18} color={p.sol} />
           <T v="eyebrow" tone="onHeroMuted">Modo prueba</T>
         </RowView>
         <T v="h2" tone="onHero">Noche {Math.min(pilot.nights, pilot.target)} de {pilot.target}</T>
@@ -55,7 +55,7 @@ export default function Entrenamiento() {
         </T>
         <View style={{ flexDirection: 'row', gap: 6 }} accessibilityLabel={`${pilot.nights} de ${pilot.target} noches completas`}>
           {Array.from({ length: pilot.target }, (_, i) => (
-            <View key={i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: i < pilot.nights ? p.lime : 'rgba(255,255,255,0.22)' }} />
+            <View key={i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: i < pilot.nights ? p.sol : 'rgba(255,255,255,0.22)' }} />
           ))}
         </View>
       </Hero>

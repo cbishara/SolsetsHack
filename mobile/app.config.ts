@@ -6,11 +6,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const team = process.env.SOL_APPLE_TEAM_ID;
   return {
     ...config,
-    name: "SOL",
+    name: "Soltra",
     slug: "sol-mobile-demo",
     scheme: "sol-demo",
     version: "0.1.0",
-    userInterfaceStyle: "automatic",
+    userInterfaceStyle: "dark",
+    backgroundColor: "#000000",
     ios: {
       ...config.ios,
       supportsTablet: false,
@@ -18,8 +19,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ...(team ? { appleTeamId: team } : {}),
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        // Lets Reanimated run at 120 fps on ProMotion iPhones.
+        CADisableMinimumFrameDurationOnPhone: true,
         NSLocalNetworkUsageDescription:
-          "Conectar con la demo de SOL en tu Mac durante el desarrollo.",
+          "Conectar con la demo de Soltra en tu Mac durante el desarrollo.",
       },
     },
     android: { ...config.android, package: bundleIdentifier },

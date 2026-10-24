@@ -1,6 +1,6 @@
 # La app usa el sistema visual "Mi espacio" de Amaru, con modo noche
 
-Estado: oficial
+Estado: reemplazada por `2026-10-24-soltra-negro-inspirado-en-opal.md`
 Fecha: 2026-10-23
 Decidió: Bishara (dueño de `mobile/` desde el trueque de carriles), siguiendo la dirección que eligió Amaru
 Carril: bishara
@@ -30,3 +30,5 @@ Había dos direcciones para la app:
 2. Hay que diseñar la versión nocturna de cada pantalla que se usa de noche: guardia, cierre, alerta y descarga.
 
 ## Cambios
+
+2026-10-24: reemplazada por `2026-10-24-soltra-negro-inspirado-en-opal.md` (negro siempre, inspirada en Opal, con Sol como avatar).

@@ -209,8 +209,8 @@ export function Pilot({ nav }: { nav: StepNav }) {
             </View>
           ))}
           <View style={{ alignItems: 'center', gap: space.xs, flex: 1 }}>
-            <View style={[pl.night, { backgroundColor: p.lime, borderColor: p.lime }]}>
-              <ShieldCheck size={18} color={p.onLime} />
+            <View style={[pl.night, { backgroundColor: p.sol, borderColor: p.sol }]}>
+              <ShieldCheck size={18} color={p.onSol} />
             </View>
             <T v="caption" tone="ink">Confías</T>
           </View>
@@ -257,7 +257,7 @@ export function Done({ nav, draft }: { nav: StepNav; draft: Draft }) {
     router.replace('/');
   };
   return (
-    <StepShell {...nav} title="Listo. Desde ahora yo me acuerdo." footer={<Button kind="lime" label="Ir a mi día" onPress={finish} />}>
+    <StepShell {...nav} title="Listo. Desde ahora yo me acuerdo." footer={<Button kind="primary" label="Ir a mi día" onPress={finish} />}>
       <Hero>
         <T v="eyebrow" tone="onHeroMuted">Esta noche empieza la prueba</T>
         <T v="h2" tone="onHero">

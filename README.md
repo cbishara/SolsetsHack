@@ -1,4 +1,6 @@
-# Solsets Sistem
+# Soltra
+
+La app se llama **Soltra**. **Sol** es el agente que vive dentro de ella y hace la guardia por ti. Los identificadores técnicos (`com.solsets.sol.demo`, el scheme `sol-demo`, las variables `SOL_*`) siguen igual a propósito: cambiarlos rompería builds y notificaciones.
 
 ## Tablero del equipo
 

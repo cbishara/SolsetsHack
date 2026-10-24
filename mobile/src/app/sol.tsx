@@ -1,9 +1,10 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowUp, CalendarClock, Mic, Square, Sun, Undo2, X } from 'lucide-react-native';
+import { ArrowUp, CalendarClock, Mic, Square, Undo2, X } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBackend } from '../api/backend';
+import { SolOrb } from '../components/sol-orb';
 import { Chip, IconButton, SourceTag, T, tap } from '../components/ui';
 import { dumpToTasks } from '../data/dump';
 import { useStore } from '../data/store';
@@ -101,7 +102,7 @@ export default function Sol() {
     <SafeAreaView style={{ flex: 1, backgroundColor: p.bg }} edges={['top', 'bottom']}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={[s.header, { borderBottomColor: p.line }]}>
-          <View style={[s.avatar, { backgroundColor: p.lime }]}><Sun size={20} color={p.onLime} strokeWidth={2.4} /></View>
+          <View style={[s.avatar, { backgroundColor: p.surface, borderColor: p.line }]}><SolOrb size={20} state="watching" /></View>
           <View style={{ flex: 1 }}>
             <T v="bodyStrong">Sol</T>
             <T v="caption" tone="muted">Atento a WhatsApp, correo y calendario</T>
@@ -164,8 +165,8 @@ export default function Sol() {
                 <ArrowUp size={20} color={p.onAccent} strokeWidth={2.6} />
               </Pressable>
             ) : (
-              <Pressable accessibilityRole="button" accessibilityLabel="Dictar" onPress={() => { tap('light'); setRecording(true); }} style={[s.send, { backgroundColor: p.lime }]}>
-                <Mic size={20} color={p.onLime} strokeWidth={2.4} />
+              <Pressable accessibilityRole="button" accessibilityLabel="Dictar" onPress={() => { tap('light'); setRecording(true); }} style={[s.send, { backgroundColor: p.sol }]}>
+                <Mic size={20} color={p.onSol} strokeWidth={2.4} />
               </Pressable>
             )}
           </View>
@@ -208,7 +209,7 @@ function TaskCards({ tasks, undone, onUndo }: { tasks: Task[]; undone?: boolean;
 
 const s = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md, paddingHorizontal: space.lg, paddingVertical: space.md, borderBottomWidth: StyleSheet.hairlineWidth },
-  avatar: { width: 40, height: 40, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
+  avatar: { width: 40, height: 40, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth },
   thread: { padding: space.lg, gap: space.md, flexGrow: 1 },
   bubble: { maxWidth: '84%', paddingHorizontal: space.lg, paddingVertical: space.md, borderRadius: radius.lg, gap: 4 },
   theirs: { alignSelf: 'flex-start', borderBottomLeftRadius: 6 },

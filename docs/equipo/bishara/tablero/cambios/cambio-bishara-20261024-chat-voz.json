@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-chat-voz",
+  "title": "Chat con Sol rediseñado y voz real: grabación, fin de turno automático y respuesta hablada",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "El chat se ve como un asistente profesional y la voz deja de ser una transcripción de ejemplo: graba de verdad, termina el turno sola con el silencio y Sol contesta en voz alta.",
+  "before": "El chat era una lista de burbujas con un botón 'Dictar' repetido junto al micrófono, y el dictado ponía siempre el mismo texto de ejemplo.",
+  "after": "Sin conversación, el chat muestra a Sol grande, un saludo y sugerencias según la hora. Tus mensajes van en ámbar y Sol responde con tarjetas de lo que hizo (eventos, tareas creadas con Deshacer). La barra de escritura es de vidrio con un solo micrófono. El modo voz es manos libres: el círculo reacciona al volumen, el turno termina tras 1,6 s de silencio, Sol responde en voz alta y vuelve a escuchar. Tocar el círculo interrumpe. Tiene los controles oficiales de Quito: Silenciar, Ver texto y Terminar. Sin el agente conectado, Sol responde desde los datos de la app: agenda de hoy, de mañana y de la semana, resumen del día, qué llegó de alguien, pendientes, activar o apagar los avisos de esta noche y anotar tareas con fecha. Si el agente responde, su respuesta reemplaza la local.",
+  "reason": "Bishara pidió un chat que se vea pro (con su referencia de gradientes y vidrio), sin el dictado repetido y con transcripción que funcione. Quito definió los controles de voz como oficiales.",
+  "checked": "TypeScript sin errores y 28 pruebas en verde, con tres nuevas del cerebro local. En web se probó el saludo, las sugerencias, una pregunta de agenda, anotar dos tareas con fecha y el modo voz con sus controles. Falta probar en un iPhone la grabación, el fin de turno por silencio y la voz. La transcripción del audio grabado necesita POST /api/transcribe en server/ (#60). Hoy funciona en web con el reconocimiento del navegador.",
+  "availability": "Rama bishara/chat-voz. Implementa oficiales/2026-10-24-controles-de-voz-forma-que-cambia.",
+  "featureIds": [],
+  "flowIds": []
+}

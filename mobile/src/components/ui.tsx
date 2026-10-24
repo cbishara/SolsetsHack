@@ -219,10 +219,12 @@ export function Glass({ children, style, strong, radius: r = radius.lg, intensit
 }) {
   const { p } = useTheme();
   return (
-    <View style={[{ borderRadius: r, borderCurve: 'continuous', overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: p.glassLine }, style]}>
-      <BlurView intensity={Platform.OS === 'android' ? 0 : intensity} tint="dark" style={StyleSheet.absoluteFill} />
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: strong ? p.glassStrong : p.glass }]} />
-      <View pointerEvents="none" style={[s.glassHi, { backgroundColor: p.glassHi }]} />
+    // zIndex keeps the blur and its tint behind every child, also on the web
+    // (where an absolute layer would otherwise paint over in-flow icons and inputs).
+    <View style={[{ borderRadius: r, borderCurve: 'continuous', overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: p.glassLine, zIndex: 0 }, style]}>
+      <BlurView intensity={Platform.OS === 'android' ? 0 : intensity} tint="dark" style={[StyleSheet.absoluteFill, { zIndex: -1 }]} />
+      <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: strong ? p.glassStrong : p.glass, zIndex: -1 }]} />
+      <View pointerEvents="none" style={[s.glassHi, { backgroundColor: p.glassHi, zIndex: -1 }]} />
       {children}
     </View>
   );
@@ -471,7 +473,7 @@ export function Sheet({ visible, onClose, title, children, action }: {
           </Animated.View>
           <Animated.View entering={SlideInDown.duration(280).easing(Easing.bezier(...motion.easeOut))} exiting={SlideOutDown.duration(200)}
             style={[s.sheet, { backgroundColor: p.glassStrong, borderColor: p.glassLine, paddingBottom: Math.max(insets.bottom, space.lg) + space.sm }]}>
-            <BlurView intensity={Platform.OS === 'android' ? 0 : 50} tint="dark" style={[StyleSheet.absoluteFill, { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl }]} />
+            <BlurView intensity={Platform.OS === 'android' ? 0 : 50} tint="dark" style={[StyleSheet.absoluteFill, { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, zIndex: -1 }]} />
             <View style={[s.grabber, { backgroundColor: p.faint }]} />
             {title || action ? (
               <View style={s.sheetHead}>
@@ -634,7 +636,7 @@ export const s = StyleSheet.create({
   source: { flexDirection: 'row', alignItems: 'center', gap: 4, flexShrink: 1 },
   catTag: { flexDirection: 'row', alignItems: 'center', gap: 5, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start', maxWidth: '100%' },
   badge: { alignSelf: 'flex-start', borderRadius: radius.pill, paddingHorizontal: space.sm + 2, paddingVertical: 3 },
-  sheet: { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, borderWidth: StyleSheet.hairlineWidth, borderBottomWidth: 0, overflow: 'hidden', gap: space.md },
+  sheet: { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, borderWidth: StyleSheet.hairlineWidth, borderBottomWidth: 0, overflow: 'hidden', gap: space.md, zIndex: 0 },
   grabber: { width: 38, height: 5, borderRadius: 3, alignSelf: 'center', marginTop: space.sm, opacity: 0.5 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.xl, gap: space.md, minHeight: 36 },
 });

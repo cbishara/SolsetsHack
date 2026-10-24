@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { BackHandler } from 'react-native';
 import { About, Goals, Welcome } from '../../features/onboarding/steps-intro';
-import { Questions, Rules } from '../../features/onboarding/steps-learning';
-import { Done, Night, Permissions, Pilot } from '../../features/onboarding/steps-night';
+import { Categories, Questions } from '../../features/onboarding/steps-categories';
+import { Done, Night, Permissions, Pilot, SolButton, Summaries } from '../../features/onboarding/steps-night';
 import { Chats, Connect, Reading } from '../../features/onboarding/steps-sources';
 import type { Draft, StepNav } from '../../features/onboarding/types';
 
 // Onboarding: get context, connect sources, let Sol learn from the history,
-// agree on rules and the night, then start the 5-night trial (shadow mode).
-// One idea per screen; the optional ones can be skipped.
-const STEPS = ['welcome', 'goals', 'about', 'connect', 'chats', 'reading', 'rules', 'questions', 'night', 'permissions', 'pilot', 'done'] as const;
+// agree on the categories and the night, learn the Sol button, then start the
+// trial (shadow mode). One idea per screen; the optional ones can be skipped.
+const STEPS = ['welcome', 'goals', 'about', 'connect', 'chats', 'reading', 'categories', 'questions', 'night', 'summaries', 'sol', 'permissions', 'pilot', 'done'] as const;
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -37,9 +37,11 @@ export default function Onboarding() {
     case 'connect': return <Connect nav={nav} />;
     case 'chats': return <Chats nav={nav} />;
     case 'reading': return <Reading nav={nav} />;
-    case 'rules': return <Rules nav={nav} />;
+    case 'categories': return <Categories nav={nav} />;
     case 'questions': return <Questions nav={nav} />;
     case 'night': return <Night nav={nav} draft={draft} />;
+    case 'summaries': return <Summaries nav={nav} />;
+    case 'sol': return <SolButton nav={nav} />;
     case 'permissions': return <Permissions nav={nav} draft={draft} setDraft={setDraft} />;
     case 'pilot': return <Pilot nav={nav} />;
     case 'done': return <Done nav={nav} draft={draft} />;

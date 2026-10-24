@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-onboarding",
+  "title": "Onboarding al día con la app nueva: categorías, avisos nocturnos, resúmenes, el botón de Sol y permisos reales",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "El onboarding enseña lo que la app hace hoy, en 14 pasos, con textos que sirven a cualquier persona.",
+  "before": "Bienvenida con 'Suelta.', objetivos con 'guardia', dictado de ejemplo, un mazo de reglas, permisos simulados y el botón de Sol sin explicar.",
+  "after": "Los pasos son: bienvenida ('Todo lo que te llega, ordenado'), objetivos universales, sobre ti, conectar fuentes, elegir chats, lectura del historial, categorías y preguntas. Los chats empiezan sin marcar y las sugerencias traen su motivo. En las categorías se elige qué hace Sol con un toque por categoría, con la luna para lo que puede despertar. Siguen noche y avisos (todas las noches, ciertos días o según una palabra del calendario), resúmenes de la mañana y de fin del día con o sin WhatsApp, una práctica del botón de Sol (tocar para escribir, mantener para hablar), permisos reales de notificaciones y micrófono, el modo prueba y un final con lo que quedó configurado.",
+  "reason": "Bishara pidió que la práctica de mantener el botón de Sol para dictar esté en el onboarding, y que el onboarding se arme cuando la app y sus flujos estén listos.",
+  "checked": "TypeScript sin errores y 28 pruebas en verde. Recorrido completo en web a 390 pt con una captura por paso.",
+  "availability": "Rama bishara/onboarding.",
+  "featureIds": [],
+  "flowIds": []
+}

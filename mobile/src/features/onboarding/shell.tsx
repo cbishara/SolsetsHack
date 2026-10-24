@@ -40,7 +40,7 @@ export function StepShell({ index, total, back, onBack = back, onSkip, skipLabel
           <ChevronLeft size={22} color={p.ink} strokeWidth={2.2} />
         </Pressable>
         <View style={{ flex: 1 }} accessibilityLabel={`Paso ${index} de ${total}`}>
-          <Progress value={index / total} height={6} />
+          <Progress value={index / total} height={5} tone="sol" />
         </View>
         <View style={s.skip}>{onSkip ? <LinkButton label={skipLabel} onPress={onSkip} /> : null}</View>
       </View>
@@ -48,7 +48,7 @@ export function StepShell({ index, total, back, onBack = back, onSkip, skipLabel
       <ScrollView contentContainerStyle={s.body} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: enter, transform: [{ translateY }], gap: space.xxl }}>
           <View style={{ gap: space.sm }}>
-            {eyebrow ? <T v="eyebrow" tone="accent">{eyebrow}</T> : null}
+            {eyebrow ? <T v="calloutStrong" tone="sol">{eyebrow}</T> : null}
             <T v="title" accessibilityRole="header">{title}</T>
             {lead ? <T tone="muted">{lead}</T> : null}
           </View>

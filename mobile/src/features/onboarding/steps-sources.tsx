@@ -2,21 +2,21 @@ import { Calendar, Check, Mail, MessageCircle, Users, User, type LucideIcon } fr
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Easing, Pressable, StyleSheet, Switch, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
-import { Badge, Button, Card, T, tap } from '../../components/ui';
+import { Badge, Button, Card, IconTile, T, tap } from '../../components/ui';
 import { useStore } from '../../data/store';
 import type { ConnectionId } from '../../data/types';
 import { useTheme } from '../../theme/theme';
-import { radius, space } from '../../theme/tokens';
+import { categoryColors, radius, space } from '../../theme/tokens';
 import { useReduceMotion } from './motion';
 import { StepShell } from './shell';
 import type { StepNav } from './types';
 
 // 4. Connect sources -------------------------------------------------------
 
-const SOURCES: { id: ConnectionId; name: string; icon: LucideIcon; how: string; promise: string }[] = [
-  { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, how: 'Escaneas un código, como en WhatsApp Web', promise: 'Leo los chats que elijas. No respondo por ti.' },
-  { id: 'gmail', name: 'Correo', icon: Mail, how: 'Inicias sesión con tu cuenta', promise: 'Leo tus correos. Nunca envío nada.' },
-  { id: 'calendar', name: 'Calendario', icon: Calendar, how: 'Inicias sesión con tu cuenta', promise: 'Veo tus turnos y eventos para saber cuándo cuidarte.' },
+const SOURCES: { id: ConnectionId; name: string; icon: LucideIcon; color: string; how: string; promise: string }[] = [
+  { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, color: '#25D366', how: 'Escaneas un código, como en WhatsApp Web', promise: 'Leo los chats que elijas. No respondo por ti.' },
+  { id: 'gmail', name: 'Correo', icon: Mail, color: categoryColors.red, how: 'Inicias sesión con Google o Microsoft', promise: 'Leo tus correos para sacar tareas y plazos. Nunca envío nada.' },
+  { id: 'calendar', name: 'Calendario', icon: Calendar, color: categoryColors.blue, how: 'Inicias sesión con Google o Microsoft', promise: 'Veo tus eventos para ordenar tu día y saber qué noches cuidarte.' },
 ];
 
 type Phase = 'off' | 'qr' | 'connecting' | 'on';
@@ -48,7 +48,6 @@ export function Connect({ nav }: { nav: StepNav }) {
   return (
     <StepShell
       {...nav}
-      eyebrow="Tus fuentes"
       title="Conecta lo que te llega"
       lead="Sol trabaja con lo que ya usas. Mientras más conectes, mejor te cuida."
       footer={
@@ -72,13 +71,13 @@ export function Connect({ nav }: { nav: StepNav }) {
   );
 }
 
-function SourceCard({ name, icon: Icon, how, promise, phase, onPress }: { name: string; icon: LucideIcon; how: string; promise: string; phase: Phase; onPress: () => void }) {
+function SourceCard({ name, icon: Icon, color, how, promise, phase, onPress }: { name: string; icon: LucideIcon; color: string; how: string; promise: string; phase: Phase; onPress: () => void }) {
   const { p } = useTheme();
   const on = phase === 'on';
   return (
     <Card tone={on ? 'calmSoft' : 'card'} style={{ gap: space.md }}>
       <View style={cs.head}>
-        <View style={[cs.icon, { backgroundColor: on ? p.card : p.accentSoft }]}><Icon size={20} color={on ? p.calm : p.accent} strokeWidth={2.2} /></View>
+        <IconTile icon={Icon} color={color} size={40} />
         <View style={{ flex: 1, gap: 2 }}>
           <T v="bodyStrong">{name}</T>
           <T v="callout" tone="muted">{promise}</T>
@@ -95,7 +94,7 @@ function SourceCard({ name, icon: Icon, how, promise, phase, onPress }: { name: 
       ) : null}
       {phase === 'connecting' ? (
         <View style={cs.connecting} accessibilityLiveRegion="polite">
-          <ActivityIndicator color={p.accent} />
+          <ActivityIndicator color={p.sol} />
           <T v="callout" tone="muted">Conectando…</T>
         </View>
       ) : null}
@@ -151,40 +150,47 @@ const cs = StyleSheet.create({
 export function Chats({ nav }: { nav: StepNav }) {
   const { p } = useTheme();
   const { state, dispatch } = useStore();
+  // Everything starts unselected: Sol suggests, the person chooses.
+  useEffect(() => {
+    dispatch({ type: 'setChats', chats: state.chats.map((c) => ({ ...c, on: false })) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
   const watched = state.chats.filter((c) => c.on).length;
+  const ordered = [...state.chats].sort((a, b) => Number(!!b.suggested) - Number(!!a.suggested));
+  const pending = state.chats.filter((c) => c.suggested && !c.on);
   return (
     <StepShell
       {...nav}
-      eyebrow="WhatsApp"
-      title="¿Qué chats vigilo?"
-      lead="Solo leo los que marques. Lo personal puede quedar fuera."
-      footer={<Button label={`Vigilar ${watched} ${watched === 1 ? 'chat' : 'chats'}`} disabled={!watched} onPress={nav.next} />}
+      title="¿Qué chats lee Sol?"
+      lead="Solo leo los que marques. Te sugiero algunos por sus nombres, sin abrir ninguno."
+      footer={<Button label={watched ? `Leer ${watched} ${watched === 1 ? 'chat' : 'chats'}` : 'Elige al menos uno'} disabled={!watched} onPress={nav.next} />}
     >
+      {pending.length ? <Button kind="secondary" small label={`Marcar los ${pending.length} sugeridos`} onPress={() => { tap('success'); pending.forEach((c) => dispatch({ type: 'toggleChat', id: c.id })); }} style={{ alignSelf: 'flex-start' }} /> : null}
       <View style={[ch.list, { backgroundColor: p.card, borderColor: p.line }]}>
-        {state.chats.map((c, i) => (
+        {ordered.map((c, i) => (
           <Pressable
             key={c.id}
             accessibilityRole="switch"
             accessibilityState={{ checked: c.on }}
-            accessibilityLabel={`${c.name}, ${c.kind}`}
+            accessibilityLabel={`${c.name}, ${c.kind}${c.reason ? `. ${c.reason}` : ''}`}
             onPress={() => { tap(); dispatch({ type: 'toggleChat', id: c.id }); }}
-            style={[ch.row, i < state.chats.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.line }]}
+            style={[ch.row, i < ordered.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.line }]}
           >
-            <View style={[ch.avatar, { backgroundColor: p.accentSoft }]}>
-              {c.kind === 'grupo' ? <Users size={18} color={p.accent} /> : <User size={18} color={p.accent} />}
+            <View style={[ch.avatar, { backgroundColor: c.kind === 'grupo' ? '#25D36622' : p.surface }]}>
+              {c.kind === 'grupo' ? <Users size={18} color="#25D366" /> : <User size={18} color={p.muted} />}
             </View>
             <View style={{ flex: 1, gap: 2 }}>
               <T v="body">{c.name}</T>
-              <T v="caption" tone="muted">{c.kind === 'grupo' ? 'Grupo' : 'Persona'}{c.on ? ' · Lo vigilo' : ' · No lo leo'}</T>
+              <T v="caption" tone={c.reason ? 'sol' : 'muted'}>{c.reason ?? (c.kind === 'grupo' ? `Grupo${c.members ? ` · ${c.members} personas` : ''}` : 'Chat personal')}</T>
             </View>
             {/* The whole row toggles; the switch only shows the state. */}
             <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              <Switch value={c.on} trackColor={{ true: p.accent, false: p.line }} thumbColor="#FFFFFF" />
+              <Switch value={c.on} trackColor={{ true: p.calm, false: p.surface }} ios_backgroundColor={p.surface} />
             </View>
           </Pressable>
         ))}
       </View>
-      <T v="callout" tone="muted">Puedes cambiar esto cuando quieras desde Tú, Sol en WhatsApp.</T>
+      <T v="callout" tone="muted">Puedes cambiarlo cuando quieras en Perfil, WhatsApp.</T>
     </StepShell>
   );
 }
@@ -238,25 +244,24 @@ export function Reading({ nav }: { nav: StepNav }) {
   return (
     <StepShell
       {...nav}
-      eyebrow="Aprendiendo de ti"
       title={done ? 'Ya entendí lo que te llega' : 'Estoy leyendo tu historial'}
       lead={`Los últimos ${training.read.months} meses de tus chats y tu correo. Así aprendo qué te importa y qué no, sin preguntarte todo.`}
-      footer={<Button label={done ? 'Ver lo que te propongo' : 'Leyendo…'} disabled={!done} onPress={nav.next} />}
+      footer={<Button label={done ? 'Ver las categorías que te propongo' : 'Leyendo…'} disabled={!done} onPress={nav.next} />}
     >
-      <Card tone="accentSoft" style={{ gap: space.md }}>
+      <Card style={{ gap: space.md }}>
         <View accessibilityLiveRegion="polite" accessibilityLabel={`Leí ${fmt(count)} de ${fmt(total)} mensajes y correos`}>
-          <T v="numeral" tone="accent">{fmt(count)}</T>
+          <T v="numeral">{fmt(count)}</T>
           <T v="callout" tone="muted">
             mensajes y correos leídos · {fmt(training.read.messages)} de WhatsApp y {fmt(training.read.emails)} correos
           </T>
         </View>
         <View style={[rd.track, { backgroundColor: p.card }]}>
-          <Animated.View style={[rd.fill, { width, backgroundColor: p.accent }]} />
+          <Animated.View style={[rd.fill, { width, backgroundColor: p.sol }]} />
         </View>
       </Card>
 
       <View style={{ gap: space.sm }}>
-        <T v="eyebrow" tone="muted">Lo que encontré</T>
+        <T v="h3">Lo que encontré</T>
         {training.categories.map((c, i) => (
           <Animated.View
             key={c.id}
@@ -272,7 +277,7 @@ export function Reading({ nav }: { nav: StepNav }) {
           </Animated.View>
         ))}
       </View>
-      {done ? <T v="callout" tone="calm">Todo quedó mapeado. Ahora te propongo reglas a partir de esto.</T> : null}
+      {done ? <T v="callout" tone="calm">Todo quedó mapeado. Con esto te propongo tus categorías.</T> : null}
     </StepShell>
   );
 }

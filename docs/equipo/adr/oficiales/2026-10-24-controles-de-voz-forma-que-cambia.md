@@ -33,3 +33,5 @@ Quito eligió la 05 entre las diez («me gusta el forma que cambia, alinéalo a 
 5. El resto de la pantalla de voz de la maqueta (cielo azul, círculo azul, modo día blanco) es anterior a Soltra y choca con su regla de negro siempre y color solo para Sol. Su adaptación está en la [pregunta abierta del personaje y el cielo](../por-confirmar/2026-10-24-personaje-de-lineas-y-cielo-animado.md).
 
 ## Cambios
+
+2026-10-24: Bishara los construyó en `mobile/src/features/sol/voice-controls.tsx` (`ShapeButton`, PR #64, ajustado en #66) con Reanimated y los tokens de Soltra.

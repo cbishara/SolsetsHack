@@ -1,0 +1,19 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261024-voz-soltra",
+  "title": "Acoplar la maqueta de voz a Soltra",
+  "owner": "Quito",
+  "updatedAt": "2026-10-24",
+  "summary": "Bishara cambió la app a Soltra (negro, color solo para Sol) y construyó la pantalla de voz con los controles 05. Quito pidió acoplar la maqueta a esa app y sacar los puntitos que suben.",
+  "before": "La maqueta de la revisión 03 tenía fondo azul con aurora, luna, colinas y luciérnagas que suben, círculo fluido azul con encabezado SOL ↗ e iconos de línea fina.",
+  "after": "La pantalla de voz copia la de mobile/src/app/sol.tsx: fondo negro con el brillo cálido solStrong, píldora de vidrio Cerrar, Sol como la luz naranja de sol-orb.tsx que respira y crece con la voz, estado en gris y texto en vivo grande. Encima quedan los ojos de línea en onSol y la antena fina; la textura fluida queda como un velo que solo aparece con la voz. En vez de estrellas, partículas suaves con degradé en los tonos de Sol giran alrededor del círculo y se aceleran con la voz, con poco contraste; la luz cálida de arriba se mueve lento y Sol tiene un borde fino de luz. Se sacaron aurora, luna, colinas y luciérnagas. Iconos Phosphor Regular y teléfono tachado para Terminar. El chat de entrada también pasa a Soltra.",
+  "reason": "Quito: «ok acóplalo a ellos» y «esos puntitos de animación que salen de abajo hacia arriba están más o menos». La app ya es la referencia construida; la maqueta sirve para evaluar lo que se le suma (ojos, estrellas) sobre la pantalla real. Después pidió partículas más dinámicas, con más degradé y menos contraste, y más contorno en la figura.",
+  "checked": "34 comprobaciones en Chrome aprobadas sobre la copia local, incluida una nueva que confirma fondo negro, luz de Sol con los colores solHi y sol de los tokens, brillo radial, píldora Cerrar, icono de colgar y que el cielo ya no tiene luciérnagas; el cielo cambia entre fotogramas. Sin errores JavaScript ni peticiones externas. No es una prueba en Expo ni en un teléfono.",
+  "availability": "Fuente en docs/equipo/quito/diseno/voz-sol/. Copia compilada, capturas y GIF en .context/voz-sol/ y .context/voz-sol/revision-03/, solo en este Mac. No se modificaron mobile/ ni server/. Los ojos de línea y las estrellas no están en la app: siguen por confirmar y, si se aprueban, los construye Bishara sobre sol-orb.tsx.",
+  "featureIds": [
+    "feat-quito-descarga"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes"
+  ]
+}

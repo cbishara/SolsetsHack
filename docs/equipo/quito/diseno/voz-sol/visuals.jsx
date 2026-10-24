@@ -16,7 +16,7 @@ function installIcons() {
     symbol.setAttribute("stroke", "none")
     symbol.innerHTML = markup
   }
-  document.documentElement.dataset.icons = "phosphor-light"
+  document.documentElement.dataset.icons = "phosphor-regular"
 }
 
 class OrbBridge {
@@ -55,11 +55,12 @@ class OrbBridge {
     const paused = muted || owner.closed || document.hidden || media.matches
     const key = [state, dark, paused, capture].join("/")
     document.documentElement.classList.toggle("dark", dark)
+    // Soltra: Sol's warm light (solDeep → solHi), night dimmer than day.
     this.colors.current = muted
-      ? ["#263c65", "#839bc6"]
+      ? ["#2a1f17", "#6b5a4a"]
       : dark
-        ? ["#3d68e4", "#b5d8ff"]
-        : ["#2e59e5", "#9cc9ff"]
+        ? ["#B04419", "#EDBF8E"]
+        : ["#D9531C", "#FFD3A1"]
     if (key === this.key && !force) return
     this.key = key
     this.host.dataset.renderer = "elevenlabs-orb"

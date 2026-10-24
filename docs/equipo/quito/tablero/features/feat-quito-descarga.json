@@ -12,7 +12,7 @@
   "buildStatus": "en-curso",
   "availability": "main",
   "updatedAt": "2026-10-23",
-  "summary": "El chat de prueba guarda el pendiente actual, propone un primer paso y recuerda preferencias; el parte de la mañana sigue pendiente.",
+  "summary": "El chat conserva un pendiente y memoria; el agente también prepara varias tareas con fechas para revisión. Guardarlas desde la app y llevarlas al parte requiere conectar server/.",
   "need": "Poder dejar de repasar mentalmente un pendiente por miedo a olvidarlo.",
   "userActions": [
     "Anota en el chat, en una descarga breve de menos de un minuto antes de acostarse, lo que le preocupa.",
@@ -22,7 +22,9 @@
     "Conserva la conversación, el pendiente actual y un primer paso en el agente local.",
     "Recuerda preferencias expresadas por el usuario con una cita literal, y permite corregirlas o borrar lo aprendido en el chat.",
     "Muestra un fallo visible si Codex no responde y permite reintentar el mismo mensaje sin duplicarlo.",
-    "En la web local del agente, conversa directamente y consulta el pendiente y la memoria desde «Lo que dejamos listo»; las herramientas técnicas quedan en una vista secundaria."
+    "En la web local del agente, conversa directamente y consulta el pendiente y la memoria desde «Lo que dejamos listo»; las herramientas técnicas quedan en una vista secundaria.",
+    "Extrae de texto o transcripción varias tareas con fechas calculadas en la zona del usuario; pregunta por expresiones de fecha que no puede resolver.",
+    "Propone reglas basadas en feedback y preguntas con opciones, sin confirmarlas ni escribir memoria por cuenta propia."
   ],
   "example": "Ejemplo ficticio probado: «Mañana revisar la impresora del segundo piso. Prefiero empezar con un paso de dos minutos». Codex respondió desde la interfaz móvil de Amaru, preparó un paso de dos minutos y la preferencia apareció en Memoria. Tras reiniciar el agente y reconectar la web, seguía disponible.",
   "rules": [
@@ -37,7 +39,9 @@
     "No convertir una preocupación escrita en una orden de compra, envío o cambio de horario sin un flujo específico.",
     "Hay un pendiente actual; todavía no se integra automáticamente con el parte de la mañana.",
     "El puente con el backend compartido de Railway se probó con escenarios sintéticos; faltan Expo, iPhone físico y WhatsApp reales.",
-    "Al recargar la vista web hay que reconectar al piloto desde Ajustes; sus datos permanecen en el agente."
+    "Al recargar la vista web hay que reconectar al piloto desde Ajustes; sus datos permanecen en el agente.",
+    "Las capacidades de #41 están implementadas para pruebas sintéticas en agent/; sus rutas internas no conectan por sí solas /api/dump ni el entrenamiento de la app.",
+    "voice recibe texto ya transcrito; no implementa captura ni transcripción de audio. Los resultados requieren persistencia e idempotencia de operaciones en server/."
   ],
   "acceptance": [
     "Un pendiente ficticio escrito por la noche se puede identificar en el parte.",
@@ -47,7 +51,8 @@
     "¿Qué horario y zona horaria definen el parte de la mañana?",
     "Integrar en Expo la identidad y el almacenamiento por usuario del backend compartido.",
     "El puente sintético servidor–Codex pasó la prueba de #24; faltan recuperación desde Expo, dispositivo físico y contrato v1 de #30.",
-    "Acoplar el contrato y trabajador v1 publicados con el extremo de Amaru en #30; faltan prueba compartida de dos usuarios y cliente móvil."
+    "Acoplar el contrato y trabajador v1 publicados con el extremo de Amaru en #30; faltan prueba compartida de dos usuarios y cliente móvil.",
+    "Amaru debe acoplar las capacidades de #41, persistir tareas/propuestas y acordar cualquier ampliación de cola; Bishara debe verificar después el recorrido Expo (#40)."
   ],
   "flowIds": [
     "flujo-quito-recuperar-pendientes"
@@ -113,6 +118,12 @@
       "environment": "Cierre de sesión, origin/main y piloto local del Mac en localhost:4181",
       "result": "Se confirmó la integración del chat web y Luna en #42 (717148e). Los registros conservan por separado las 66 pruebas de la entrega sobre main, las 49 de la copia local y las diez comprobaciones previas en Chrome/Codex. En la revisión de las 21:08 Santiago, el piloto estaba detenido: se arrancó la misma copia aprobada y health respondió correctamente; el hash del archivo de estado permaneció idéntico. No se repitió la evaluación del modelo ni se acredita el recorrido móvil/servidor/WhatsApp. Las entregas posteriores #44 y #45 y la tarea de Bishara #41 se distinguen de este piloto.",
       "evidence": "agent/README.md; docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json; PR #42, merge 717148e"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Node 24, HTTP loopback y Codex real; casos ficticios de #41",
+      "result": "Capacidades de agent/ para descarga en varias tareas, reglas pendientes y preguntas, y clasificación que conserva la clave de un incidente reformulado. Aceptación real: ocho casos con ocho inferencias; pruebas unitarias/HTTP verifican fechas, feedback, usuarios y salidas inválidas. El servidor y Expo siguen pendientes de acoplamiento; no acredita Railway ni teléfono físico.",
+      "evidence": "agent/APP-INTEGRATION.md; agent/scripts/verify-app.ts; agent/src/app-capabilities.test.ts"
     }
   ],
   "evidence": [
@@ -159,6 +170,10 @@
     {
       "label": "Cierre del chat web, merge y estado del piloto",
       "path": "docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json"
+    },
+    {
+      "label": "Capacidades para la app pedidas por Bishara y guía de prueba",
+      "path": "agent/APP-INTEGRATION.md"
     }
   ]
 }

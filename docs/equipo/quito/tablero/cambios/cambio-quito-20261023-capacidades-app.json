@@ -1,0 +1,23 @@
+{
+  "type": "change",
+  "id": "cambio-quito-20261023-capacidades-app",
+  "title": "Completar la inteligencia que Bishara pidió para testear la app",
+  "owner": "Quito",
+  "updatedAt": "2026-10-23",
+  "summary": "Agente preparado para varias tareas con fechas, reglas pendientes/preguntas y agrupación de avisos reformulados del mismo incidente.",
+  "before": "El chat tenía un pendiente actual; no había extracción remota de listas de tareas ni propuestas de entrenamiento. Sin una clave del servidor, la deduplicación solo reconocía el mismo texto.",
+  "after": "Funciones sin efectos y rutas internas candidatas en agent/ preparan tareas con la forma de la app y proponen reglas con confirmed:false. Una clasificación puede reutilizar una clave reciente validada y la política vigente evita el segundo despertar. La conexión pública y persistencia de server/ siguen pendientes.",
+  "reason": "Pedido de Bishara #41, ejemplo de descarga y formas Task/Rule/AgentQuestion de mobile/. La entrega se limita al carril de Quito, como confirmó Quito.",
+  "checked": "Pruebas del agente y aceptación HTTP/Codex real con datos ficticios. Ocho casos: caída, duplicado reformulado, sucursal distinta, tres tareas, acciones negadas/terminadas, regla/pregunta, inyección sin feedback y chat con memoria. No acredita app, Railway ni teléfono.",
+  "availability": "Rama Quitogonzalez/bishara-main-test; se integra mediante PR a main.",
+  "featureIds": [
+    "feat-quito-descarga",
+    "feat-amaru-confianza",
+    "feat-bishara-alerta-respaldo"
+  ],
+  "flowIds": [
+    "flujo-quito-recuperar-pendientes",
+    "flujo-quito-revisar-confianza",
+    "flujo-quito-atender-alerta"
+  ]
+}

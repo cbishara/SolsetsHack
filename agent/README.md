@@ -1,5 +1,7 @@
 # Agente de SOL
 
+**Pedido de Bishara #41:** [capacidades para la app y cómo probarlas](./APP-INTEGRATION.md). Incluye descarga a varias tareas, propuestas de reglas/preguntas y agrupación de incidentes para la aceptación sintética. El acoplamiento de estas funciones con las rutas de `server/` sigue a cargo de Amaru.
+
 Clasificación de guardia y chat con memoria por usuario. Usa Codex CLI con la sesión del operador y guarda el estado del piloto en un JSON local. Solo datos sintéticos. Esta entrega publica el módulo probado; la conexión con el servidor compartido sigue pendiente de contrato y adaptación.
 
 ## Arrancar

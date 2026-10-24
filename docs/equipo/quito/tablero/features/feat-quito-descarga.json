@@ -46,7 +46,8 @@
   "questions": [
     "¿Qué horario y zona horaria definen el parte de la mañana?",
     "Integrar en Expo la identidad y el almacenamiento por usuario del backend compartido.",
-    "El puente sintético servidor–Codex pasó la prueba de #24; faltan recuperación desde Expo, dispositivo físico y contrato v1 de #30."
+    "El puente sintético servidor–Codex pasó la prueba de #24; faltan recuperación desde Expo, dispositivo físico y contrato v1 de #30.",
+    "Acoplar el contrato y trabajador v1 publicados con el extremo de Amaru en #30; faltan prueba compartida de dos usuarios y cliente móvil."
   ],
   "flowIds": [
     "flujo-quito-recuperar-pendientes"
@@ -100,6 +101,18 @@
       "environment": "Entrega aislada preparada sobre origin/main, Node 24",
       "result": "El chat web y la configuración independiente de Luna/Fast se prepararon sin los cambios en curso de integración o voz. TypeScript, 66 pruebas del agente, evaluación de reglas y tablero build/check aprobados. La versión del piloto ya activa se verificó por separado con Chrome y Codex real. La evaluación sintética de reglas conserva 2/2 casos confirmados y 22/39 propuestos; no mide precisión general del modelo.",
       "evidence": "agent/README.md; agent/src/engines/codex.test.ts; agent/src/server.test.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Candidato v1 del agente, Node 24, HTTP local y cuenta Codex del Mac; fixtures ficticios",
+      "result": "19 pruebas nuevas; cierre sobre main con PR #44: 85 pruebas del agente y TypeScript aprobados. Sugerencias solo por nombres/tipos y chat con evidencia elegida construidos en agent/. Pruebas verifican identidad, versiones, permisos, separación de memoria, aislamiento A/B, modo real explícito y reentrega tras reinicio. Cinco casos de comportamiento pasaron con siete inferencias reales de Codex y datos sintéticos: relevancia, ambigüedad, inyección por nombre, evidencia sin cambiar preferencias y corrección del dueño. Falta publicar/acoplar v1 con Amaru; no acredita móvil ni WhatsApp real.",
+      "evidence": "agent/INTEGRATION-V1.md; agent/src/integration/processor-v1.test.ts; agent/src/integration/worker-v1.test.ts; agent/scripts/verify-v1.ts"
+    },
+    {
+      "date": "2026-10-23",
+      "environment": "Cierre de sesión, origin/main y piloto local del Mac en localhost:4181",
+      "result": "Se confirmó la integración del chat web y Luna en #42 (717148e). Los registros conservan por separado las 66 pruebas de la entrega sobre main, las 49 de la copia local y las diez comprobaciones previas en Chrome/Codex. En la revisión de las 21:08 Santiago, el piloto estaba detenido: se arrancó la misma copia aprobada y health respondió correctamente; el hash del archivo de estado permaneció idéntico. No se repitió la evaluación del modelo ni se acredita el recorrido móvil/servidor/WhatsApp. Las entregas posteriores #44 y #45 y la tarea de Bishara #41 se distinguen de este piloto.",
+      "evidence": "agent/README.md; docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json; PR #42, merge 717148e"
     }
   ],
   "evidence": [
@@ -134,6 +147,18 @@
     {
       "label": "Activación local de Luna max y Fast solicitado",
       "path": "docs/equipo/quito/tablero/cambios/cambio-quito-20261023-desplegar-luna.json"
+    },
+    {
+      "label": "Sugerencias de chats y contexto elegido con memoria personal separada",
+      "path": "agent/INTEGRATION-V1.md"
+    },
+    {
+      "label": "Autorización oficial de contexto real con selección explícita",
+      "path": "docs/equipo/adr/oficiales/2026-10-23-contexto-whatsapp-autorizado.md"
+    },
+    {
+      "label": "Cierre del chat web, merge y estado del piloto",
+      "path": "docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json"
     }
   ]
 }

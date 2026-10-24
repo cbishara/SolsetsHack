@@ -2,16 +2,18 @@ import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { IntegrationError, parseJob, record, string } from './contract.ts';
 import type { AgentJob, JobResult } from './contract.ts';
-import type { Journal } from './journal.ts';
+import type { Journal, WorkState } from './journal.ts';
 
 export class WorkerTransportError extends Error {
   readonly code: string;
   readonly fatal: boolean;
   constructor(code: string, fatal: boolean) { super(code); this.code = code; this.fatal = fatal; }
 }
-export interface WorkerOptions {
-  url: string; token: string; workerId: string; journal: Journal;
-  process: (job: AgentJob) => Promise<JobResult>;
+type LeaseJob = Pick<AgentJob, 'id' | 'leaseId' | 'leaseExpiresAt' | 'deadlineAt'>;
+export interface WorkerOptions<J extends LeaseJob = AgentJob, R = JobResult> {
+  url: string; token: string; workerId: string; journal: Journal<J, R>;
+  process: (job: J) => Promise<R>;
+  protocol?: { version: 'v0' | 'v1'; parseJob: (input: unknown) => J };
   fetcher?: typeof fetch; now?: () => number; requestTimeoutMs?: number;
 }
 export function workerOrigin(value: string): string {
@@ -21,9 +23,11 @@ export function workerOrigin(value: string): string {
   return url.origin;
 }
 
-export function createWorker(options: WorkerOptions) {
+export function createWorker<J extends LeaseJob = AgentJob, R = JobResult>(options: WorkerOptions<J, R>) {
   const { token, workerId, journal, process: processJob, fetcher = fetch, now = Date.now, requestTimeoutMs = 10_000 } = options;
   const origin = workerOrigin(options.url);
+  const protocol = options.protocol ?? { version: 'v0', parseJob: parseJob as unknown as (input: unknown) => J };
+  const prefix = `/internal/agent/${protocol.version}`;
   if (!token || token.length < 24 || /\s/.test(token)) throw new Error('Falta un token exclusivo del trabajador de al menos 24 caracteres.');
   string(workerId, 100);
   let active = false;
@@ -52,15 +56,19 @@ export function createWorker(options: WorkerOptions) {
     if (active) throw new Error('Solo un paso del trabajador puede ejecutarse a la vez.');
     active = true;
     try {
-      let state = journal.read();
+      let state: WorkState<J, R> | null = journal.read();
       if (!state) { state = { phase: 'claim', requestId: randomUUID() }; journal.write(state); }
       if (state.phase === 'claim') {
-        const response = await post('/internal/agent/v0/claim', { workerId, requestId: state.requestId });
+        const response = await post(`${prefix}/claim`, { workerId, requestId: state.requestId });
         if (response === null) { journal.write(null); return 'idle'; }
         let job;
-        try { job = parseJob(response.job); }
+        try { job = protocol.parseJob(response.job); }
         catch (e) { throw new WorkerTransportError(e instanceof IntegrationError ? e.code : 'invalid_job', true); }
         state = { phase: 'claimed', job }; journal.write(state);
+      }
+      if ('job' in state) {
+        try { protocol.parseJob(state.job); }
+        catch { throw new WorkerTransportError('journal_protocol_mismatch', true); }
       }
       // A previous process might have called the model already. Do not repeat an uncertain inference.
       if (state.phase === 'running') {
@@ -90,7 +98,7 @@ export function createWorker(options: WorkerOptions) {
       if (state.phase !== 'result' && state.phase !== 'failure') throw new Error('Estado del trabajador inválido.');
       const tail = state.phase === 'result' ? 'result' : 'failure';
       const body = state.phase === 'result' ? { leaseId: state.job.leaseId, result: state.result } : { leaseId: state.job.leaseId, code: state.code };
-      const response = await post(`/internal/agent/v0/jobs/${encodeURIComponent(state.job.id)}/${tail}`, body, true);
+      const response = await post(`${prefix}/jobs/${encodeURIComponent(state.job.id)}/${tail}`, body, true);
       if (!response || (!response.conflict && response.status !== (tail === 'result' ? 'accepted' : 'failed'))) throw new WorkerTransportError('invalid_acknowledgement', true);
       journal.write(null);
       return response.conflict ? 'discarded' : 'delivered';
@@ -100,7 +108,7 @@ export function createWorker(options: WorkerOptions) {
 }
 
 /** Bounded polling; logs only status codes and never a prompt, token or job payload. */
-export async function runWorker(worker: ReturnType<typeof createWorker>, signal: AbortSignal, log: (status: string) => void, pollMs = 1000) {
+export async function runWorker(worker: { step(): Promise<'idle' | 'delivered' | 'discarded'> }, signal: AbortSignal, log: (status: string) => void, pollMs = 1000) {
   let backoff = pollMs;
   while (!signal.aborted) {
     try { const status = await worker.step(); if (status !== 'idle') log(status); backoff = pollMs; }

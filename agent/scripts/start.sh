@@ -26,7 +26,9 @@ fi
 # so server/ jobs reach this Codex session instead of a laptop. It stops on purpose on
 # bad config or auth, so wait before trying again instead of hammering the server.
 if [ -n "${AGENT_WORKER_URL:-}" ]; then
-  export AGENT_WORKER_STATE="${AGENT_WORKER_STATE:-$(dirname "$AGENT_DATA_FILE")/worker.json}"
+  # Each protocol version keeps its own outbox, as scripts/worker.ts does locally.
+  case "${AGENT_WORKER_VERSION:-v0}" in v1) outbox=worker-v1.json ;; *) outbox=worker.json ;; esac
+  export AGENT_WORKER_STATE="${AGENT_WORKER_STATE:-$(dirname "$AGENT_DATA_FILE")/$outbox}"
   (
     while true; do
       node scripts/worker.ts || true

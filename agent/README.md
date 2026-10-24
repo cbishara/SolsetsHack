@@ -32,6 +32,16 @@ El borrador y el identificador de un envío pendiente se conservan al recargar e
 
 Las herramientas de clasificación, feedback y semana simulada se conservan en **http://localhost:4181/tools**. Ambas páginas están disponibles solo en modo de desarrollo. La web utiliza las mismas rutas `/api/disconnect` del chat y la misma conversación local; no reemplaza ni modifica `mobile/`.
 
+### Cierre del chat web · 23 de octubre
+
+El chat web y la configuración independiente de Luna/Fast están integrados en `main` mediante el [PR #42](https://github.com/cbishara/SolsetsHack/pull/42), merge `717148e`. La entrega preparada sobre main aprobó TypeScript y 66 pruebas; la copia local de ejecución aprobó 49 pruebas. Son versiones distintas: esos números no representan una evaluación nueva de los cambios que llegaron después. El tablero pasó build/check y el recorrido en Chrome con Codex real y datos sintéticos pasó diez comprobaciones de memoria, corrección, recarga, cambio de pendiente y borrado. La conversación y su archivo se conservaron al activar Luna.
+
+El piloto de este Mac está disponible en **http://localhost:4181** con `CHAT_MODEL=gpt-6-luna`, `CHAT_REASONING_EFFORT=max` y `CHAT_FAST=true`. Al revisar el cierre a las 21:08 del 23 de octubre (Santiago), el proceso no respondía; se arrancó de nuevo la misma copia aprobada y `/health` volvió a responder, sin cambios en el archivo de estado. Es una ejecución local que depende del proceso y del Mac. El código en main permite esta configuración; arrancar sin esas variables mantiene los valores predeterminados del módulo.
+
+La copia activa parte de `f659ca0` con los archivos del chat web y la configuración de Luna publicados en #42; no se actualiza automáticamente con cada merge. Los trabajos posteriores de contrato y agente multiusuario tienen sus propias entregas (#44 y #45). Este cierre no verifica su recorrido completo con app, servidor y WhatsApp. Queda pendiente esa comprobación compartida y revisar con Bishara lo que espera la app en [#41](https://github.com/cbishara/SolsetsHack/issues/41).
+
+Detalle humano, evidencia y límites en el [registro de cierre](../docs/equipo/quito/tablero/cambios/cambio-quito-20261023-cierre-chat-web.json), la [funcionalidad](../docs/equipo/quito/tablero/features/feat-quito-descarga.json) y el [flujo](../docs/equipo/quito/tablero/flujos/flujo-quito-recuperar-pendientes.json). La selección de Luna conserva su estado de [decisión por confirmar](../docs/equipo/adr/por-confirmar/2026-10-23-chat-luna-max-fast.md); su prueba y activación fueron autorizadas.
+
 ## Luna max y Fast en el piloto
 
 El piloto web del Mac usa Luna con razonamiento `max` y solicita Fast con configuración explícita del chat:

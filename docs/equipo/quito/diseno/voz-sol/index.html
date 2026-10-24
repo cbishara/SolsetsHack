@@ -252,6 +252,63 @@ svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-wi
 .dock-card h2[data-badge]::after{content:attr(data-badge);margin-left:8px;font-size:9px;font-weight:600;color:#2349c1;background:#e6ecff;padding:2px 7px;border-radius:20px;vertical-align:1px}
 .dock-stage{height:122px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(180deg,#10203d,#0a1429)}
 .dock-meta{margin:10px 2px 0;font-size:10.5px;line-height:1.5;color:#697185}
+
+/* Revision 04: Soltra (mobile/src/theme/tokens.ts, ui.tsx, sol-orb.tsx and app/sol.tsx in main): black always, Sol as a warm breathing light under the line eyes, glass close pill, app status lines, faint stars only. "day" is Soltra's brighter dark, "night" the dimmer one. */
+.phone,.phone[data-theme="day"]{--bg:#000;--surface:#121214;--card:#0A0A0B;--line:rgba(255,255,255,.07);--ink:#E6E6E9;--muted:#A09FA5;--faint:#6C6B71;--sol:#E3823F;--sol-hi:#EDBF8E;--sol-deep:#B04419;--on-sol:#1F0B02;--urgent:#F2756C;--glass:rgba(24,24,26,.56);--glass-strong:rgba(30,30,33,.84);--glass-line:rgba(255,255,255,.08);--glass-hi:rgba(255,255,255,.12);--glow:#6F7FA3;--glow-dim:.7;--night:#000;--raised:#121214;--secondary:#A09FA5;--tertiary:#6C6B71;--brand:#E6E6E9;background:#000;color:var(--ink);font-family:"Inter Tight",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;border-color:#1c1c1f}
+.phone[data-theme="day"]{--surface:#161618;--card:#0D0D0F;--line:rgba(255,255,255,.08);--ink:#FFFFFF;--muted:#BCBBC0;--faint:#7A7980;--sol:#FF9548;--sol-hi:#FFD3A1;--sol-deep:#D9531C;--urgent:#FF7B72;--glass:rgba(30,30,33,.56);--glass-strong:rgba(38,38,42,.82);--glass-line:rgba(255,255,255,.10);--glass-hi:rgba(255,255,255,.18);--glow:#8E9BB8;--glow-dim:1;--raised:#161618;--secondary:#BCBBC0;--tertiary:#7A7980;--brand:#FFFFFF}
+.phone .voice-screen,.phone[data-theme="day"] .voice-screen{background:#000;padding:58px 20px 30px}
+.phone .voice-screen::after,.phone .voice-atmosphere::before,.phone .voice-atmosphere::after{display:none}
+.phone .voice-atmosphere,.phone[data-theme="day"] .voice-atmosphere{opacity:1}
+.sol-glow{position:absolute;left:0;right:0;top:0;height:950px;background:radial-gradient(95% 90% at 50% 0%,rgb(from var(--sol-deep) r g b / calc(.55*var(--glow-dim))) 0%,rgb(from var(--sol-deep) r g b / calc(.22*var(--glow-dim))) 55%,rgb(from var(--sol-deep) r g b / 0) 100%)}
+.sol-glow::after{content:"";position:absolute;inset:0;background:radial-gradient(55% 42% at 62% 6%,rgb(from var(--sol) r g b / calc(.34*var(--glow-dim))) 0%,rgb(from var(--sol) r g b / calc(.102*var(--glow-dim))) 55%,rgb(from var(--sol) r g b / 0) 100%);opacity:calc(.85 + var(--voice-level)*.4);animation:sol-glow-drift 13s ease-in-out infinite alternate}
+@keyframes sol-glow-drift{from{transform:translate(-14px,-6px) scale(1)}to{transform:translate(16px,10px) scale(1.08)}}
+.phone .voice-header{justify-content:center;min-height:38px;padding:0}
+.phone .back-button.close-pill{position:relative;display:flex;align-items:center;gap:6px;width:auto;height:38px;margin:0;padding:0 16px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass);box-shadow:none;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--ink);font-size:15px;line-height:21px;font-weight:600;letter-spacing:-.1px}
+.phone .close-pill::after{content:"";position:absolute;top:0;left:16px;right:16px;height:1px;background:var(--glass-hi)}
+.phone .close-pill svg{width:16px;height:16px}
+.phone .voice-body{padding:0 0 8px}
+.phone .orb-button,.board-card .phone .orb-button{width:214px;height:214px;margin:0}
+.phone .orb-button::before{display:none}
+.phone .orb-rings,.phone .orb-shadow{display:none!important}
+.sol-halo{position:absolute;inset:-45%;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(closest-side,rgb(from var(--sol) r g b / .34) 30%,rgb(from var(--sol-deep) r g b / .12) 62%,rgb(from var(--sol) r g b / 0) 100%);animation:sol-halo-breath var(--breath,5200ms) cubic-bezier(.77,0,.175,1) infinite}
+.sol-core{position:absolute;inset:4.5%;border-radius:50%;z-index:1;background:radial-gradient(64% 64% at 44% 40%,#FFF7EE 0%,var(--sol-hi) 22%,rgb(from var(--sol) r g b / .98) 52%,rgb(from var(--sol-deep) r g b / .92) 80%,rgb(from var(--sol-deep) r g b / .8) 100%);box-shadow:inset 0 0 0 1px rgb(from var(--sol-hi) r g b / .3),inset 0 2px 1px rgb(255 247 238 / .22),inset 0 -10px 22px rgb(from var(--sol-deep) r g b / .35),0 0 0 1px rgb(from var(--sol-deep) r g b / .4),0 0 22px rgb(from var(--sol) r g b / .28);animation:sol-breath var(--breath,5200ms) cubic-bezier(.77,0,.175,1) infinite}
+@keyframes sol-breath{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes sol-halo-breath{0%,100%{opacity:.55}50%{opacity:1}}
+.phone[data-state="speaking"]{--breath:3600ms}
+.phone .orb-rig{transition:opacity 200ms cubic-bezier(.23,1,.32,1)}
+.phone[data-state="muted"] .orb-rig,.phone[data-state="error"] .orb-rig{opacity:.45}
+.phone .orb-canvas{opacity:calc(.14 + var(--voice-level)*.34);mix-blend-mode:soft-light;-webkit-mask-image:radial-gradient(closest-side,#000 50%,transparent 96%);mask-image:radial-gradient(closest-side,#000 50%,transparent 96%)}
+.phone[data-state="muted"] .orb-canvas,.phone[data-state="error"] .orb-canvas{opacity:0}
+.phone .sol-face .eye-line{stroke:var(--on-sol);opacity:.88}
+.phone .sol-face .eye-body,.phone .sol-face .mouth{fill:var(--on-sol);stroke:var(--on-sol)}
+.phone .sol-face .eye-happy{stroke:var(--on-sol)}
+.phone .sol-antenna .stalk,.phone[data-character="lineas"] .sol-antenna .stalk{stroke:rgba(255,255,255,.42)}
+.phone .sol-antenna .tip{fill:var(--sol-hi)}
+.phone[data-character="lineas"] .sol-antenna .tip{fill:none;stroke:var(--sol-hi)}
+.phone .sol-antenna .tip-halo{fill:var(--sol)}
+.phone .orb-muted-icon{background:var(--glass-strong);box-shadow:inset 0 0 0 1px var(--glass-line);color:var(--ink);bottom:6px}
+.phone .voice-state,.board-card .phone .voice-state{font-size:15px;line-height:21px;font-weight:400;letter-spacing:-.1px;color:var(--muted);margin:22px 0 0;max-width:300px}
+.phone .voice-hint,.phone .turn-hint{display:none}
+.phone .voice-body .live-caption,.phone .voice-body .live-caption:empty{min-height:120px;margin:14px 0 0;max-width:330px;font-size:21px;line-height:27px;font-weight:600;letter-spacing:-.5px;color:var(--ink)}
+.phone .voice-body .live-caption[data-kind="sol"]{font-size:18px;line-height:24px;letter-spacing:-.3px}
+.phone .voice-controls-wrap{padding-bottom:4px}
+.phone .transcript,.phone[data-theme="day"] .transcript{background:var(--glass-strong);border:1px solid var(--glass-line);color:var(--ink);backdrop-filter:blur(24px)}
+.phone .inline-retry{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.phone .chat-screen{background:#000;position:relative;isolation:isolate}
+.phone .chat-screen::before{content:"";position:absolute;inset:0 0 auto 0;height:520px;z-index:-1;pointer-events:none;background:radial-gradient(85% 100% at 50% 0%,rgb(from var(--glow) r g b / calc(.15*var(--glow-dim))) 0%,rgb(from var(--glow) r g b / calc(.0525*var(--glow-dim))) 55%,rgb(from var(--glow) r g b / 0) 100%)}
+.phone .chat-wordmark{font-weight:700;letter-spacing:-.04em}
+.phone .avatar{background:var(--surface);color:var(--muted)}
+.phone .chat-intro h2{font-weight:700;font-size:29px;line-height:34px;letter-spacing:-1.1px}
+.phone .chat-intro p,.phone .chat-intro .date{color:var(--muted)}
+.phone .chat-thread .person{background:var(--surface)}
+.phone .chat-thread .agent{color:var(--muted)}
+.phone .chat-thread .agent::before{content:"Sol";color:var(--sol)}
+.phone .chat-footer{left:16px;right:16px;bottom:24px;padding:8px 18px;border:1px solid var(--glass-line);border-radius:32px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);align-items:center}
+.phone .nav-option{color:var(--muted);font-size:10px}
+.phone .entry-wrap{color:var(--ink);font-size:10px;padding-bottom:4px}
+.phone .voice-entry{width:56px;height:56px;margin:-30px auto 0;color:var(--on-sol);background:radial-gradient(56% 56% at 44% 40%,#FFF7EE 0%,var(--sol-hi) 24%,var(--sol) 58%,var(--sol-deep) 100%);box-shadow:0 0 0 6px #000,0 0 28px rgb(from var(--sol) r g b / .45)}
+.dock-stage{background:#000}
+.phone button:focus-visible{outline-color:var(--ink)}
 </style>
 </head>
 <body>
@@ -266,9 +323,10 @@ svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-wi
 <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11m-17-14 1 1 2-2m-3 8 1 1 2-2M4 19h.01"/></symbol>
 <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
 <symbol id="i-replay" viewBox="0 0 24 24"><path d="M3.5 10a8.5 8.5 0 1 1 1 7M3 4v6h6"/></symbol>
+<symbol id="i-hangup" viewBox="0 0 24 24"><path d="M3 3l18 18M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.6 3.6a1 1 0 0 1-.25 1L6.6 10.8Z"/></symbol>
 </defs></svg>
 <main class="studio" id="studio">
-<aside class="intro"><div class="signature">SOL <i>↗</i></div><h1>La voz<br><span>cobra vida.</span></h1><p>Ondas fluidas, luz de noche y una conversación que sigue tu ritmo.</p><small>Propuesta de diseño · 03<br>Mi espacio / modo noche<br>Quito + SOL · 24 octubre 2026</small><a class="desktop-only-link" href="?view=options">Comparar los personajes ↗</a><br><a class="desktop-only-link" href="?view=buttons">Ver los diez botones ↗</a></aside>
+<aside class="intro"><div class="signature">Soltra · Sol</div><h1>La voz<br><span>cobra vida.</span></h1><p>Sol respira con tu voz, sobre negro, con los controles de la app.</p><small>Propuesta de diseño · 04<br>Soltra: negro, Sol en luz cálida<br>Quito + Sol · 24 octubre 2026</small><a class="desktop-only-link" href="?view=options">Comparar los personajes ↗</a><br><a class="desktop-only-link" href="?view=buttons">Ver los diez botones ↗</a></aside>
 <div class="phone-host" id="phone-host"></div>
 <aside class="studio-panel"><h2>Personaje</h2><div class="character-switch" id="character-switch"><button class="character-option" data-character="ojos" aria-pressed="false">A · Ojos</button><button class="character-option" data-character="antena" aria-pressed="false">B · Antena</button><button class="character-option" data-character="criatura" aria-pressed="false">C · Criatura</button><button class="character-option" data-character="lineas" aria-pressed="false">D · Líneas</button></div><h2>Prueba la conversación</h2><div class="presets">
 <button class="preset" data-demo="listening"><svg><use href="#i-mic"/></svg>Te escucha</button>
@@ -285,17 +343,17 @@ svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-wi
 <p class="prototype-note" id="prototype-note">Maqueta interactiva. Los turnos son ejemplos y no se envían al agente. Puedes probar el movimiento con tu micrófono: se mide el volumen en este navegador, sin guardar ni enviar audio.</p>
 </aside></main>
 <section class="board" id="board" hidden><header class="board-header"><div><div class="eyebrow">SOL ↗ · Propuesta de voz / 02</div><h1>La conversación, a tu ritmo.</h1></div><p>Un toque para entrar. Habla sin mantener pulsado.<br>Mi espacio · modo noche</p></header><div class="board-grid" id="board-grid"></div><footer class="board-footer"><span>Propuesta para revisar con Quito · sin integrar en Expo</span><span>Círculo reactivo · interrupción · silenciar · texto</span></footer></section>
-<section class="board" id="buttons" hidden><header class="board-header"><div><div class="eyebrow">SOL ↗ · Propuesta de voz / 03 · botones</div><h1>Diez botones para elegir.</h1></div><p>Toca un estilo para verlo en el teléfono.<br>Silenciar se activa solo cada pocos segundos para mostrar la animación.</p></header><div class="buttons-layout"><div id="buttons-phone"></div><div class="dock-grid" id="dock-grid"></div></div><footer class="board-footer"><span>Opciones para elegir con Quito · sin integrar en Expo · interpretaciones, no copias</span><span>Personaje D · líneas · iconos Phosphor Light</span></footer></section>
-<section class="board" id="options" hidden><header class="board-header"><div><div class="eyebrow">SOL ↗ · Propuesta de voz / 03</div><h1>Tres maneras de darle vida.</h1></div><p>Mismo cielo animado en las tres.<br>Mueve el cursor sobre un teléfono: SOL te sigue con la mirada.</p></header><div class="options-bar" id="options-bar"></div><div class="board-grid" id="options-grid"></div><footer class="board-footer"><span>Opciones para elegir con Quito · sin integrar en Expo</span><span>Estados de ejemplo · sin conexión al agente</span></footer></section>
+<section class="board" id="buttons" hidden><header class="board-header"><div><div class="eyebrow">Soltra · Sol · Propuesta de voz / 04 · botones</div><h1>Diez botones para elegir.</h1></div><p>Toca un estilo para verlo en el teléfono.<br>Silenciar se activa solo cada pocos segundos para mostrar la animación.</p></header><div class="buttons-layout"><div id="buttons-phone"></div><div class="dock-grid" id="dock-grid"></div></div><footer class="board-footer"><span>Opciones para elegir con Quito · sin integrar en Expo · interpretaciones, no copias</span><span>Personaje D · líneas · iconos Phosphor Light</span></footer></section>
+<section class="board" id="options" hidden><header class="board-header"><div><div class="eyebrow">Soltra · Sol · Propuesta de voz / 04</div><h1>Tres maneras de darle vida.</h1></div><p>Mismo cielo animado en las tres.<br>Mueve el cursor sobre un teléfono: SOL te sigue con la mirada.</p></header><div class="options-bar" id="options-bar"></div><div class="board-grid" id="options-grid"></div><footer class="board-footer"><span>Opciones para elegir con Quito · sin integrar en Expo</span><span>Estados de ejemplo · sin conexión al agente</span></footer></section>
 <template id="phone-template">
 <section class="phone" data-theme="night" data-state="listening" aria-label="Propuesta móvil de SOL">
 <div class="statusbar" aria-hidden="true"><span>9:41</span><span class="island"></span><div class="status-icons"><svg viewBox="0 0 18 16"><path d="M2 12v2M6 9v5M10 6v8M14 2v12"/></svg><svg viewBox="0 0 18 16"><path d="M2 5a11 11 0 0 1 14 0M4.5 8a7 7 0 0 1 9 0M7 11a3 3 0 0 1 4 0"/><circle cx="9" cy="14" r=".4" fill="currentColor"/></svg><svg class="battery" viewBox="0 0 28 14"><rect x="1" y="2" width="22" height="10" rx="2"/><path d="M26 5v4"/><rect x="3" y="4" width="17" height="6" rx="1" fill="currentColor" stroke="none"/></svg></div></div>
-<section class="chat-screen" aria-label="Chat con SOL"><header class="chat-header"><span class="chat-wordmark">Mi espacio <i class="arrow-mark">↗</i></span><div class="avatar">R</div></header><div class="chat-intro"><div class="date">Viernes, 23 de octubre</div><h2>¿Qué tienes<br>dando vueltas?</h2><p>Cuéntamelo. Podemos mirarlo juntos.</p></div><div class="chat-thread" hidden></div><nav class="chat-footer" aria-label="Acceso al chat de voz"><div class="nav-option"><svg><use href="#i-home"/></svg><span>Mi espacio</span></div><div class="entry-wrap"><button class="voice-entry" aria-label="Hablar con SOL"><svg><use href="#i-mic"/></svg></button><span>Hablar con SOL</span></div><div class="nav-option"><svg><use href="#i-list"/></svg><span>Pendientes</span></div></nav></section>
+<section class="chat-screen" aria-label="Chat con SOL"><header class="chat-header"><span class="chat-wordmark">Soltra</span><div class="avatar">R</div></header><div class="chat-intro"><div class="date">Viernes, 23 de octubre</div><h2>¿Qué tienes<br>dando vueltas?</h2><p>Cuéntamelo. Podemos mirarlo juntos.</p></div><div class="chat-thread" hidden></div><nav class="chat-footer" aria-label="Acceso al chat de voz"><div class="nav-option"><svg><use href="#i-home"/></svg><span>Inicio</span></div><div class="entry-wrap"><button class="voice-entry" aria-label="Hablar con SOL"><svg><use href="#i-mic"/></svg></button><span>Hablar con Sol</span></div><div class="nav-option"><svg><use href="#i-list"/></svg><span>Pendientes</span></div></nav></section>
 <section class="voice-screen" hidden aria-label="Conversación por voz">
-<div class="voice-atmosphere" aria-hidden="true"><span class="aurora a1"></span><span class="aurora a2"></span><span class="moon"></span><svg class="night-horizon" viewBox="0 0 390 844" preserveAspectRatio="none"><path class="hill h1" d="M-40 562C70 484 204 538 430 452V844H-40Z" fill="#2c5084" opacity=".11"/><path class="hill h2" d="M-40 640C118 522 236 650 430 548V844H-40Z" fill="#22436d" opacity=".17"/><path class="hill h3" d="M-40 712C98 600 242 716 430 645V844H-40Z" fill="#071020" opacity=".5"/><path class="hill h1" d="M-40 570C70 492 229 541 430 448" fill="none" stroke="#91baff" stroke-width=".7" opacity=".13"/></svg><canvas class="sky-canvas"></canvas></div>
-<header class="voice-header"><div class="voice-brand"><button class="back-button" aria-label="Volver al chat y cerrar el micrófono"><svg><use href="#i-down"/></svg></button><div><div class="voice-name">SOL <i class="arrow-mark">↗</i></div><div class="voice-caption">Miguel G · Español</div></div></div><div class="session-indicator"><span class="session-dot"></span><span class="session-text">Voz activa</span></div></header>
-<div class="voice-body"><button class="orb-button" aria-label="SOL está escuchando"><span class="orb-shadow" aria-hidden="true"></span><div class="orb-rig" aria-hidden="true"><svg class="orb-rings" viewBox="0 0 320 320" aria-hidden="true"><ellipse cx="160" cy="160" rx="139" ry="147"/><ellipse cx="160" cy="160" rx="151" ry="143" transform="rotate(19 160 160)"/><ellipse cx="160" cy="160" rx="153" ry="155" transform="rotate(-11 160 160)"/></svg><svg class="sol-antenna" viewBox="0 0 100 100"><path class="stalk"/><circle class="tip-halo" r="6"/><circle class="tip" r="2.5"/></svg><div class="orb-canvas"></div><svg class="sol-face" viewBox="0 0 100 100"></svg></div><span class="orb-muted-icon" hidden><svg><use href="#i-mic-off"/></svg></span></button><h1 class="voice-state" aria-live="polite" aria-atomic="true">Te escucho</h1><p class="voice-hint">Habla cuando quieras.<br>No hace falta mantener pulsado.</p><p class="live-caption"></p><button class="inline-retry" hidden>Volver a conectar</button></div>
-<div class="voice-controls-wrap"><p class="turn-hint">Puedes interrumpirme cuando quieras</p><div class="voice-controls"><div class="control-wrap"><button class="control mute" aria-label="Silenciar micrófono" aria-pressed="false"><svg class="ico ico-on" aria-hidden="true"><use href="#i-mic"/></svg><svg class="ico ico-off" aria-hidden="true"><use href="#i-mic-off"/></svg></button><span class="mute-label">Silenciar</span></div><div class="control-wrap"><button class="control text" aria-label="Ver texto de la conversación" aria-haspopup="dialog"><svg><use href="#i-text"/></svg></button><span>Ver texto</span></div><div class="control-wrap"><button class="control end" aria-label="Terminar conversación de voz"><svg><use href="#i-close"/></svg></button><span>Terminar</span></div></div></div>
+<div class="voice-atmosphere" aria-hidden="true"><span class="sol-glow"></span><canvas class="sky-canvas"></canvas></div>
+<header class="voice-header"><button class="back-button close-pill" aria-label="Volver al chat y cerrar el micrófono"><svg aria-hidden="true"><use href="#i-close"/></svg><span>Cerrar</span></button><div class="session-indicator" hidden><span class="session-dot"></span><span class="session-text">Voz activa</span></div></header>
+<div class="voice-body"><button class="orb-button" aria-label="SOL está escuchando"><span class="orb-shadow" aria-hidden="true"></span><div class="orb-rig" aria-hidden="true"><svg class="orb-rings" viewBox="0 0 320 320" aria-hidden="true"><ellipse cx="160" cy="160" rx="139" ry="147"/><ellipse cx="160" cy="160" rx="151" ry="143" transform="rotate(19 160 160)"/><ellipse cx="160" cy="160" rx="153" ry="155" transform="rotate(-11 160 160)"/></svg><span class="sol-halo"></span><svg class="sol-antenna" viewBox="0 0 100 100"><path class="stalk"/><circle class="tip-halo" r="6"/><circle class="tip" r="2.5"/></svg><span class="sol-core"></span><div class="orb-canvas"></div><svg class="sol-face" viewBox="0 0 100 100"></svg></div><span class="orb-muted-icon" hidden><svg><use href="#i-mic-off"/></svg></span></button><h1 class="voice-state" aria-live="polite" aria-atomic="true">Te escucho…</h1><p class="voice-hint">Habla cuando quieras.<br>No hace falta mantener pulsado.</p><p class="live-caption"></p><button class="inline-retry" hidden>Volver a conectar</button></div>
+<div class="voice-controls-wrap"><p class="turn-hint">Puedes interrumpirme cuando quieras</p><div class="voice-controls"><div class="control-wrap"><button class="control mute" aria-label="Silenciar micrófono" aria-pressed="false"><svg class="ico ico-on" aria-hidden="true"><use href="#i-mic"/></svg><svg class="ico ico-off" aria-hidden="true"><use href="#i-mic-off"/></svg></button><span class="mute-label">Silenciar</span></div><div class="control-wrap"><button class="control text" aria-label="Ver texto de la conversación" aria-haspopup="dialog"><svg><use href="#i-text"/></svg></button><span>Ver texto</span></div><div class="control-wrap"><button class="control end" aria-label="Terminar conversación de voz"><svg><use href="#i-hangup"/></svg></button><span>Terminar</span></div></div></div>
 <section class="transcript" role="dialog" aria-label="Texto de la conversación" aria-modal="true" hidden><div class="sheet-handle" aria-hidden="true"></div><header class="sheet-header"><h2>La conversación</h2><button class="sheet-close" aria-label="Cerrar texto y volver a voz"><svg><use href="#i-close"/></svg></button></header><div class="sheet-messages"></div><p class="sheet-footnote">Ejemplo de diseño. El texto real aparecerá aquí cuando la voz esté conectada al agente.</p></section>
 </section><div class="home-indicator" aria-hidden="true"></div>
 </section></template>
@@ -308,28 +366,30 @@ const params=new URLSearchParams(location.search),fixed=params.get('capture')===
 const sampleUser='Mañana tengo que llamar al taller. Prefiero dar un paso de dos minutos.';
 const sampleAgent='Podemos dejar preparada la pregunta para esa llamada. ¿Qué necesitas saber del taller?';
 const copy={
-listening:{title:'Te escucho',hint:'Habla cuando quieras.\nNo hace falta mantener pulsado.',footer:'Puedes interrumpirme cuando quieras',session:'Voz activa'},
-talking:{title:'Te escucho',hint:'Tómate tu tiempo.',footer:'Sigue hablando; no hace falta pulsar',session:'Tu voz'},
-thinking:{title:'Un momento…',hint:'Estoy preparando tu respuesta.',footer:'Puedes añadir algo si lo necesitas',session:'Preparando'},
-speaking:{title:'SOL está hablando',hint:'Si hablas, me detengo para escucharte.',footer:'También puedes tocar el círculo para interrumpir',session:'Voz activa'},
+listening:{title:'Te escucho…',hint:'Habla cuando quieras.\nNo hace falta mantener pulsado.',footer:'Puedes interrumpirme cuando quieras',session:'Voz activa'},
+talking:{title:'Te escucho…',hint:'Tómate tu tiempo.',footer:'Sigue hablando; no hace falta pulsar',session:'Tu voz'},
+thinking:{title:'Pensando…',hint:'Estoy preparando tu respuesta.',footer:'Puedes añadir algo si lo necesitas',session:'Preparando'},
+speaking:{title:'Sol habla · toca el círculo para interrumpir',hint:'Si hablas, me detengo para escucharte.',footer:'También puedes tocar el círculo para interrumpir',session:'Voz activa'},
 muted:{title:'Micrófono silenciado',hint:'Vuelve a activarlo cuando quieras.',footer:'Tu micrófono está apagado',session:'En silencio'},
 error:{title:'Se cortó la conexión',hint:'Puedes seguir en el chat escrito.',footer:'El micrófono está pausado',session:'Sin conexión'}
 };
 const characters=['ojos','antena','criatura','lineas'];
 const seeded=seed=>()=>{seed=seed*16807%2147483647;return seed/2147483647};
-// Night sky behind the character: twinkling stars, a rare shooting star and motes that follow the voice.
+// Light around Sol: soft gradient particles that orbit the circle, faster and brighter with the voice. Low contrast on purpose.
+const hexRgb=hex=>{const v=hex.trim().replace('#','');return[0,2,4].map(i=>parseInt(v.slice(i,i+2),16)).join(',')};
 class NightSky{
-constructor(canvas){this.c=canvas;this.ctx=canvas.getContext('2d');this.w=0;this.h=0;const r=seeded(7);this.r=r;
-this.stars=Array.from({length:70},()=>({x:r(),y:Math.pow(r(),1.25)*.56,s:.45+r()*1.05,a:.25+r()*.6,f:.5+r()*1.7,p:r()*6.283}));
-this.motes=Array.from({length:14},()=>({x:r(),y:r(),s:.8+r()*1.3,v:.008+r()*.014,p:r()*6.283,f:.5+r()*.9}));this.shot=null;this.nextShot=2.5+r()*3}
-fit(){const w=this.c.clientWidth,h=this.c.clientHeight;if(!w||!h)return false;if(w!==this.w||h!==this.h){const d=Math.min(devicePixelRatio||1,2);this.c.width=w*d;this.c.height=h*d;this.ctx.setTransform(d,0,0,d,0,0);this.w=w;this.h=h}return true}
+constructor(canvas,owner){this.c=canvas;this.o=owner;this.ctx=canvas.getContext('2d');this.w=0;this.h=0;this.cx=.5;this.cy=.33;this.phase=0;this.last=null;this.theme=null;const r=seeded(11);
+this.particles=Array.from({length:28},()=>{const z=.35+r()*.65;return{a0:r()*6.283,R:.2+Math.pow(r(),.8)*.62,z,s:5+Math.pow(r(),2)*22,tone:r(),spin:(.06+r()*.13)*(r()<.2?-1:1),f:.4+r()*.9,p:r()*6.283,al:.14+r()*.18}})}
+fit(){const w=this.c.clientWidth,h=this.c.clientHeight;if(!w||!h)return false;const theme=this.o.el.dataset.theme;if(w!==this.w||h!==this.h||theme!==this.theme){const d=Math.min(devicePixelRatio||1,2);this.c.width=w*d;this.c.height=h*d;this.ctx.setTransform(d,0,0,d,0,0);this.w=w;this.h=h;this.theme=theme;
+const box=this.c.getBoundingClientRect(),orb=this.o.$('.orb-button').getBoundingClientRect();if(orb.width&&box.width){this.cx=(orb.left+orb.width/2-box.left)/box.width;this.cy=(orb.top+orb.height/2-box.top)/box.height}
+const css=getComputedStyle(this.o.el);this.colors=['--sol-hi','--sol','--sol-deep','--glow'].map(v=>hexRgb(css.getPropertyValue(v)||'#FF9548'))}return true}
 update(t,level,day,still){
-if(!this.fit())return;const{ctx,w,h}=this;ctx.clearRect(0,0,w,h);const dim=day?.22:1;ctx.fillStyle='#d3e4ff';
-for(const s of this.stars){const twinkle=still?.8:.55+.45*Math.sin(t*s.f+s.p);ctx.globalAlpha=s.a*twinkle*dim;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.s,0,6.283);ctx.fill();if(s.s>1.2){ctx.globalAlpha*=.22;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.s*3.2,0,6.283);ctx.fill()}}
-if(!still){if(!this.shot&&t>this.nextShot)this.shot={t0:t,x:.55+this.r()*.4,y:.06+this.r()*.18};if(this.shot){const k=(t-this.shot.t0)/.9;if(k>=1||k<0){this.shot=null;this.nextShot=t+6+this.r()*7}else{const x=this.shot.x*w-k*170,y=this.shot.y*h+k*92,g=ctx.createLinearGradient(x,y,x+74,y-40);g.addColorStop(0,'rgba(226,238,255,.95)');g.addColorStop(1,'rgba(226,238,255,0)');ctx.globalAlpha=Math.sin(k*Math.PI)*dim;ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+74,y-40);ctx.stroke()}}}
-for(const m of this.motes){const span=.4,rise=still?0:t*m.v*(1+level*2.4),k=((m.y-rise)%1+1)%1,y=h*(1-span*k)-26,x=m.x*w+(still?0:Math.sin(t*m.f+m.p)*13),fade=Math.sin(k*Math.PI),pulse=.45+.55*Math.pow(Math.sin((still?2:t)*m.f*1.4+m.p),2),a=fade*pulse*(.32+level*.6)*(day?.5:1);
-const glow=ctx.createRadialGradient(x,y,0,x,y,m.s*5);glow.addColorStop(0,day?'rgba(70,120,220,.55)':'rgba(160,205,255,.75)');glow.addColorStop(1,'rgba(120,170,255,0)');ctx.globalAlpha=a;ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,m.s*5,0,6.283);ctx.fill()}
-ctx.globalAlpha=1}
+if(!this.fit())return;const{ctx,w,h}=this,state=this.o.state,quiet=state==='muted'||state==='error';
+const dt=this.last===null||still?0:Math.max(0,Math.min(.05,t-this.last));this.last=t;this.phase=still?2.2:this.phase+dt*(quiet?.35:1+level*2.6);
+const glow=(quiet?.5:1+level*.9)*(day?1.15:1),cx=this.cx*w,cy=this.cy*h;ctx.clearRect(0,0,w,h);ctx.globalCompositeOperation='lighter';
+for(const q of this.particles){const angle=q.a0+this.phase*q.spin/Math.sqrt(q.z),radius=(q.R+Math.sin(this.phase*.3*q.f+q.p)*.03)*w,x=cx+Math.cos(angle)*radius,y=cy+Math.sin(angle)*radius*.95+(still?0:Math.sin(t*q.f+q.p)*6),size=q.s*(.8+.4*q.z)*(1+level*.25),a=Math.min(.5,q.al*glow*(.6+.4*Math.sin((still?2.2:t)*q.f*1.3+q.p))),c=this.colors[q.tone<.45?0:q.tone<.8?1:q.tone<.93?2:3];
+const g=ctx.createRadialGradient(x,y,0,x,y,size);g.addColorStop(0,'rgba('+c+','+a.toFixed(3)+')');g.addColorStop(.4,'rgba('+c+','+(a*.55).toFixed(3)+')');g.addColorStop(1,'rgba('+c+',0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,size,0,6.283);ctx.fill()}
+ctx.globalCompositeOperation='source-over'}
 }
 // The animatronic: eyes with lids, gaze, blinks and per-state expressions; options add an antenna or a mouth.
 let characterId=0;
@@ -337,14 +397,14 @@ class SolCharacter{
 constructor(owner,kind){this.o=owner;const id='sol'+ ++characterId,eye=side=>'<g class="eye"><clipPath id="'+id+side+'"><rect class="lid" x="-11" y="-9.5" width="22" height="22"/></clipPath><g class="eye-shape" clip-path="url(#'+id+side+')"><rect class="eye-body" x="-4.7" y="-8" width="9.4" height="16" rx="4.7"/><circle class="glint" cx="-1.6" cy="-4.1" r="1.45"/></g><path class="eye-happy" d="M-5.2 2.4Q0-6.6 5.2 2.4"/><line class="eye-line"/></g>';
 this.face=owner.$('.sol-face');this.face.innerHTML=eye('l')+eye('r')+'<path class="mouth"/>';this.eyes=[...this.face.querySelectorAll('.eye')].map(g=>({g,lid:g.querySelector('.lid'),body:g.querySelector('.eye-shape'),happy:g.querySelector('.eye-happy'),line:g.querySelector('.eye-line')}));this.mouth=this.face.querySelector('.mouth');
 this.rig=owner.$('.orb-rig');this.shadow=owner.$('.orb-shadow');this.stalk=owner.$('.stalk');this.tip=owner.$('.tip');this.halo=owner.$('.tip-halo');
-this.p={gx:0,gy:0,lid:0,lidAngle:0,happy:0,scale:1,mouth:0,smile:1,flat:0,tilt:0,glow:.6};this.look={x:0,y:0,next:0};this.blinkAt=1.4;this.doubleBlink=false;this.pointer=null;this.prev=null;this.surprise=-9;this.hop=-9;this.ant={a:0,v:0};this.last=null;
+this.p={gx:0,gy:0,lid:0,lidAngle:0,happy:0,scale:1,mouth:0,smile:1,flat:0,tilt:0,glow:.6,vs:1};this.look={x:0,y:0,next:0};this.blinkAt=1.4;this.doubleBlink=false;this.pointer=null;this.prev=null;this.surprise=-9;this.hop=-9;this.ant={a:0,v:0};this.last=null;
 owner.el.addEventListener('pointermove',e=>{const r=owner.$('.orb-button').getBoundingClientRect();if(!r.width)return;const c=v=>Math.max(-1.3,Math.min(1.3,v));this.pointer={x:c((e.clientX-r.left-r.width/2)/(r.width*.8)),y:c((e.clientY-r.top-r.height/2)/(r.height*.8)),at:performance.now()}});
 owner.el.addEventListener('pointerleave',()=>{this.pointer=null});this.setKind(kind)}
 setKind(kind){this.kind=characters.includes(kind)?kind:'antena';this.o.el.dataset.character=this.kind}
 update(t,level,still){
 const dt=this.last===null?.016:Math.max(0,Math.min(.05,t-this.last)),state=this.o.state,kind=this.kind,p=this.p;this.last=t;
 if(this.prev!==null&&state!==this.prev){if(this.prev==='speaking'&&state==='talking')this.surprise=t;this.hop=t;this.ant.v+=(this.ant.a>0?-1:1)*120}this.prev=state;
-const T={gx:0,gy:0,lid:0,lidAngle:0,happy:0,scale:1,mouth:0,smile:1,flat:0,tilt:0,glow:.5+.25*Math.sin(t*2.1)};
+const T={gx:0,gy:0,lid:0,lidAngle:0,happy:0,scale:1,mouth:0,smile:1,flat:0,tilt:0,glow:.5+.25*Math.sin(t*2.1),vs:state==='muted'||state==='error'?1:1+level*.12};
 if(state==='talking'){T.gy=1.4+level*1.6;T.scale=1.07;T.glow=.55+level*.45}
 else if(state==='thinking'){T.gx=4.2;T.gy=-5;T.lid=.08;T.scale=.93;T.tilt=7;T.smile=.4;T.glow=Math.sin(t*7)>0?.95:.15}
 else if(state==='speaking'){T.gy=.6;if(kind==='criatura'){T.mouth=level}else if(kind==='lineas'){T.lid=level*.35}else T.happy=1;T.glow=.85+level*.15}
@@ -354,7 +414,7 @@ if(!still&&['listening','talking','speaking'].includes(state)){if(t>this.look.ne
 if(this.pointer&&performance.now()-this.pointer.at<2600&&state!=='muted'&&state!=='error'){T.gx=this.pointer.x*5;T.gy=this.pointer.y*4}
 const surprised=t-this.surprise;if(surprised>=0&&surprised<.5){T.scale+=.17*Math.sin(surprised/.5*Math.PI);T.lid=0;T.happy=0}
 const ease=(key,rate)=>{p[key]+=(T[key]-p[key])*(still?1:1-Math.exp(-rate*dt))};
-ease('gx',16);ease('gy',16);ease('lid',10);ease('lidAngle',8);ease('happy',9);ease('scale',12);ease('mouth',24);ease('smile',8);ease('flat',10);ease('tilt',5);ease('glow',8);
+ease('gx',16);ease('gy',16);ease('lid',10);ease('lidAngle',8);ease('happy',9);ease('scale',12);ease('mouth',24);ease('smile',8);ease('flat',10);ease('vs',14);ease('tilt',5);ease('glow',8);
 let blink=0;if(!still&&state!=='muted'){if(t>this.blinkAt+.15){if(this.doubleBlink){this.blinkAt=t+.07;this.doubleBlink=false}else{this.blinkAt=t+2.2+Math.random()*3.6;this.doubleBlink=Math.random()<.22}}const b=(t-this.blinkAt)/.15;if(b>=0&&b<=1)blink=Math.sin(b*Math.PI)}
 const lid=Math.max(p.lid,blink*(1-p.happy)),turn=p.gx/5;
 this.eyes.forEach((e,i)=>{const side=i?1:-1,x=50+side*11*(1-Math.abs(turn)*.06)+p.gx,y=45+p.gy,sx=p.scale*(1+side*turn*.09);
@@ -365,7 +425,7 @@ if(kind==='criatura'){const x=50+p.gx*.8,y=59.5+p.gy*.6,open=Math.min(1,p.mouth*
 let lift=0,tilt=0,sx=1,sy=1;
 if(kind==='antena'||kind==='lineas'){tilt=p.tilt+p.gx*1.1;if(!still)lift=Math.sin(t*1.8)*(kind==='lineas'?2.5:4.5)-(state==='talking'?level*3:0)+(state==='muted'?3:0)}
 if(kind==='criatura'&&!still){const breath=Math.sin(t*2.3)*.012;sy=1+breath;sx=1-breath*.7;if(state==='talking'){sy+=level*.05;sx-=level*.03}if(state==='speaking'){sy+=level*.035;sx+=level*.02}const hop=(t-this.hop)/.55;if(hop>=0&&hop<1){lift=-Math.sin(hop*Math.PI)*13*(1-hop*.3);if(hop<.18){const s=Math.sin(hop/.18*Math.PI);sy-=.07*s;sx+=.06*s}}tilt=p.tilt*.6}
-this.rig.style.transform=kind==='ojos'?'':'translateY('+lift.toFixed(2)+'px) rotate('+tilt.toFixed(2)+'deg) scale('+sx.toFixed(3)+','+sy.toFixed(3)+')';
+this.rig.style.transform='translateY('+lift.toFixed(2)+'px) rotate('+tilt.toFixed(2)+'deg) scale('+(sx*p.vs).toFixed(3)+','+(sy*p.vs).toFixed(3)+')';
 this.shadow.style.transform='scale('+(1+lift/42).toFixed(3)+')';this.shadow.style.opacity=(.85+lift/28).toFixed(3);
 if(kind==='antena'||kind==='lineas'){const target=-tilt*.9+(still?0:Math.sin(t*1.25)*3+(state==='talking'?Math.sin(t*9)*level*7:0))+(state==='muted'?38:0);
 if(still){this.ant.a=target;this.ant.v=0}else{this.ant.v+=(-55*(this.ant.a-target)-5.5*this.ant.v)*dt;this.ant.a+=this.ant.v*dt}
@@ -379,7 +439,7 @@ constructor(host,initial,readOnly,character){
 host.append(document.getElementById('phone-template').content.cloneNode(true));this.el=host.querySelector('.phone');
 this.state='listening';this.beforeMute='listening';this.muted=false;this.readOnly=!!readOnly;this.localMode=false;this.meter=0;this.smooth=0;this.stream=null;this.micContext=null;this.outputContext=null;this.outputAnalyser=null;this.outputSamples=null;this.audio=null;this.timer=null;this.micTimer=null;this.chatSaved=false;this.epoch=0;this.raf=null;this.closed=true;this.permissionPending=false;
 this.canvas=this.$('.orb-canvas');this.graphics=window.SolVoiceVisuals?.mount(this.canvas,this)||null;this.ctx=null;if(!this.graphics){const fallback=document.createElement('canvas');fallback.className='orb-fallback';this.canvas.append(fallback);this.canvas=fallback;this.ctx=fallback.getContext('2d')}this.draw=this.draw.bind(this);
-this.sky=new NightSky(this.$('.sky-canvas'));this.character=new SolCharacter(this,character);
+this.sky=new NightSky(this.$('.sky-canvas'),this);this.character=new SolCharacter(this,character);
 this.$('.voice-entry').onclick=()=>this.open('listening');this.$('.back-button').onclick=()=>this.end();this.$('.end').onclick=()=>this.end();
 this.$('.mute').onclick=()=>this.toggleMute();this.$('.text').onclick=()=>this.showText(true);this.$('.sheet-close').onclick=()=>this.showText(false);
 this.$('.orb-button').onclick=()=>{if(!this.muted&&!this.readOnly&&(this.state==='speaking'||this.state==='thinking'))this.interrupt()};
@@ -399,10 +459,10 @@ this.state=next;this.muted=next==='muted';if(this.stream)this.stream.getAudioTra
 this.el.dataset.state=next;const c=copy[next]||copy.listening;this.$('.voice-state').textContent=c.title;
 this.$('.voice-hint').replaceChildren(...c.hint.split('\n').flatMap((line,i)=>i?[document.createElement('br'),document.createTextNode(line)]:[document.createTextNode(line)]));
 this.$('.turn-hint').textContent=c.footer;this.$('.session-text').textContent=c.session;
-this.$('.mute').setAttribute('aria-pressed',String(this.muted));this.$('.mute').setAttribute('aria-label',this.muted?'Activar micrófono':'Silenciar micrófono');this.$('.mute-label').textContent=this.muted?'Activar micro':'Silenciar';
+this.$('.mute').setAttribute('aria-pressed',String(this.muted));this.$('.mute').setAttribute('aria-label',this.muted?'Activar micrófono':'Silenciar micrófono');this.$('.mute-label').textContent=this.muted?'Silenciado':'Silenciar';
 this.$('.orb-muted-icon').hidden=!this.muted;this.$('.orb-button').disabled=this.muted||next==='error';this.$('.orb-button').setAttribute('aria-label',next==='speaking'||next==='thinking'?'Interrumpir a SOL y seguir hablando':c.title);
 this.$('.inline-retry').hidden=next!=='error';this.$('.mute').disabled=next==='error';
-this.$('.live-caption').textContent=!this.localMode&&next==='talking'?'“Mañana tengo que llamar al taller…”':'';this.$('.live-caption').hidden=next!=='talking';
+const live=this.$('.live-caption');live.textContent=!this.localMode&&next==='talking'?'Mañana tengo que llamar al taller…':next==='speaking'?sampleAgent:'';live.dataset.kind=next==='speaking'?'sol':'you';live.hidden=!live.textContent;
 if(next==='muted'||next==='error')this.meter=0;
 document.querySelectorAll('[data-demo]').forEach(b=>b.classList.toggle('selected',b.dataset.demo===next));
 if(fixed||reducedMotion.matches)this.draw(2.2);
@@ -470,8 +530,8 @@ const docks=[
 ['island','09','Cápsula negra','en la línea de la isla dinámica','Costo medio. Riesgo: sin etiquetas y muy cercano al iPhone.'],
 ['trazo','10','Solo trazo','sin contenedor','Costo bajo. Riesgo: no se ve dónde termina el área que se toca.'],
 ];
-const dockMarkup='<div class="voice-controls"><div class="control-wrap"><button class="control mute" aria-label="Silenciar micrófono" aria-pressed="false"><svg class="ico ico-on" aria-hidden="true"><use href="#i-mic"/></svg><svg class="ico ico-off" aria-hidden="true"><use href="#i-mic-off"/></svg></button><span class="mute-label">Silenciar</span></div><div class="control-wrap"><button class="control text" aria-label="Ver texto de la conversación"><svg aria-hidden="true"><use href="#i-text"/></svg></button><span>Ver texto</span></div><div class="control-wrap"><button class="control end" aria-label="Terminar conversación de voz"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span>Terminar</span></div></div>';
-const setMute=(button,on)=>{button.setAttribute('aria-pressed',String(on));button.setAttribute('aria-label',on?'Activar micrófono':'Silenciar micrófono');button.parentElement.querySelector('.mute-label').textContent=on?'Activar micro':'Silenciar'};
+const dockMarkup='<div class="voice-controls"><div class="control-wrap"><button class="control mute" aria-label="Silenciar micrófono" aria-pressed="false"><svg class="ico ico-on" aria-hidden="true"><use href="#i-mic"/></svg><svg class="ico ico-off" aria-hidden="true"><use href="#i-mic-off"/></svg></button><span class="mute-label">Silenciar</span></div><div class="control-wrap"><button class="control text" aria-label="Ver texto de la conversación"><svg aria-hidden="true"><use href="#i-text"/></svg></button><span>Ver texto</span></div><div class="control-wrap"><button class="control end" aria-label="Terminar conversación de voz"><svg aria-hidden="true"><use href="#i-hangup"/></svg></button><span>Terminar</span></div></div>';
+const setMute=(button,on)=>{button.setAttribute('aria-pressed',String(on));button.setAttribute('aria-label',on?'Activar micrófono':'Silenciar micrófono');button.parentElement.querySelector('.mute-label').textContent=on?'Silenciado':'Silenciar'};
 let preview;
 const chosenCharacter=characters.includes(params.get('character'))?params.get('character'):'lineas';
 const chosenDock=docks.some(d=>d[0]===params.get('dock'))?params.get('dock'):'m3';

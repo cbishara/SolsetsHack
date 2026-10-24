@@ -1,8 +1,8 @@
-# SOL tiene un rostro de líneas y un cielo animado en la pantalla de voz
+# Sol tiene ojos de línea y partículas de luz en la pantalla de voz
 
-Estado: por confirmar
+Estado: por confirmar (aprobado por Quito el 2026-10-24; falta Bishara)
 Fecha: 2026-10-24
-Decidió: lo decide Quito
+Decidió: Quito lo aprobó como diseño; para la app falta que lo acepte Bishara, dueño de `mobile/` y del avatar de Sol
 Carril: quito (diseño de la voz); la implementación en `mobile/` es de Bishara
 
 ## Contexto
@@ -33,3 +33,9 @@ Un rostro mínimo hace que la persona sepa de un vistazo si SOL escucha, piensa 
 2. El personaje y el cielo siguen moviéndose suave con el micrófono silenciado. La superficie del círculo sí queda quieta.
 
 ## Cambios
+
+2026-10-24: Quito eligió la opción 1 del choque con Soltra («ok acóplalo a ellos») y pidió sacar los puntitos que suben («están más o menos»). La maqueta pasa a negro con el brillo `solStrong` de la app, Sol como la luz naranja de `sol-orb.tsx` que respira y crece con la voz, los ojos de línea en `onSol`, la antena fina, estrellas blancas muy tenues y una estrella fugaz de vez en cuando. Se sacaron la aurora, la luna, las colinas y las luciérnagas. Falta preguntarle si esta versión es oficial.
+
+2026-10-24: Quito pidió partículas más dinámicas, con un degradé más fuerte y poco contraste, y un poco más de contorno en Sol. Las estrellas pasan a partículas suaves que giran alrededor de Sol y se aceleran con la voz; Sol suma un borde fino de luz.
+
+2026-10-24: Quito aprobó esta versión («Ok me gustó, dejemos eso»): Sol de Soltra con ojos de línea, antena fina, borde de luz y partículas suaves alrededor. Sigue por confirmar porque los ojos y las partículas cambian el avatar de Sol en `mobile/src/components/sol-orb.tsx` y la pantalla `mobile/src/app/sol.tsx`, que son de Bishara. Pasa a oficial cuando Bishara lo acepte.

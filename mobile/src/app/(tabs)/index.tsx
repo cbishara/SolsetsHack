@@ -8,7 +8,7 @@ import { dueToday, inNightWindow, lastNightItems, shouldAskTonight, todayCounts,
 import { useStore } from '../../data/store';
 import { AskSol, SolStatus } from '../../features/home/hero';
 import { QuestionCard } from '../../features/home/question-card';
-import { AgendaWidget, InboxWidget, NightCard, SummaryCard, TodayTasks } from '../../features/home/widgets';
+import { AgendaWidget, InboxWidget, NightCard, SummaryCard, TodayTasks, TomorrowCard } from '../../features/home/widgets';
 import { useTheme } from '../../theme/theme';
 import { space } from '../../theme/tokens';
 
@@ -65,25 +65,38 @@ export default function Inicio() {
         <AskSol hint={nightNow ? 'Anota algo antes de dormir…' : 'Pídele algo a Sol o cuéntale algo…'} />
       </View>
 
-      {morning ? <SummaryCard kind="morning" now={now} /> : evening && !closed ? <SummaryCard kind="evening" now={now} /> : null}
+      {nightNow ? (
+        <>
+          <Section title="Esta noche">
+            <NightCard tonight={night} ask={false} morningAt={state.summaries.morning.at} />
+          </Section>
+          <Section title="Mañana" action="Ver agenda" onAction={() => router.navigate('/agenda')}>
+            <TomorrowCard now={now} />
+          </Section>
+        </>
+      ) : (
+        <>
+          {morning ? <SummaryCard kind="morning" now={now} /> : evening && !closed ? <SummaryCard kind="evening" now={now} /> : null}
 
-      {open.length ? <QuestionCard questions={open} /> : null}
+          {open.length ? <QuestionCard questions={open} /> : null}
 
-      <Section title="Para hoy" count={today.length}>
-        <TodayTasks tasks={today} />
-      </Section>
+          <Section title="Para hoy" count={today.length}>
+            <TodayTasks tasks={today} />
+          </Section>
 
-      <Section title="Agenda">
-        <AgendaWidget now={now} />
-      </Section>
+          <Section title="Agenda">
+            <AgendaWidget now={now} />
+          </Section>
 
-      <Section title="Bandeja" action={review.length ? `${review.length} por confirmar` : 'Abrir'} onAction={() => router.navigate('/bandeja')}>
-        <InboxWidget now={now} />
-      </Section>
+          <Section title="Bandeja" action={review.length ? `${review.length} por confirmar` : 'Abrir'} onAction={() => router.navigate('/bandeja')}>
+            <InboxWidget now={now} />
+          </Section>
 
-      <Section title="Esta noche">
-        <NightCard tonight={night} ask={shouldAskTonight(state, now)} morningAt={state.summaries.morning.at} />
-      </Section>
+          <Section title="Esta noche">
+            <NightCard tonight={night} ask={shouldAskTonight(state, now)} morningAt={state.summaries.morning.at} />
+          </Section>
+        </>
+      )}
     </Screen>
   );
 }

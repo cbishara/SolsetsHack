@@ -303,7 +303,7 @@ const exampleTasks: Task[] = [
   },
 ];
 
-export const items: Item[] = exampleItems.map((i) => ({ ...i, example: true }));
+export const items: Item[] = exampleItems.map((i) => ({ ...i, example: true })).sort((a, b) => b.receivedAt.localeCompare(a.receivedAt));
 export const tasks: Task[] = exampleTasks.map((t) => ({ ...t, example: true }));
 
 // Calendar ---------------------------------------------------------------------

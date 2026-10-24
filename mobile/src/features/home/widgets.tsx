@@ -102,6 +102,29 @@ export function AgendaWidget({ now }: { now: Date }) {
   );
 }
 
+// Tomorrow (night view) ---------------------------------------------------------------
+
+/** What tomorrow starts with, so the person can let go of it tonight. */
+export function TomorrowCard({ now }: { now: Date }) {
+  const { state } = useStore();
+  const tomorrow = keyOf(new Date(now.getTime() + 86_400_000));
+  const events = eventsOn(state, tomorrow).filter((e) => !e.allDay && keyOf(new Date(e.start)) === tomorrow).slice(0, 3);
+  const tasks = state.tasks.filter((t) => !t.done && t.date && t.date <= tomorrow);
+  const color = (e: CalendarEvent) => categoryColors[calendarById(state, e.calendarId)?.color ?? 'gray'];
+  return (
+    <Card>
+      {events.length ? events.map((e) => (
+        <View key={e.id} style={s.line}>
+          <T v="calloutStrong" tone="muted" style={s.time}>{timeOf(e.start)}</T>
+          <View style={[s.dot, { backgroundColor: color(e) }]} />
+          <T v="callout" numberOfLines={1} style={{ flex: 1 }}>{e.title}</T>
+        </View>
+      )) : <T v="callout" tone="muted">Sin eventos agendados.</T>}
+      <T v="caption" tone="faint">{tasks.length ? `${tasks.length} ${tasks.length === 1 ? 'tarea queda' : 'tareas quedan'} para mañana, todas con fecha. No tienes que acordarte de ninguna.` : 'Mañana empiezas sin pendientes.'}</T>
+    </Card>
+  );
+}
+
 // Inbox by category ----------------------------------------------------------------
 
 export function InboxWidget({ now }: { now: Date }) {

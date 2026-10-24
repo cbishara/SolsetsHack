@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { TopBar } from '../../components/top-bar';
 import { Screen, Section } from '../../components/ui';
-import { cap, greeting, longDate, minutesOf } from '../../data/dates';
+import { cap, greeting, longDate, minutesOf, todayKey } from '../../data/dates';
 import { dueToday, inNightWindow, lastNightItems, shouldAskTonight, todayCounts, tonight, toReview, unseenAlerts } from '../../data/select';
 import { useStore } from '../../data/store';
 import { AskSol, SolStatus } from '../../features/home/hero';
@@ -42,6 +42,7 @@ export default function Inicio() {
   const mins = now.getHours() * 60 + now.getMinutes();
   const morning = mins >= minutesOf(state.summaries.morning.at) && mins < 12 * 60 && lastNightItems(state, now).length > 0;
   const evening = mins >= minutesOf(state.summaries.evening.at) && !nightNow;
+  const closed = state.closedDays.includes(todayKey(now));
 
   const pressing = today.filter((t) => t.priority === 'high' || t.flagged).length + review.length + alerts.length;
   const title = alerts.length
@@ -51,7 +52,7 @@ export default function Inicio() {
   const detail = nightNow
     ? night.on ? `Avisos nocturnos activos hasta las ${night.to}. Lo demás espera al resumen.` : `Sin avisos esta noche. Todo queda para el resumen de las ${state.summaries.morning.at}.`
     : read
-      ? `Hoy revisé ${read} ${read === 1 ? 'mensaje' : 'mensajes'}: ${counts.tasks} ${counts.tasks === 1 ? 'quedó como tarea' : 'quedaron como tareas'}, ${counts.events} en tu agenda y ${counts.ignored} silenciados.`
+      ? `Hoy revisé ${read} ${read === 1 ? 'mensaje' : 'mensajes'}: ${counts.tasks} ${counts.tasks === 1 ? 'quedó como tarea' : 'quedaron como tareas'}, ${counts.events} en tu agenda y ${counts.ignored} ${counts.ignored === 1 ? 'silenciado' : 'silenciados'}.`
       : 'Estoy revisando lo que llega. Te muestro aquí lo que te necesite.';
 
   return (
@@ -64,9 +65,9 @@ export default function Inicio() {
         <AskSol hint={nightNow ? 'Anota algo antes de dormir…' : 'Pídele algo a Sol o cuéntale algo…'} />
       </View>
 
-      {open.length ? <QuestionCard questions={open} /> : null}
+      {morning ? <SummaryCard kind="morning" now={now} /> : evening && !closed ? <SummaryCard kind="evening" now={now} /> : null}
 
-      {morning ? <SummaryCard kind="morning" now={now} /> : evening ? <SummaryCard kind="evening" now={now} /> : null}
+      {open.length ? <QuestionCard questions={open} /> : null}
 
       <Section title="Para hoy" count={today.length}>
         <TodayTasks tasks={today} />

@@ -153,8 +153,19 @@ export function nextRepeat(key: string, repeat: Repeat): string {
     case 'daily': d.setDate(d.getDate() + 1); break;
     case 'weekdays': do d.setDate(d.getDate() + 1); while (d.getDay() === 0 || d.getDay() === 6); break;
     case 'weekly': d.setDate(d.getDate() + 7); break;
-    case 'monthly': d.setMonth(d.getMonth() + 1); break;
-    case 'yearly': d.setFullYear(d.getFullYear() + 1); break;
+    case 'monthly': {
+      // Same day next month, or its last day (31 Jan → 28 Feb).
+      const day = d.getDate();
+      d.setDate(1); d.setMonth(d.getMonth() + 1);
+      d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+      break;
+    }
+    case 'yearly': {
+      const day = d.getDate();
+      d.setDate(1); d.setFullYear(d.getFullYear() + 1);
+      d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+      break;
+    }
     default: break;
   }
   return keyOf(d);

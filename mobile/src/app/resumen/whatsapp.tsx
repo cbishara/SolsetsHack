@@ -5,71 +5,49 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Header } from '../../components/header';
 import { SolOrb } from '../../components/sol-orb';
 import { Chip, T } from '../../components/ui';
-import { keyOf } from '../../components/week-strip';
+import { dueLabel, timeOf } from '../../data/dates';
 import { dumpToTasks } from '../../data/dump';
+import { categoryById } from '../../data/select';
 import { useStore } from '../../data/store';
-import { byTime, dueText, eventsOn, hhmm, partition, sleepLine, topTasks } from '../../features/digest/format';
+import { dayInput, morningInput, tonightInput } from '../../features/digest/build';
 import { whatsappPalette } from '../../features/digest/palettes';
-import { morningSummary, nightClose, urgentAlert, voiceDump, type WaMessage } from '../../features/digest/whatsapp-copy';
+import { daySummary, morningSummary, tonightQuestion, urgentAlert, voiceDump, type WaMessage } from '../../features/digest/whatsapp-copy';
 import { useTheme } from '../../theme/theme';
 import { font, space } from '../../theme/tokens';
-import { dueText as compatDue } from '../../data/compat';
-import { tonight } from '../../data/select';
 
-type Scenario = 'manana' | 'noche' | 'alerta' | 'audio';
+type Scenario = 'manana' | 'dia' | 'pregunta' | 'alerta' | 'audio';
 const SCENARIOS: { id: Scenario; label: string; note: string }[] = [
-  { id: 'manana', label: 'Resumen de la mañana', note: 'Llega a la hora que elegiste. Los botones marcan el feedback sin abrir la app.' },
-  { id: 'noche', label: 'Cierre de la noche', note: 'Antes de dormir: lo abierto, mañana y la promesa de esta noche.' },
-  { id: 'alerta', label: 'Alerta', note: 'Acompaña a la notificación de la app. Si no respondes en 3 minutos, Sol llama.' },
-  { id: 'audio', label: 'Audio', note: 'Mandas un audio con pendientes y Sol los devuelve como tareas con fecha.' },
+  { id: 'manana', label: 'Mañana', note: 'Llega a la hora que elegiste. Con los botones das feedback sin abrir la app.' },
+  { id: 'dia', label: 'Fin del día', note: 'Lo que llegó, lo que terminaste y lo que queda. Respóndele con un audio para soltar lo que falte.' },
+  { id: 'pregunta', label: 'Antes de dormir', note: 'Si elegiste que te pregunte, una respuesta define cómo te cuida esa noche.' },
+  { id: 'alerta', label: 'Alerta', note: 'Acompaña a la alerta de la app. Si configuraste llamada, Sol llama si no respondes.' },
+  { id: 'audio', label: 'Audio', note: 'Mandas un audio con pendientes y Sol te devuelve las tareas con fecha.' },
 ];
 
 const DUMP = 'Mañana tengo que llamar a CertiSur por el certificado, comprar el regalo de Tomás esta semana y el lunes mandar el informe de tickets';
 
-// Content design for the WhatsApp channel, shown in a faithful simulation of
-// the chat. The copy lives in features/digest/whatsapp-copy.ts for server/.
+// The WhatsApp channel, shown in a faithful simulation of the chat. The copy
+// lives in features/digest/whatsapp-copy.ts so server/ can send the same thing.
 export default function WhatsAppPreview() {
   const { scheme } = useTheme();
   const w = whatsappPalette[scheme];
-  const { state, lastNight, sleep, events, shifts } = useStore();
+  const { state, sleep } = useStore();
   const [scenario, setScenario] = useState<Scenario>('manana');
 
   const messages = useMemo<WaMessage[]>(() => {
-    const { woke, waited, noise } = partition(byTime(lastNight));
-    const taskOf = (id?: string) => state.tasks.find((t) => t.id === id);
-    if (scenario === 'manana') {
-      return morningSummary({
-        name: state.profile.name,
-        woke: woke.map((i) => ({ time: hhmm(i.at), text: i.text, seenAt: i.seenAt ? hhmm(i.seenAt) : undefined, reason: i.reason })),
-        waited: waited.map((i) => ({ text: taskOf(i.taskId)?.title ?? i.text, due: dueText(taskOf(i.taskId) ? compatDue(taskOf(i.taskId)!) : 'Hoy') })),
-        noiseCount: noise.length,
-        totalRead: lastNight.length,
-        sleep: sleepLine(sleep)?.text,
-        today: topTasks(state.tasks).map((t) => t.title),
-        events: eventsOn(events, 0).map((e) => ({ time: hhmm(e.start), title: e.title })),
-        shadow: state.profile.agentMode === 'shadow',
-      });
-    }
-    if (scenario === 'noche') {
-      const onCall = tonight(state).on || (shifts.find((s) => s.date === keyOf(new Date()))?.onCall ?? false);
-      return nightClose({
-        name: state.profile.name,
-        open: state.tasks.filter((t) => !t.done).length,
-        tomorrow: eventsOn(events, 1).map((e) => `${hhmm(e.start)} ${e.title}`),
-        guard: onCall && state.nightAlerts.mode === 'urgent',
-        watched: state.chats.filter((c) => c.on).map((c) => c.name),
-        wakeRules: state.rules.filter((r) => r.kind === 'wake' && r.confirmed).slice(0, 3).map((r) => r.text),
-        morningAt: state.summaries.morning.at,
-      });
-    }
+    if (scenario === 'manana') return morningSummary(morningInput(state, sleep));
+    if (scenario === 'dia') return daySummary(dayInput(state));
+    if (scenario === 'pregunta') return tonightQuestion(tonightInput(state));
     if (scenario === 'alerta') {
-      const item = woke[0] ?? lastNight[0];
-      const rule = state.rules.find((r) => r.kind === 'wake' && r.confirmed);
-      return urgentAlert({ time: hhmm(item.at), text: item.text, who: item.group ? `${item.from}, en ${item.group}` : item.from, rule: rule?.text ?? 'algo nuevo que no reconozco' });
+      const item = state.items.find((i) => i.outcome.kind === 'alerted') ?? state.items[0];
+      return urgentAlert({
+        time: timeOf(item.receivedAt), text: item.summary, who: item.direct ? item.from.name : `${item.from.name}, en ${item.channel}`,
+        category: categoryById(state, item.categoryId)?.name ?? 'algo que no reconozco', callAfterMin: state.nightAlerts.call ? state.nightAlerts.callAfterMin : undefined,
+      });
     }
     const { tasks } = dumpToTasks(DUMP, 'voice');
-    return voiceDump({ transcript: DUMP, seconds: 14, tasks: tasks.map((t) => ({ title: t.title, due: dueText(compatDue(t)) })) });
-  }, [scenario, state, lastNight, sleep, events, shifts]);
+    return voiceDump({ at: '22:41', seconds: 14, tasks: tasks.map((t) => ({ title: t.title, due: (dueLabel(t) ?? 'sin fecha').toLowerCase() })) });
+  }, [scenario, state, sleep]);
 
   const current = SCENARIOS.find((x) => x.id === scenario)!;
 

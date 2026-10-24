@@ -28,6 +28,9 @@ function Navigator() {
         <Stack.Screen name="alerta" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
         <Stack.Screen name="resumen/manana" options={{ presentation: 'modal' }} />
         <Stack.Screen name="resumen/noche" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="resumen/dia" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="resumen/whatsapp" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="noche" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
       </Stack>
     </>
   );

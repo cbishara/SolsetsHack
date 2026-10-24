@@ -1,0 +1,15 @@
+{
+  "type": "change",
+  "id": "cambio-bishara-20261024-resumenes-noche",
+  "title": "Resumen del día con descarga, modo noche, resumen de la mañana y alerta, con el modelo nuevo",
+  "owner": "Bishara",
+  "updatedAt": "2026-10-24",
+  "summary": "El cierre del día deja de ser una frase: muestra lo que llegó, lo que se terminó y lo que queda, deja soltar lo pendiente y pasa a una pantalla de noche que solo dice hechos.",
+  "before": "El resumen de la noche decía 'Deja el día aquí' y 'No te voy a despertar'. La descarga estaba escondida al final, 'Listo, a descansar' solo cerraba la pantalla y la alerta hablaba de reglas.",
+  "after": "Resumen del día: cifras (llegaron, terminaste, para mañana), lo terminado, lo que queda con el botón 'pasar las de hoy a mañana', lo nuevo por categoría, cómo empieza mañana, lo que espera confirmación, la descarga '¿Algo más en la cabeza?' y la noche. 'Cerrar el día' abre el modo noche: reloj, Sol tranquilo, avisos activos o no, por qué categorías, y lo que llegó desde que empezó la noche. El resumen de la mañana trae lo que avisó, lo que quedó para hoy, lo silenciado y feedback de un toque. La alerta explica que la categoría puede despertar y muestra el original. Los textos de WhatsApp, que server/ puede reutilizar, suman el resumen del día y la pregunta '¿Activo los avisos esta noche?'.",
+  "reason": "Bishara pidió que el resumen de fin de día y la descarga estén juntos, sean universales y no prometan nada que no se sabe.",
+  "checked": "TypeScript sin errores y 25 pruebas en verde, entre ellas la noche según el calendario, el cambio de una sola noche, el modo silencio, el agrupado de tareas y la repetición mensual al 28 de febrero. Capturas en web simulando las 07:30, las 19:30 y las 23:30.",
+  "availability": "Rama bishara/resumenes-noche.",
+  "featureIds": [],
+  "flowIds": []
+}

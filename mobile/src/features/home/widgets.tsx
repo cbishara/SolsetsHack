@@ -209,7 +209,7 @@ export function SummaryCard({ kind, now }: { kind: 'morning' | 'evening'; now: D
     : `${counts.read} recibidos hoy · ${counts.tasks} tareas nuevas · ${counts.events} en tu agenda`;
   const Icon = kind === 'morning' ? Sunrise : FileText;
   return (
-    <Card onPress={() => router.push(kind === 'morning' ? '/resumen/manana' : '/resumen/noche')} accessibilityLabel={`Abrir ${title}`} style={s.summary}>
+    <Card onPress={() => router.push(kind === 'morning' ? '/resumen/manana' : '/resumen/dia')} accessibilityLabel={`Abrir ${title}`} style={s.summary}>
       <IconTile icon={Icon} color={p.sol} size={38} />
       <View style={{ flex: 1, gap: 2 }}>
         <T v="bodyStrong">{title}</T>
